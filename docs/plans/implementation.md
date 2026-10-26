@@ -101,7 +101,9 @@
 - [x] Add an Effect cache service with request-safe separation and TTL behavior for public lookup data.
   - Commit: `fb706dd`
   - Verified: targeted Ultracite, strict typecheck, all 68 tests, and web Cloudflare production build pass. Full `bun run check` still reports only the documented baseline formatting errors in `PROMPT.md` and `README.md`.
-- [ ] Add CIDR parsing, canonical network calculations, range bounds, and containment checks to the portable core package, with IPv4/IPv6 boundary tests.
+- [x] Add CIDR parsing, canonical network calculations, range bounds, and containment checks to the portable core package, with IPv4/IPv6 boundary tests.
+  - Commit: `dcf15b0`
+  - Verified: targeted Ultracite, strict typecheck, all 82 tests, and web Cloudflare production build pass. Full `bun run check` still reports only the documented baseline formatting errors in `PROMPT.md` and `README.md`.
 - [ ] Add standards-informed IP classification to the portable core package, with IPv4/IPv6 special-purpose boundary tests.
 - [ ] Add ASN and domain normalization plus DNS record utilities to the portable core package, with unit tests.
 - [ ] Add network data formatting, geographic distance, and RTT/jitter calculations to the portable core package, with unit tests.
