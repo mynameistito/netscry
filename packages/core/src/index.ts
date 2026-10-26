@@ -1,3 +1,7 @@
+export { parseAsn } from "./asn.ts";
+
+export type { Asn, AsnParseError } from "./asn.ts";
+
 export { containsIpAddress, parseCidr } from "./cidr.ts";
 
 export type { IpCidr, IpCidrParseError } from "./cidr.ts";
