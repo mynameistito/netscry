@@ -85,8 +85,13 @@
 - [x] Declare direct Effect v4 and shared-schema workspace dependencies in the web application before adding app-owned services.
   - Commit: `7fc7705`
   - Verified: frozen-lockfile install, strict typecheck, and 42 tests pass; targeted Ultracite passes. Full `bun run check` reports only the baseline formatting errors in `PROMPT.md` and `README.md`.
-- [ ] Declare the direct `@netscry/core` workspace dependency needed by web-side network service code.
-- [ ] Implement a request-scoped visitor metadata Effect service with typed Cloudflare request properties and explicit live, local, and fixture Layers.
+- [x] Declare the direct `@netscry/core` workspace dependency needed by web-side network service code.
+  - Commit: `ec1ccae`
+  - Verified: frozen-lockfile install, strict typecheck, and all 48 tests pass.
+- [x] Implement a request-scoped visitor metadata Effect service with typed Cloudflare request properties and explicit live, local, and fixture Layers.
+  - Commit: `7de31d2`
+  - Verified: `wrangler types`, targeted Ultracite, strict typecheck, 50 tests, and the web Cloudflare production build pass. Full `bun run check` still reports only the documented baseline formatting errors in `PROMPT.md` and `README.md`.
+- [ ] Document provider HTTP trust boundaries and resource limits in an ADR before shared provider client integration.
 - [ ] Add the shared typed external-provider error model and reusable bounded Effect HTTP client policy.
 - [ ] Add an Effect cache service with request-safe separation and TTL behavior for public lookup data.
 - [ ] Extend core utilities with CIDR calculations, ASN and domain normalization, DNS record handling, network formatting, geographic distance, and timing calculations with unit tests.
