@@ -85,6 +85,22 @@ describe(ExternalProviderHttpClient, () => {
     expect(result).toStrictEqual({ value: "resolved" });
   });
 
+  it("decodes the Cloudflare DNS JSON media type", async () => {
+    const result = await lookup(
+      mockClient(() =>
+        Response.json(
+          { value: "resolved" },
+          {
+            headers: { "content-type": "application/dns-json" },
+          }
+        )
+      ),
+      { ...providerRequest, accept: "application/dns-json" }
+    );
+
+    expect(result).toStrictEqual({ value: "resolved" });
+  });
+
   it("sends a validated provider-specific Accept header", async () => {
     let acceptHeader: string | undefined;
 

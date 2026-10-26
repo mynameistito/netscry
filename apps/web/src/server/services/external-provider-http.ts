@@ -215,6 +215,7 @@ const collectBody = (
 
   const isJsonContentType =
     contentType === "application/json" ||
+    contentType === "application/dns-json" ||
     (contentType !== undefined && contentType.endsWith("+json"));
 
   if (!isJsonContentType) {

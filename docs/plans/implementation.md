@@ -198,6 +198,9 @@
 - [x] Add a validated `Accept`-header option to the bounded external provider HTTP client.
   - Implementation: allow callers to request a provider media type while retaining pinned HTTPS origins, timeout/size limits, schema validation, retries, and redirect blocking; reject empty, oversized, and control-character values before transport.
   - Verified: focused provider-client tests pass (12 cases), full unit suite passes (281 tests), strict typecheck and web production build pass, and targeted Ultracite passes. Repository-wide `bun run check` retains only the documented baseline formatting failures in unchanged `PROMPT.md` and `README.md`.
+- [x] Accept the Cloudflare DNS JSON media type in bounded provider responses.
+  - Implementation: recognize the resolver's documented `application/dns-json` content type as JSON while preserving schema validation and response limits.
+  - Verified: focused provider-client tests pass (13 cases), full unit suite passes (282 tests), strict typecheck and targeted Ultracite pass.
 - [ ] Implement schema-validated DNS-over-HTTPS lookups for all requested record types, with documented resolver behavior and TTL-aware caching.
 - [ ] Expose DNS lookup through a schema-validated REST API route.
 - [ ] Add DNS lookup search and detail views as part of the public lookup interface.
