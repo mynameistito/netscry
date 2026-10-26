@@ -236,7 +236,11 @@
   - Commit: `58b4dd6`
   - Implementation: classify query text using the core's existing IP, CIDR, ASN, and IDNA domain parsers; return canonical tagged targets and structured validation errors without coupling the portable core to Effect or a UI framework.
   - Verification run: 17 focused cases cover IPv4/IPv6, canonical IPv4/IPv6 CIDRs, prefixed and numeric ASNs, IDNA domains, URL-like values, and malformed input. All 382 tests, strict typecheck, and targeted Ultracite pass. Full `bun run check` reports only the documented baseline formatting failures in unchanged `PROMPT.md` and `README.md`.
-- [ ] Build public IP detail views with local range facts, RDAP registration, source availability, and links to BGP observations.
+- [x] Build public IP detail views with local range facts, RDAP registration, source availability, and links to BGP observations.
+  - Commit: `ab553b3`
+  - Implementation: add `/ip/:address` for canonical IPv4/IPv6 and CIDR queries; fetch local range facts, normalized RDAP registration, and RouteViews observations independently with schema validation and separate loading/error states. Show allocation details, registered range/events, observed origins, peer AS paths, source links, and the limitation that RouteViews only reflects participating collectors.
+  - Verification run: four UI cases cover independent loading, populated local/RDAP/BGP data and provenance, partial RDAP failure, CIDR URL encoding, and invalid input without fetches. All 386 tests pass; strict typecheck, scoped Ultracite, React Doctor review, and `bun --filter @netscry/web build` pass. React Doctor reports the same pre-existing `packages/ui/src/components/map.tsx` findings. The full `bun run check` confirmed baseline formatting errors in unchanged `PROMPT.md` and `README.md`, then its workspace-wide Oxlint phase stalled; the touched-file Ultracite check passes.
+- [ ] Extract the schema-validated public lookup HTTP boundary for reuse across detail views.
 - [ ] Build ASN and BGP detail views with announced prefixes, observed routes, RouteViews coverage, and provenance.
 - [ ] Build public domain registration details and cross-link them to the existing DNS lookup view.
 - [ ] Add a reusable lookup search to the shell and connect the home lookup index to all completed detail views.

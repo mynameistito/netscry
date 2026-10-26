@@ -1,6 +1,5 @@
 import { parsePublicLookupQuery } from "@netscry/core";
 import {
-  ApiErrorResponseSchema,
   PublicNetworkLookupResponseSchema,
   PublicBgpPrefixLookupResponseSchema,
   RdapNormalizedRecordSchema,
@@ -15,7 +14,8 @@ import { ErrorState } from "@netscry/ui/components/error-state";
 import { LoadingState } from "@netscry/ui/components/loading-state";
 import { ArrowRight } from "@netscry/ui/lib/icons";
 import { useQuery } from "@tanstack/react-query";
-import { Schema } from "effect";
+
+import { fetchPublicLookup } from "./public-lookup-client";
 
 type SourceState<Value> =
   | { readonly status: "loading" }
@@ -42,46 +42,6 @@ const toSourceState = <Value,>(
   return data === undefined
     ? { status: "error", message: "The source returned no usable data." }
     : { status: "ready", data };
-};
-
-const fetchLookup = async <Value,>(
-  url: string,
-  schema: Schema.Decoder<Value>,
-  signal: AbortSignal,
-  label: string
-): Promise<Value> => {
-  let response: Response;
-
-  try {
-    response = await fetch(url, { signal });
-  } catch {
-    throw new Error(`The ${label} service could not be reached. Try again.`);
-  }
-
-  let body: unknown;
-
-  try {
-    body = await response.json();
-  } catch {
-    throw new Error(`The ${label} service returned an unreadable response.`);
-  }
-
-  if (!response.ok) {
-    const error = Schema.decodeUnknownResult(ApiErrorResponseSchema)(body);
-    throw new Error(
-      error._tag === "Success"
-        ? error.success.error.message
-        : `The ${label} lookup could not be completed.`
-    );
-  }
-
-  const result = Schema.decodeUnknownResult(schema)(body);
-
-  if (result._tag === "Failure") {
-    throw new Error(`The ${label} service returned unexpected data.`);
-  }
-
-  return result.success;
 };
 
 const sourceLabel = (source: string) =>
@@ -396,7 +356,7 @@ export const IpLookupPage = ({ query }: { readonly query: string }) => {
   const local = useQuery({
     enabled: !invalid,
     queryFn: async ({ signal }) =>
-      await fetchLookup(
+      await fetchPublicLookup(
         `/api/v1/ip/${encoded}`,
         PublicNetworkLookupResponseSchema,
         signal,
@@ -409,7 +369,7 @@ export const IpLookupPage = ({ query }: { readonly query: string }) => {
   const rdap = useQuery({
     enabled: !invalid,
     queryFn: async ({ signal }) =>
-      await fetchLookup(
+      await fetchPublicLookup(
         `/api/v1/rdap/ip/${encoded}`,
         RdapNormalizedRecordSchema,
         signal,
@@ -429,7 +389,7 @@ export const IpLookupPage = ({ query }: { readonly query: string }) => {
     queryFn: async ({ signal }) => {
       const parameters = new URLSearchParams({ prefix: bgpQuery });
 
-      return await fetchLookup(
+      return await fetchPublicLookup(
         `/api/v1/bgp?${parameters.toString()}`,
         PublicBgpPrefixLookupResponseSchema,
         signal,
