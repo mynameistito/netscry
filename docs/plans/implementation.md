@@ -27,7 +27,7 @@
 - Blume's current npm documentation specifies its own `blume dev` and `blume build` commands and static output. It does not require a hand-built Astro application.
 - The checked-out `mynameistito/alchemy-deploy` repository provides a root action pinned to an immutable release SHA, `workflow_run` exact-SHA gating, and artifact-backed previews. The latest local release tag is v3.1.8 at `68f577f3032660bd4919dfcc5725db21d5b64f9d`; inspect that exact release's template/interface before deployment integration. CI builds must not receive deployment credentials.
 - Registry metadata checked during setup: TanStack Start `1.169.4` requires Vite 8 and React; React `19.3.1`, Vite `8.3.5`, Cloudflare Vite plugin `1.65.0` (Vite 6/7/8, Wrangler 4.152+), Tailwind Vite plugin `4.3.3`, Effect `4.0.6`, Alchemy `2.0.0-beta.84` (Vite 8.0.7+, Effect 4.0.5+), Blume `2.2.6` (Node 22.19+), Vitest `5.0.5` (Node 22.12+), and Playwright `1.64.1` (Node 20+) are mutually aligned for this Bun 1.4.4 project. Alchemy's beta API is the current published release and will be validated against its official docs/types before infrastructure implementation.
-- Official sources reviewed: <https://effect.website/docs/v4/schema/introduction>, <https://tanstack.com/start/latest/docs/framework/react/guide/hosting>, <https://ui.shadcn.com/docs/monorepo>, <https://www.mapcn.dev/docs/installation>, <https://www.npmjs.com/package/blume>, <https://github.com/mynameistito/alchemy-deploy>.
+- Official sources reviewed: <https://effect.website/docs/v4/schema/introduction>, <https://effect.website/docs/v4/schema/filters>, <https://tanstack.com/start/latest/docs/framework/react/guide/hosting>, <https://ui.shadcn.com/docs/monorepo>, <https://www.mapcn.dev/docs/installation>, <https://www.npmjs.com/package/blume>, <https://github.com/mynameistito/alchemy-deploy>.
 
 ## Phase 1 — Repository and monorepo foundation
 
@@ -37,10 +37,13 @@
 - [x] Verify compatible current package versions, declare Bun workspace boundaries, and confirm a reproducible lockfile.
   - Commit: `9b65da3`
   - Verified: Bun recognized the workspace patterns; `bun install --frozen-lockfile` passed with no lockfile changes; targeted formatting checks passed. Project-wide formatting/typecheck remain blocked by the recorded, unchanged `PROMPT.md` and `README.md`; test/build scripts did not exist yet.
-- [ ] Add the first real `@netscry/core` workspace with strict IPv4/IPv6 parsing, canonicalization, Vitest coverage, and a working root typecheck/test command.
+- [x] Add the first real `@netscry/core` workspace with strict IPv4/IPv6 parsing, canonicalization, Vitest coverage, and a working root typecheck/test command.
+  - Commit: `f2305fd`
+  - Verified: 22 Vitest cases pass; `bun run typecheck` passes; targeted Ultracite and frozen-lockfile checks pass. Full `bun run check` still reports only unchanged `PROMPT.md` and `README.md`; `build` is not available until a production application exists.
+- [ ] Add `@netscry/schemas` with Effect Schema contracts for provenance, availability, sensitivity, and typed network/visitor metadata.
 - [ ] Complete shared TypeScript settings and root check, typecheck, test, build, and development commands across workspaces while preserving Ultracite.
 - [ ] Add CI checks for formatting/lint, typechecking, tests, and builds without deployment credentials.
-- [ ] Add `packages/schemas` and `packages/config` with correct exports and boundaries; `packages/core` starts in the preceding task.
+- [ ] Add `packages/config` only when shared configuration is justified; `packages/core` and `packages/schemas` are implemented in their own foundation tasks.
 
 ## Phase 2 — Web, docs, and UI foundation
 
@@ -53,7 +56,7 @@
 
 ## Phase 3 — Effect, contracts, and Cloudflare integration
 
-- [ ] Add Effect v4 services and inferred Effect Schema contracts for visitor, network, enrichment, provenance, availability, and error data.
+- [ ] Add Effect v4 services for visitor, network, enrichment, caching, and typed external-provider errors.
 - [ ] Extend core utilities with CIDR calculations, ASN and domain normalization, DNS record handling, network formatting, geographic distance, and timing calculations with unit tests.
 - [ ] Define Alchemy-managed Worker infrastructure and typed native bindings, stage separation, and local development behavior.
 - [ ] Implement request-scoped extraction of all supported and safe Cloudflare request metadata, with explicit live/local/fixture modes.
