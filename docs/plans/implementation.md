@@ -94,7 +94,9 @@
 - [x] Document provider HTTP trust boundaries and resource limits in an ADR before shared provider client integration.
   - Commit: `f80f847`
   - Verified: targeted Ultracite formatting and lint check passes.
-- [ ] Add the shared typed external-provider error model and reusable bounded Effect HTTP client policy.
+- [x] Add the shared typed external-provider error model and reusable bounded Effect HTTP client policy.
+  - Commit: `453696a`
+  - Verified: frozen-lockfile install, targeted Ultracite, strict typecheck, 62 tests, and the web Cloudflare production build pass. Full `bun run check` still reports only the documented baseline formatting errors in `PROMPT.md` and `README.md`.
 - [ ] Add an Effect cache service with request-safe separation and TTL behavior for public lookup data.
 - [ ] Extend core utilities with CIDR calculations, ASN and domain normalization, DNS record handling, network formatting, geographic distance, and timing calculations with unit tests.
 - [ ] Define Alchemy-managed Worker infrastructure and typed native bindings, stage separation, and local development behavior.
