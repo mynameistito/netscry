@@ -307,12 +307,16 @@
   - Reference: <https://nodejs.org/api/typescript.html>.
   - Verification: all 424 tests pass; SDK Node consumer smoke test, package builds, strict typecheck, web production build, and docs production build pass. Oxfmt reports all files formatted. `bun run check` completed formatting but its Oxlint stage stalled without diagnostics; direct scoped Oxlint and `bun run check:docs` also stalled without diagnostics. Retry those checks during phase validation.
 - [ ] Add repository, package contents, tree-shaking, and runtime support metadata to the SDK and shared package manifests; verify package contents without publishing.
+  - Commit: `a909e55`
   - Prepared manifests with repository links, `files: ["dist"]`, `sideEffects: false`, and Node `>=20` support. `npm pack --dry-run --json` includes only each package manifest and built `dist` artifacts; no archive was published.
   - `bun pm pack --dry-run` independently confirms each workspace package contains only its manifest and built `dist` artifacts.
-  - Validation before commit: all three package builds and the SDK Node consumer smoke pass; Oxfmt passes for the manifests.
+  - Verification: all three package builds and the SDK Node consumer smoke pass; Oxfmt and both npm/Bun pack dry-runs pass.
 - [ ] Verify npm package name availability/ownership and resolve the project's licensing choice before enabling public SDK/shared package manifests.
   - Discovery: `npm view @netscry/sdk`, `@netscry/core`, and `@netscry/schemas` returned 404 responses that npm documents as either unclaimed names or insufficient access; registry ownership remains unverified. There is no repository LICENSE file or user-provided license choice, so keep packages private and do not assign a license.
-- [ ] Add Changesets versioning and release conventions without publishing packages.
+- [ ] Add `@changesets/cli` as a root development dependency.
+  - Added `@changesets/cli@3.0.3` with Bun and updated the lockfile.
+  - Validation before commit: `bun install --frozen-lockfile`, CLI version check, and root package formatting pass.
+- [ ] Configure Changesets versioning and release conventions without publishing packages.
 - [ ] Write comprehensive Blume documentation for product, privacy, data sources, local modes, every implemented API route, SDK, development, and deployment.
 - [ ] Generate or validate API documentation from canonical schemas/contracts and ensure docs builds detect stale required artifacts.
 - [ ] Add consumer-facing READMEs, license/repository metadata, package contents checks, and runtime support declarations for publishable packages.
