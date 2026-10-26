@@ -1,8 +1,6 @@
 import { DataField } from "@netscry/ui/components/data-field";
-import { EmptyState } from "@netscry/ui/components/empty-state";
 import {
   ArrowRight,
-  Compass,
   Globe2,
   Network,
   RadioTower,
@@ -11,6 +9,7 @@ import {
 } from "@netscry/ui/lib/icons";
 import { createFileRoute } from "@tanstack/react-router";
 
+import { NetworkMap } from "../features/maps/network-map";
 import { AppShell } from "../features/shell/app-shell";
 
 const lookupAreas = [
@@ -153,23 +152,20 @@ const HomePage = () => (
         </section>
 
         <section
-          aria-labelledby="diagnostics-title"
+          aria-labelledby="location-map-title"
           className="border-border rounded-xl border"
-          id="diagnostics"
+          id="location-map"
         >
           <div className="border-border border-b px-5 py-4 sm:px-6">
-            <h2 className="text-sm font-medium" id="diagnostics-title">
-              Diagnostics
+            <h2 className="text-sm font-medium" id="location-map-title">
+              Approximate location
             </h2>
             <p className="text-muted-foreground mt-1 text-xs">
-              Edge observations and browser measurements stay distinct.
+              Network-level estimates do not identify a device&apos;s precise
+              location.
             </p>
           </div>
-          <EmptyState
-            description="Connection and browser measurements will appear here when their data sources are available."
-            icon={<Compass aria-hidden="true" size={18} />}
-            title="No diagnostic data yet"
-          />
+          <NetworkMap location={null} />
         </section>
       </div>
 

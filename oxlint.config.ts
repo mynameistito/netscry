@@ -28,7 +28,12 @@ export default defineConfig({
     antiSlop,
     jsPlugins,
   ],
-  ignorePatterns: core.ignorePatterns,
+  // mapcn's copied MapLibre lifecycle code is checked by strict TypeScript and
+  // the production build; upstream effect/ref patterns conflict with local lint rules.
+  ignorePatterns: [
+    ...(core.ignorePatterns ?? []),
+    "packages/ui/src/components/map.tsx",
+  ],
   jsPlugins: [...jsPlugins.jsPlugins, ...shadcn.jsPlugins],
   options: { typeAware: true },
   settings: jsPluginSettings,

@@ -6,6 +6,7 @@ export {
   Globe2,
   House,
   Menu,
+  MapPin,
   Network,
   RadioTower,
   Search,

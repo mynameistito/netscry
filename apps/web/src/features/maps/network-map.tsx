@@ -1,0 +1,180 @@
+// oxlint-disable react/todo -- This browser-only dynamic import keeps MapLibre out of the server render.
+import { EmptyState } from "@netscry/ui/components/empty-state";
+import { ErrorState } from "@netscry/ui/components/error-state";
+import { LoadingState } from "@netscry/ui/components/loading-state";
+import type {
+  MapControlsProps,
+  MapMarkerProps,
+  MapProps,
+  MarkerContentProps,
+  MarkerLabelProps,
+} from "@netscry/ui/components/map";
+import { MapPin } from "@netscry/ui/lib/icons";
+import type { ComponentType } from "react";
+import { useEffect, useState } from "react";
+
+interface MapComponents {
+  Map: ComponentType<MapProps>;
+  MapControls: ComponentType<MapControlsProps>;
+  MapMarker: ComponentType<MapMarkerProps>;
+  MarkerContent: ComponentType<MarkerContentProps>;
+  MarkerLabel: ComponentType<MarkerLabelProps>;
+}
+
+interface NetworkLocation {
+  longitude: number;
+  latitude: number;
+  label: string;
+}
+
+interface LoadedMapProps {
+  location: NetworkLocation;
+}
+
+interface NetworkMapProps {
+  location: NetworkLocation | null;
+}
+
+const mapStyles = {
+  light: "https://tiles.openfreemap.org/styles/positron",
+  dark: "https://tiles.openfreemap.org/styles/dark",
+};
+
+const isValidLongitude = (longitude: number) =>
+  Number.isFinite(longitude) && longitude >= -180 && longitude <= 180;
+
+const isValidLatitude = (latitude: number) =>
+  Number.isFinite(latitude) && latitude >= -90 && latitude <= 90;
+
+const isValidLocation = ({ longitude, latitude }: NetworkLocation) =>
+  isValidLongitude(longitude) && isValidLatitude(latitude);
+
+const LoadedNetworkMap = ({ location }: LoadedMapProps) => {
+  const [components, setComponents] = useState<MapComponents>();
+  const [loadFailed, setLoadFailed] = useState(false);
+
+  useEffect(() => {
+    let cancelled = false;
+
+    void import("@netscry/ui/components/map")
+      .then((loadedComponents) => {
+        if (!cancelled) {
+          setComponents(loadedComponents);
+        }
+
+        return loadedComponents;
+      })
+      .catch(() => {
+        if (!cancelled) {
+          setLoadFailed(true);
+        }
+      });
+
+    return () => {
+      cancelled = true;
+    };
+  }, []);
+
+  if (loadFailed) {
+    return (
+      <ErrorState
+        description="The map could not load. Check the connection and reload this page to try again."
+        title="Map unavailable"
+      />
+    );
+  }
+
+  if (components === undefined) {
+    return (
+      <LoadingState label="Loading approximate network location map" rows={2} />
+    );
+  }
+
+  const {
+    Map: MapView,
+    MapControls,
+    MapMarker,
+    MarkerContent,
+    MarkerLabel,
+  } = components;
+
+  return (
+    <div className="space-y-2">
+      <section
+        aria-label="Approximate network location map"
+        className="border-border relative h-64 min-h-60 w-full overflow-hidden rounded-lg border sm:h-80"
+      >
+        <MapView
+          attributionControl={false}
+          center={[location.longitude, location.latitude]}
+          dragRotate={false}
+          styles={mapStyles}
+          touchPitch={false}
+          zoom={5}
+        >
+          <MapMarker
+            anchor="bottom"
+            latitude={location.latitude}
+            longitude={location.longitude}
+          >
+            <MarkerContent>
+              <span
+                aria-hidden="true"
+                className="bg-primary outline-primary/30 block size-3 rounded-full border-2 border-white outline outline-2"
+              />
+            </MarkerContent>
+            <MarkerLabel>{location.label}</MarkerLabel>
+          </MapMarker>
+          <MapControls position="top-right" showCompass showZoom />
+        </MapView>
+        <div className="bg-background/90 text-muted-foreground absolute bottom-2 left-2 z-10 rounded px-2 py-1 text-xs backdrop-blur-xs">
+          <a href="https://openfreemap.org/" rel="noreferrer" target="_blank">
+            OpenFreeMap
+          </a>{" "}
+          © OpenMapTiles · Data from{" "}
+          <a
+            href="https://www.openstreetmap.org/copyright"
+            rel="noreferrer"
+            target="_blank"
+          >
+            OpenStreetMap
+          </a>
+        </div>
+        <p className="sr-only">
+          This is an approximate network location, not a device location.
+        </p>
+      </section>
+      <p className="text-muted-foreground text-xs">
+        The map shows an approximate network location, not a device location.
+        Your browser requests map tiles directly from OpenFreeMap.
+      </p>
+    </div>
+  );
+};
+
+/**
+ * Renders an approximate network location only when real coordinates exist.
+ * @returns A map, loading, empty, or invalid-data state.
+ */
+export const NetworkMap = ({ location }: NetworkMapProps) => {
+  if (location === null) {
+    return (
+      <EmptyState
+        description="A map appears when a supported source provides approximate network coordinates. NetScry does not use device location."
+        icon={<MapPin aria-hidden="true" size={18} />}
+        title="Location data unavailable"
+      />
+    );
+  }
+
+  if (!isValidLocation(location)) {
+    return (
+      <ErrorState
+        description="The location source returned coordinates outside valid latitude or longitude bounds."
+        title="Location could not be mapped"
+      />
+    );
+  }
+
+  return <LoadedNetworkMap location={location} />;
+};

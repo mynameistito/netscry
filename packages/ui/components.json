@@ -16,5 +16,8 @@
     "hooks": "@netscry/ui/hooks",
     "lib": "@netscry/ui/lib",
     "ui": "@netscry/ui/components"
+  },
+  "registries": {
+    "@mapcn": "https://mapcn.dev/r/{name}.json"
   }
 }

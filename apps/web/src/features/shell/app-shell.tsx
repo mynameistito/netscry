@@ -5,6 +5,7 @@ import {
   CircleHelp,
   Globe2,
   House,
+  MapPin,
   Menu,
   Search,
   X,
@@ -16,7 +17,7 @@ import { useState } from "react";
 const navigation = [
   { href: "#overview", label: "Overview", icon: House },
   { href: "#lookups", label: "Public lookups", icon: Globe2 },
-  { href: "#diagnostics", label: "Diagnostics", icon: Activity },
+  { href: "#location-map", label: "Location map", icon: MapPin },
 ];
 
 interface AppShellProps {
