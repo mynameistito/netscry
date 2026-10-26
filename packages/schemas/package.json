@@ -2,7 +2,20 @@
   "name": "@netscry/schemas",
   "version": "0.1.0",
   "private": true,
+  "homepage": "https://github.com/mynameistito/netscry#readme",
+  "bugs": {
+    "url": "https://github.com/mynameistito/netscry/issues"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/mynameistito/netscry.git",
+    "directory": "packages/schemas"
+  },
+  "files": [
+    "dist"
+  ],
   "type": "module",
+  "sideEffects": false,
   "exports": {
     ".": {
       "types": "./dist/index.d.ts",
@@ -18,5 +31,8 @@
   "dependencies": {
     "@netscry/core": "workspace:*",
     "effect": "4.0.6"
+  },
+  "engines": {
+    "node": ">=20"
   }
 }

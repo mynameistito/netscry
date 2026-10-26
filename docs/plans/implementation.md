@@ -301,11 +301,17 @@
   - Verification run: five SDK tests, all 424 repository tests, strict typecheck, full root check (Ultracite formatting/lint and Blume check/doctor/links), `bun install --frozen-lockfile`, and targeted SDK Ultracite pass. The package follows existing workspace source exports and has no independent build script; emitted package artifacts are part of the package-readiness task.
 - [x] Record the workspace-source versus consumer-build package boundary in an ADR before changing package exports.
   - Commit: `a815e49`
-- [ ] Add ESM JavaScript and declaration builds for the SDK and its shared core/schema dependencies, then verify a consumer can import the built packages without workspace source aliases.
+- [x] Add ESM JavaScript and declaration builds for the SDK and its shared core/schema dependencies, then verify a consumer can import the built packages without workspace source aliases.
+  - Commit: `087711d`
   - Discovery: Node's TypeScript runtime cannot execute `.ts` files from `node_modules`, so the current source-only workspace exports are unsuitable for an npm tarball. Generate `.js` and `.d.ts` artifacts and test the resolved package entrypoints in a Node consumer.
   - Reference: <https://nodejs.org/api/typescript.html>.
-  - Validation before commit: all 424 tests pass; SDK Node consumer smoke test, package builds, strict typecheck, web production build, and docs production build pass. Oxfmt reports all files formatted. `bun run check` completed formatting but its Oxlint stage stalled without diagnostics; direct scoped Oxlint and `bun run check:docs` also stalled without diagnostics. Record this tool/runtime limitation and retry during phase validation.
-- [ ] Verify npm naming and prepare publishable manifests, exports, package contents, and runtime support for SDK and shared dependencies without publishing.
+  - Verification: all 424 tests pass; SDK Node consumer smoke test, package builds, strict typecheck, web production build, and docs production build pass. Oxfmt reports all files formatted. `bun run check` completed formatting but its Oxlint stage stalled without diagnostics; direct scoped Oxlint and `bun run check:docs` also stalled without diagnostics. Retry those checks during phase validation.
+- [ ] Add repository, package contents, tree-shaking, and runtime support metadata to the SDK and shared package manifests; verify package contents without publishing.
+  - Prepared manifests with repository links, `files: ["dist"]`, `sideEffects: false`, and Node `>=20` support. `npm pack --dry-run --json` includes only each package manifest and built `dist` artifacts; no archive was published.
+  - `bun pm pack --dry-run` independently confirms each workspace package contains only its manifest and built `dist` artifacts.
+  - Validation before commit: all three package builds and the SDK Node consumer smoke pass; Oxfmt passes for the manifests.
+- [ ] Verify npm package name availability/ownership and resolve the project's licensing choice before enabling public SDK/shared package manifests.
+  - Discovery: `npm view @netscry/sdk`, `@netscry/core`, and `@netscry/schemas` returned 404 responses that npm documents as either unclaimed names or insufficient access; registry ownership remains unverified. There is no repository LICENSE file or user-provided license choice, so keep packages private and do not assign a license.
 - [ ] Add Changesets versioning and release conventions without publishing packages.
 - [ ] Write comprehensive Blume documentation for product, privacy, data sources, local modes, every implemented API route, SDK, development, and deployment.
 - [ ] Generate or validate API documentation from canonical schemas/contracts and ensure docs builds detect stale required artifacts.

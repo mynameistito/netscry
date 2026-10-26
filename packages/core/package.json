@@ -2,7 +2,20 @@
   "name": "@netscry/core",
   "version": "0.1.0",
   "private": true,
+  "homepage": "https://github.com/mynameistito/netscry#readme",
+  "bugs": {
+    "url": "https://github.com/mynameistito/netscry/issues"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/mynameistito/netscry.git",
+    "directory": "packages/core"
+  },
+  "files": [
+    "dist"
+  ],
   "type": "module",
+  "sideEffects": false,
   "exports": {
     ".": {
       "types": "./dist/index.d.ts",
@@ -14,5 +27,8 @@
   },
   "scripts": {
     "build": "tsc -p tsconfig.build.json"
+  },
+  "engines": {
+    "node": ">=20"
   }
 }
