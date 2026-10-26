@@ -59,7 +59,10 @@
 - [x] Create `packages/ui` and configure shadcn's monorepo component paths, Tailwind CSS v4 tokens, and accessible theme switching.
   - Commit: `d5ce9a9`
   - Verified: shadcn CLI recognizes TanStack Start, Tailwind v4, shared UI paths, and both workspace aliases; the app source generates shared Tailwind utilities; IBM Plex fonts are bundled locally; theme toggle tests pass in light and dark modes; local Worker mode returns HTTP 200; React Doctor scores 100/100. Shared typecheck, all 35 tests, web production build, targeted Ultracite, and frozen-lockfile checks pass. Full Ultracite still reports only unchanged `PROMPT.md` and `README.md`.
+- [x] Add Lucide React to the shared UI workspace for the project-standard interface icons.
+  - Verified: dependency resolves through the workspace lockfile; typecheck, 35 tests, and targeted formatting checks pass.
 - [x] Create the runnable Blume docs workspace with verified configuration and local/build commands.
+  - Commit: `cb6d26c`
   - Verified: Blume check reports no errors/warnings/hints; doctor and link validation pass; static build emits the docs, search index, `llms.txt`, and agent metadata; frozen-lockfile install, strict typecheck, 35 tests, and targeted Ultracite pass. Full `bun run check` reports only the pre-existing `PROMPT.md` and `README.md` formatting issues. Dev server binds to loopback, but an HTTP smoke request hangs under the environment's Socket Firewall, so interactive dev serving remains unverified here.
 - [ ] Establish app shell, navigation, search, responsive layouts, and shared loading, empty, error, and data-display components.
 - [ ] Integrate mapcn/MapLibre after UI setup, with SSR-safe loading, attribution, appropriate tiles, and mobile behavior.
