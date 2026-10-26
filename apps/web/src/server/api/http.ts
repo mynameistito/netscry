@@ -28,6 +28,10 @@ const API_SECURITY_HEADERS = {
   Vary: "Accept",
 } satisfies HeadersInit;
 
+interface ApiResponseOptions<Body> {
+  readonly plainText?: (body: Body) => string | null;
+}
+
 const parseAcceptHeader = (header: string): readonly AcceptedMediaRange[] =>
   header.split(",").flatMap((entry) => {
     const [mediaTypePart, ...parameters] = entry
@@ -149,7 +153,27 @@ const apiJsonResponse = (body: typeof Schema.Json.Type, status = 200) =>
     status,
   });
 
-const apiErrorResponse = (
+/**
+ * Create a plain-text response with the shared API headers.
+ * @param body - Plain-text response content.
+ * @returns A response with the common API security headers.
+ */
+const apiTextResponse = (body: string) =>
+  new Response(body.endsWith("\n") ? body : `${body}\n`, {
+    headers: {
+      ...API_SECURITY_HEADERS,
+      "Content-Type": "text/plain; charset=utf-8",
+    },
+  });
+
+/**
+ * Create a schema-validated API error response.
+ * @param code - Stable API error code.
+ * @param message - Safe, user-facing error message.
+ * @param status - HTTP status code.
+ * @returns A secured JSON error response.
+ */
+export const apiErrorResponse = (
   code: ApiErrorResponse["error"]["code"],
   message: string,
   status: number
@@ -166,6 +190,7 @@ const apiErrorResponse = (
  * @param request - Incoming API request.
  * @param schema - Shared response contract.
  * @param effect - Effect that produces the response value.
+ * @param options - Optional plain-text representation for scalar responses.
  * @returns A secured JSON response with an explicit status.
  */
 export const respondWithApiEffect = async <
@@ -174,11 +199,15 @@ export const respondWithApiEffect = async <
 >(
   request: Request,
   schema: Schema.ConstraintDecoder<ResponseBody>,
-  effect: Effect.Effect<unknown, Failure>
+  effect: Effect.Effect<unknown, Failure>,
+  options: ApiResponseOptions<ResponseBody> = {}
 ): Promise<Response> => {
-  const representation = negotiateApiRepresentation(request, [
-    "application/json",
-  ]);
+  const supported: readonly ApiRepresentation[] =
+    options.plainText === undefined
+      ? ["application/json"]
+      : ["application/json", "text/plain"];
+
+  const representation = negotiateApiRepresentation(request, supported);
 
   if (representation === undefined) {
     return apiErrorResponse(
@@ -200,7 +229,24 @@ export const respondWithApiEffect = async <
           "The request could not be completed.",
           500
         ),
-      onSuccess: (body) => apiJsonResponse(body),
+      onSuccess: (body) => {
+        if (
+          representation === "text/plain" &&
+          options.plainText !== undefined
+        ) {
+          const text = options.plainText(body);
+
+          return text === null
+            ? apiErrorResponse(
+                "unavailable",
+                "The requested value is unavailable for this request.",
+                503
+              )
+            : apiTextResponse(text);
+        }
+
+        return apiJsonResponse(body);
+      },
     })
   );
 

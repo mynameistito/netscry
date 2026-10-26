@@ -151,7 +151,9 @@
   - Commit: `8a2262a`
 - [x] Add a focused visitor AS-organization reader for the `/me/asn` fast path.
   - Verified: the fast-path test checks ASN and organization values with independent field availability and provenance; strict typecheck, all 213 unit tests, web production build, and targeted Ultracite pass. Full repository check reports only the documented baseline formatting issues in `PROMPT.md` and `README.md`.
-- [ ] Implement all required granular `/api/v1/me/*` endpoints from one request-scoped metadata snapshot, including fast scalar paths and plain-text IP/ASN responses.
+  - Commit: `54da224`
+- [x] Implement all required granular `/api/v1/me/*` endpoints from request-scoped metadata, including fast scalar paths and plain-text IP/ASN responses.
+  - Verified: 17 endpoint tests cover every `/me` route, schema validation, local unavailable IP, plain-text scalar outputs, errors, and header-secret exclusion; all 230 tests pass, strict typecheck and web production build pass, and targeted Ultracite passes. Local Alchemy Worker returned HTTP 200 with `no-store` for `/me` and each granular endpoint; local IP text returned a safe typed 503 because the local runtime cannot establish the visitor's public IP. Full repository check reports only the documented baseline formatting issues in `PROMPT.md` and `README.md`.
 - [ ] Add API integration tests for all `/me` endpoints, IPv4/IPv6, unavailable fields, `Accept` variants, no-store behavior, and errors.
 - [ ] Build the visitor overview with IP, ASN/network, location, edge, connection, and security panels that distinguish missing data honestly.
 - [ ] Add the safe raw JSON viewer/export, copy controls, responsive states, and dashboard browser tests.

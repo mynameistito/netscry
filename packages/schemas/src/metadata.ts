@@ -6,6 +6,7 @@ export const DataSourceSchema = Schema.Literals([
   "local-runtime",
   "fixture",
   "browser",
+  "request-header",
   "third-party",
   "derived",
 ]);
