@@ -120,7 +120,10 @@
 - [x] Add DNS record utilities to the portable core package, with typed records and unit tests.
   - Commit: `e15ddf1`
   - Verified: targeted Ultracite, strict typecheck, all 165 tests, and web Cloudflare production build pass. Full `bun run check` still reports only the documented baseline formatting errors in `PROMPT.md` and `README.md`.
-- [ ] Add network data formatting, geographic distance, and RTT/jitter calculations to the portable core package, with unit tests.
+- [x] Add network data formatting, geographic distance, and RTT/jitter calculations to the portable core package, with unit tests.
+  - Commit: `46fe126`
+  - Verified: targeted Ultracite, strict typecheck, all 192 tests, and web Cloudflare production build pass. Full `bun run check` still reports only the documented baseline formatting errors in `PROMPT.md` and `README.md`.
+- [ ] Add the current Alchemy CLI and Cloudflare provider packages as pinned workspace development dependencies.
 - [ ] Define Alchemy-managed Worker infrastructure and typed native bindings, stage separation, and local development behavior.
 - [ ] Implement metadata availability/source/units/sensitivity modeling and safe raw metadata output with redaction tests.
 
