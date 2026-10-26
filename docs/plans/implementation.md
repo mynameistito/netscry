@@ -76,10 +76,13 @@
 - [x] Add a cross-platform process-tree manager for root dev orchestration, so interrupting the root process reliably stops both dev servers.
   - Commit: `391c37f`
   - Verified: frozen-lockfile install, strict typecheck, and 42 tests pass. `bun run check` reports only baseline formatting issues in `PROMPT.md` and `README.md`.
-- [ ] Add a cross-platform root development command for web and docs, with predictable ports and clean process shutdown.
+- [x] Add a cross-platform root development command for web and docs, with predictable ports and clean process shutdown.
+  - Commit: `493082a`
+  - Verified: both apps start from `bun run dev` at `127.0.0.1:5173` and `127.0.0.1:4321`; Ctrl+C in Windows Terminal exits and closes both task-owned listeners. Targeted Ultracite, strict typecheck, and 42 tests pass. Full `bun run check` reports only the baseline formatting errors in `PROMPT.md` and `README.md`.
 
 ## Phase 3 — Effect, contracts, and Cloudflare integration
 
+- [ ] Declare direct Effect v4 and shared-schema workspace dependencies in the web application before adding app-owned services.
 - [ ] Add Effect v4 services for visitor, network, enrichment, caching, and typed external-provider errors.
 - [ ] Extend core utilities with CIDR calculations, ASN and domain normalization, DNS record handling, network formatting, geographic distance, and timing calculations with unit tests.
 - [ ] Define Alchemy-managed Worker infrastructure and typed native bindings, stage separation, and local development behavior.
