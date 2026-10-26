@@ -27,6 +27,7 @@ export type Sensitivity = typeof SensitivitySchema.Type;
 export const UnavailableReasonSchema = Schema.Literals([
   "not-provided",
   "not-supported",
+  "invalid",
   "product-restricted",
   "redacted",
   "provider-failure",

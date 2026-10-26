@@ -80,6 +80,9 @@ describe("data provenance schemas", () => {
     expect(Schema.decodeUnknownSync(UnavailableReasonSchema)("redacted")).toBe(
       "redacted"
     );
+    expect(Schema.decodeUnknownSync(UnavailableReasonSchema)("invalid")).toBe(
+      "invalid"
+    );
   });
 });
 
