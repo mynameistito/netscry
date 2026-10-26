@@ -1,0 +1,36 @@
+---
+title: Privacy and data handling
+description: What NetScry reads for a request, sends to public data providers, and keeps in browser state.
+---
+
+# Privacy and data handling
+
+NetScry separates metadata about the request reaching the service from browser diagnostics and public-record lookups. The application labels these sources separately and does not turn unavailable values into estimates.
+
+## Current request metadata
+
+When the web application runs on Cloudflare, the `/api/v1/me` endpoints read Cloudflare's request properties. Depending on what the request and Cloudflare product expose, this can include the connecting IP address, ASN and network, approximate location, Cloudflare colo, connection details, and supported security signals. The response marks field sensitivity and source. Some fields are personal or sensitive, and some are withheld or unavailable.
+
+The request's IP address is also used as the key for the configured public-lookup rate limit: 60 public lookup requests per minute. Cloudflare's Rate Limiting binding maintains the counter. The application has no account profile or application database for storing request snapshots. Cloudflare's operational logs and the binding's service behavior are controlled by the deployment and Cloudflare, not by this application code.
+
+## Public lookups and provider requests
+
+When you submit a lookup, the server sends the relevant query to the provider needed to answer it. DNS names go to Cloudflare's public DNS-over-HTTPS resolver. RDAP requests go to the registry selected by IANA bootstrap data. ASN and prefix routing queries go to RouteViews. The query can identify the address, network, ASN, or domain you are investigating, and the provider sees the request from NetScry's server infrastructure. Read the [DNS lookup details](/data-sources/dns) before sending a sensitive DNS name.
+
+The IP purpose and CIDR calculations use local code and do not require an external lookup. Other results, such as registration and routing, are requested independently and can succeed or fail separately.
+
+## Browser-only diagnostics
+
+Browser diagnostics are read only after you press **Read browser details**. They include browser and operating-system guesses, language preferences, timezone, display dimensions, optional network hints, navigation timing, and browser capabilities. The full User-Agent is shown inside a disclosure. These properties can contribute to browser fingerprinting.
+
+The snapshot stays in component memory on the current page. NetScry does not send it to an API or write it to browser storage. Browsers may not expose every property; unavailable values stay empty or unavailable.
+
+The HTTP measurement also starts only after you press its button. It makes five sequential, same-origin requests to `/api/v1/health` with browser caching disabled. The timings stay in page state and are not persisted. They measure HTTP response timing, not ICMP ping or packet-level jitter.
+
+## Maps and external assets
+
+When a map is displayed, the browser loads map styles and tiles from [OpenFreeMap](https://openfreemap.org/). The map provider receives ordinary network request metadata from the browser. A visitor-location marker is only shown when Cloudflare supplies coordinates; the connected-colo marker is an airport reference, not a data-center location.
+
+## Storage and service boundaries
+
+The repository does not configure an analytics service or an application database. Browser diagnostics and latency samples are not stored by the application. This describes NetScry's code, not logs or retention by Cloudflare, DNS/RDAP/RouteViews providers, or the map service. Their own policies and the Cloudflare account's operational logging settings are outside this repository.

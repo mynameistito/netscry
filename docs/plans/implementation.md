@@ -322,9 +322,12 @@
   - Configured the `main` base branch, public access for eventual public scoped releases, generated changelogs, internal dependency updates, and explicit exclusion of private packages from versioning and tags. Added root status/version commands and contributor instructions; no publish command or workflow was added.
   - Verification: `bun run changeset:status` loads the config and reports no packages to bump; Oxfmt passes.
 - [ ] Refresh the Blume landing page with the implemented product scope, architecture, and documentation map.
+  - Commit: `2a2d94c`
   - Updated the landing page to describe request and public lookup features, evidence labels and approximation limits, app/package architecture, and the separate Cloudflare Worker and static documentation deployments.
-  - Validation before commit: Blume production build, doctor, link validation, and Oxfmt pass. Blume's separate `check` command stalled without output; retry during broader documentation validation.
+  - Verification: Blume production build, doctor, link validation, and Oxfmt pass. Blume's separate `check` command stalled without output; retry during broader documentation validation.
 - [ ] Document privacy boundaries, browser-local diagnostics, and third-party request disclosures.
+  - Documented request metadata sensitivity, the configured address-keyed lookup rate limit, provider query disclosure, browser-local diagnostics and HTTP timings, OpenFreeMap requests, and the boundary between application behavior and platform/provider retention.
+  - Validation before commit: Blume production build, doctor, link validation, and Oxfmt pass.
 - [ ] Document live, local development, and fixture data behavior.
 - [ ] Document data source provenance and limitations for Cloudflare metadata, DNS, RDAP, RouteViews, and location references.
 - [ ] Document every implemented API v1 route with request, response, error, and availability behavior.
