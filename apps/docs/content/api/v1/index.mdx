@@ -1,0 +1,106 @@
+---
+title: API v1
+description: Routes, response shapes, availability, and errors for the NetScry API.
+---
+
+# API v1
+
+The NetScry API is a versioned, read-only HTTP API. Every route accepts `GET` requests and requires no authentication. Replace `https://netscry.example` in examples with the origin where NetScry is deployed.
+
+All responses are JSON by default. The scalar routes listed below also support `Accept: text/plain`; other routes return JSON. Responses vary by `Accept`. The API sends permissive CORS (`Access-Control-Allow-Origin: *`) and security headers. Current-request data and health responses are not cached. Public lookup cache policies are described below.
+
+## Routes
+
+| Method and path | Purpose | Response |
+| --- | --- | --- |
+| `GET /api/v1/health` | Service liveness and API version | `status`, `service`, `version` |
+| `GET /api/v1/me` | Complete metadata snapshot for the current request | `network`, `location`, `edge`, `connection`, `security` |
+| `GET /api/v1/me/ip` | Current request's address | `ip` |
+| `GET /api/v1/me/asn` | Current request's ASN and network name | `asn`, `name` |
+| `GET /api/v1/me/country` | Current request's country | `country` |
+| `GET /api/v1/me/colo` | Cloudflare colo code for this request | `colo` |
+| `GET /api/v1/me/location` | Geographic fields exposed for this request | `continent`, `country`, `region`, `regionCode`, `city`, `postalCode`, `latitude`, `longitude`, `timezone`, `metroCode`, `isEuCountry` |
+| `GET /api/v1/me/network` | Request address, ASN, and network organization | `ip`, `asn`, `asOrganization` |
+| `GET /api/v1/me/edge` | Cloudflare edge identifiers | `colo`, `rayId` |
+| `GET /api/v1/me/connection` | Request protocol, TLS, and available transport measurements | `httpProtocol`, `tlsVersion`, `tlsCipher`, `originalAcceptedEncoding`, `tcpRttMs`, `quicRttMs`, `estimatedTcpDeliveryRateBps` |
+| `GET /api/v1/me/security` | Security and bot-management fields available to the Worker | `ja3`, `ja4`, `botScore`, `verifiedBot`, `mutualTls` |
+| `GET /api/v1/me/headers` | Selected incoming request headers | `accept`, `acceptLanguage`, `acceptEncoding`, `userAgent`, `secChUa`, `secChUaMobile`, `secChUaPlatform` |
+| `GET /api/v1/me/trace` | Request trace identifiers | `rayId`, `colo` |
+| `GET /api/v1/me/raw` | Sanitized, explicitly selected raw metadata | A map of allowlisted fields with availability and provenance |
+| `GET /api/v1/ip/{address-or-cidr}` | Parse and classify an address or calculate canonical CIDR bounds | Address or CIDR result |
+| `GET /api/v1/asn/{asn}` | ASN registration holder and announced prefixes | Holder, prefixes, and source attribution |
+| `GET /api/v1/bgp?prefix={address-or-cidr}` | RouteViews observations for a prefix | Canonical prefix, observed routes, peers, and coverage attribution |
+| `GET /api/v1/dns/{name}?type={type}` | Resolve a DNS name and record type | DNS status, normalized records, TTL and resolver attribution |
+| `GET /api/v1/rdap/ip/{address-or-cidr}` | RDAP registration record for an IP address or network | Normalized data, attribution, and validated raw record |
+| `GET /api/v1/rdap/domain/{domain}` | RDAP registration record for a domain | Normalized data, attribution, and validated raw record |
+
+## Current request metadata
+
+Every value in `/me` and its grouped endpoints uses an availability envelope. An available value has `_tag: "Available"`, `value`, `source`, and `sensitivity`; numeric measurements may also include `units`. An unavailable value has `_tag: "Unavailable"`, `source`, `reason`, and `sensitivity`.
+
+For example, a field may look like:
+
+```json
+{
+  "_tag": "Available",
+  "source": "cloudflare-request",
+  "value": "NZ",
+  "sensitivity": "personal"
+}
+```
+
+The `source` identifies Cloudflare request metadata, local runtime, request headers, or another declared source. Unavailable values are not guessed. In local development, visitor IP and Cloudflare Ray data are withheld; see [runtime modes](/development/data-modes). The `raw` endpoint applies a whitelist and redacts sensitive or unknown fields. Treat all current-request metadata as request-scoped and potentially personal or sensitive.
+
+`/me/ip`, `/me/asn`, `/me/country`, and `/me/colo` support `Accept: text/plain` when the requested value is available. If unavailable, the API responds with a JSON `503` error. The remaining `/me` routes return JSON only. Unknown `/me/{endpoint}` paths return `404`.
+
+## Public lookup inputs
+
+- **IP and CIDR:** URL-encode `/` in a CIDR path segment as `%2F`, for example `/api/v1/ip/192.0.2.0%2F24`. The IP route performs local parsing and selected IANA-purpose classification; a CIDR response includes canonical network and last addresses, address count, and provenance. `unclassified` means the address was not matched by the selected local ranges; it does not establish global reachability.
+- **ASN:** use a decimal ASN, with or without an `AS` prefix, such as `/api/v1/asn/15169`. Values must be within the supported 32-bit ASN range.
+- **BGP:** provide exactly one `prefix` query parameter. Bare IP addresses are accepted and interpreted as host prefixes. Example: `/api/v1/bgp?prefix=203.0.113.0%2F24`. RouteViews coverage is partial and observations are not a complete global routing view.
+- **DNS:** `type` is optional and defaults to `A`. Supported types are `A`, `AAAA`, `CAA`, `CNAME`, `MX`, `NS`, `PTR`, `SOA`, `SRV`, and `TXT`; lowercase is accepted. Duplicate `type` parameters are invalid. `PTR` accepts an IP address or reverse name. Responses identify Cloudflare 1.1.1.1 as the recursive resolver; an answer is not proof of an authoritative record.
+- **RDAP:** query an address or CIDR under `/rdap/ip/` or a domain under `/rdap/domain/`. Internationalized domain names are accepted. Results are resolved through IANA RDAP bootstrap data to the relevant registry; registration data does not establish reachability or current routing.
+
+## Examples
+
+```sh
+curl -H 'Accept: application/json' https://netscry.example/api/v1/health
+curl https://netscry.example/api/v1/me/network
+curl https://netscry.example/api/v1/ip/192.0.2.7
+curl https://netscry.example/api/v1/ip/192.0.2.0%2F24
+curl https://netscry.example/api/v1/asn/AS15169
+curl 'https://netscry.example/api/v1/bgp?prefix=203.0.113.0%2F24'
+curl 'https://netscry.example/api/v1/dns/example.com?type=MX'
+curl https://netscry.example/api/v1/rdap/domain/example.com
+curl -H 'Accept: text/plain' https://netscry.example/api/v1/me/country
+```
+
+## Errors
+
+Errors use the same JSON envelope:
+
+```json
+{
+  "error": {
+    "code": "invalid-input",
+    "message": "The request input is invalid."
+  }
+}
+```
+
+| HTTP status | Code | Meaning |
+| --- | --- | --- |
+| `400` | `invalid-input` | Malformed address, ASN, DNS query, parameter, or other input |
+| `404` | `not-found` | Unknown visitor endpoint or resource not found by the provider |
+| `406` | `not-acceptable` | The requested response format is unsupported |
+| `429` | `rate-limited` | Public lookup limit reached; includes `Retry-After: 60` |
+| `503` | `unavailable` | A required service is unavailable or the lookup rate limiter failed |
+| `500` | `internal-error` | Provider response, schema, or unexpected processing failure |
+
+Public lookup routes (`ip`, `asn`, `bgp`, `dns`, and `rdap`) share a limit of 60 requests per minute, keyed by `cf-connecting-ip`. Health and `/me` routes are not in this public lookup limit. A limiter failure returns `503` rather than bypassing the limit. Upstream error details are not returned verbatim.
+
+## Caching and availability
+
+Health and request-specific metadata use `Cache-Control: no-store`. IP, ASN, BGP, and RDAP lookups use `public, max-age=60, s-maxage=300, stale-while-revalidate=600`. DNS cache duration is derived from answer TTLs and capped at 60 seconds; responses with no usable TTL are not cached. Provider failures and unsupported fields can produce unavailable/error responses; see [data sources and limits](/data-sources) for provenance and scope.
+
+The canonical response contracts live in the repository's `@netscry/schemas` package. This guide describes the implemented HTTP routes; the schemas/API reference is maintained separately so it can be generated and checked against those contracts. The documentation site's own Blume-generated `openapi.json` describes its documentation search and MCP endpoints, not this NetScry API.
