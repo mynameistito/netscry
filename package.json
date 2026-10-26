@@ -9,12 +9,15 @@
   "type": "module",
   "module": "index.ts",
   "scripts": {
-    "typecheck": "tsc --noEmit",
+    "typecheck": "tsc --noEmit && bun --filter @netscry/web typecheck",
     "dev": "concurrently --kill-others --names web,docs \"bun scripts/alchemy-dev.ts dev\" \"bun --filter @netscry/docs dev\"",
     "dev:web": "bun scripts/alchemy-dev.ts dev",
-    "check": "ultracite check",
+    "check": "bun run check:code && bun run check:docs",
+    "check:code": "ultracite check apps packages scripts alchemy.run.ts oxfmt.config.ts oxlint.config.ts package.json tsconfig.json",
+    "check:docs": "bun --filter @netscry/docs check && bun --filter @netscry/docs doctor && bun --filter @netscry/docs validate",
     "fix": "ultracite fix",
     "test": "vitest run",
+    "build": "bun --filter @netscry/web build && bun --filter @netscry/docs build",
     "prepare": "lefthook install"
   },
   "devDependencies": {

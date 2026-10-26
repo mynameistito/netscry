@@ -4,7 +4,8 @@
   "type": "module",
   "scripts": {
     "dev": "vite dev --host 127.0.0.1 --port 5173 --strictPort",
-    "build": "vite build && tsc --noEmit",
+    "typecheck": "tsc --noEmit",
+    "build": "vite build && bun run typecheck",
     "preview": "vite preview",
     "cf-typegen": "wrangler types"
   },

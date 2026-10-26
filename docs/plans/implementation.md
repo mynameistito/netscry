@@ -60,6 +60,8 @@
   - Commit: `56e26d1`
   - Verified: 11 schema decode cases pass; shared typecheck passes; targeted Ultracite and frozen-lockfile checks pass.
 - [ ] Complete shared TypeScript settings and root check, typecheck, test, build, and development commands across workspaces while preserving Ultracite.
+  - Implementation: keep the strict shared root TypeScript config and make root typecheck also run the web app's own TypeScript config. Add a root build for the web and Blume docs workspaces; aggregate scoped Ultracite code checks and Blume check/doctor/link validation while excluding the known baseline root `PROMPT.md` and `README.md` formatting failures. Existing root test and combined dev commands remain the workspace entrypoints.
+  - Verification run: `bun run check`, `bun run typecheck`, `bun run test` (402 tests), and `bun run build` all pass. Web build retains its existing MapLibre chunk-size and CSS sourcemap advisories. The docs build emits static pages and agent files.
 - [ ] Add CI checks for formatting/lint, typechecking, tests, and builds without deployment credentials.
 - [ ] Add `packages/config` only when shared configuration is justified; `packages/core` and `packages/schemas` are implemented in their own foundation tasks.
 
@@ -252,7 +254,8 @@
   - Commit: `0016684`
   - Implementation: add `/domain/:domain` using IDNA normalization and the existing schema-validated RDAP endpoint; show the selected registry record, dates, nameservers, public registration/abuse contacts, attribution, and expandable raw response. Link the registration view to DNS and valid domain queries in DNS back to RDAP.
   - Verification run: all 19 focused DNS/domain UI cases and all 396 repository tests pass; strict typecheck, web production build, Oxfmt, and direct scoped Oxlint pass. Scoped Ultracite formatting passes, while its Oxlint wrapper stalled; React Doctor reports only the existing `packages/ui/src/components/map.tsx` findings. The build retains the known MapLibre chunk-size and CSS sourcemap advisories.
-- [ ] Add a reusable lookup search to the shell and connect the home lookup index to all completed detail views.
+- [x] Add a reusable lookup search to the shell and connect the home lookup index to all completed detail views.
+  - Commit: `cbaa603`
   - Implementation: route shell searches through `/lookup`, classify and canonicalize IPv4/IPv6, CIDR, ASN, and IDNA domains, redirect to the corresponding detail route, and show a safe validation state for unsupported input. Add home index links to IP, ASN, BGP, domain RDAP, and DNS views.
   - Verification run: five target-normalization/route cases plus shell wiring pass; all 402 repository tests, strict typecheck, scoped Ultracite, and web production build pass. React Doctor reports only the existing `packages/ui/src/components/map.tsx` findings. The build retains the existing MapLibre chunk-size and CSS sourcemap advisories.
   - Design decision: use the existing light `framed-sheet` developer-tool direction, retaining NetScry's blue-grey frame, semantic tokens, and IBM Plex Mono for identifiers. Put each lookup's main answer first, keep source and uncertainty beside it, and use data-driven states instead of sample records.
