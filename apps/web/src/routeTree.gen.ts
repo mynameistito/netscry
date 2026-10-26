@@ -14,6 +14,8 @@ import { Route as ApiV1HealthRouteImport } from './routes/api/v1/health'
 import { Route as ApiV1MeRouteImport } from './routes/api/v1/me'
 import { Route as ApiV1IpAddressRouteImport } from './routes/api/v1/ip.$address'
 import { Route as ApiV1MeEndpointRouteImport } from './routes/api/v1/me.$endpoint'
+import { Route as ApiV1RdapDomainDomainRouteImport } from './routes/api/v1/rdap/domain.$domain'
+import { Route as ApiV1RdapIpAddressRouteImport } from './routes/api/v1/rdap/ip.$address'
 
 const IndexRoute = IndexRouteImport.update({
   id: '/',
@@ -40,6 +42,16 @@ const ApiV1MeEndpointRoute = ApiV1MeEndpointRouteImport.update({
   path: '/$endpoint',
   getParentRoute: () => ApiV1MeRoute,
 } as any)
+const ApiV1RdapDomainDomainRoute = ApiV1RdapDomainDomainRouteImport.update({
+  id: '/api/v1/rdap/domain/$domain',
+  path: '/api/v1/rdap/domain/$domain',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ApiV1RdapIpAddressRoute = ApiV1RdapIpAddressRouteImport.update({
+  id: '/api/v1/rdap/ip/$address',
+  path: '/api/v1/rdap/ip/$address',
+  getParentRoute: () => rootRouteImport,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
@@ -47,6 +59,8 @@ export interface FileRoutesByFullPath {
   '/api/v1/me': typeof ApiV1MeRouteWithChildren
   '/api/v1/ip/$address': typeof ApiV1IpAddressRoute
   '/api/v1/me/$endpoint': typeof ApiV1MeEndpointRoute
+  '/api/v1/rdap/domain/$domain': typeof ApiV1RdapDomainDomainRoute
+  '/api/v1/rdap/ip/$address': typeof ApiV1RdapIpAddressRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
@@ -54,6 +68,8 @@ export interface FileRoutesByTo {
   '/api/v1/me': typeof ApiV1MeRouteWithChildren
   '/api/v1/ip/$address': typeof ApiV1IpAddressRoute
   '/api/v1/me/$endpoint': typeof ApiV1MeEndpointRoute
+  '/api/v1/rdap/domain/$domain': typeof ApiV1RdapDomainDomainRoute
+  '/api/v1/rdap/ip/$address': typeof ApiV1RdapIpAddressRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -62,6 +78,8 @@ export interface FileRoutesById {
   '/api/v1/me': typeof ApiV1MeRouteWithChildren
   '/api/v1/ip/$address': typeof ApiV1IpAddressRoute
   '/api/v1/me/$endpoint': typeof ApiV1MeEndpointRoute
+  '/api/v1/rdap/domain/$domain': typeof ApiV1RdapDomainDomainRoute
+  '/api/v1/rdap/ip/$address': typeof ApiV1RdapIpAddressRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -71,6 +89,8 @@ export interface FileRouteTypes {
     | '/api/v1/me'
     | '/api/v1/ip/$address'
     | '/api/v1/me/$endpoint'
+    | '/api/v1/rdap/domain/$domain'
+    | '/api/v1/rdap/ip/$address'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
@@ -78,6 +98,8 @@ export interface FileRouteTypes {
     | '/api/v1/me'
     | '/api/v1/ip/$address'
     | '/api/v1/me/$endpoint'
+    | '/api/v1/rdap/domain/$domain'
+    | '/api/v1/rdap/ip/$address'
   id:
     | '__root__'
     | '/'
@@ -85,6 +107,8 @@ export interface FileRouteTypes {
     | '/api/v1/me'
     | '/api/v1/ip/$address'
     | '/api/v1/me/$endpoint'
+    | '/api/v1/rdap/domain/$domain'
+    | '/api/v1/rdap/ip/$address'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -92,6 +116,8 @@ export interface RootRouteChildren {
   ApiV1HealthRoute: typeof ApiV1HealthRoute
   ApiV1MeRoute: typeof ApiV1MeRouteWithChildren
   ApiV1IpAddressRoute: typeof ApiV1IpAddressRoute
+  ApiV1RdapDomainDomainRoute: typeof ApiV1RdapDomainDomainRoute
+  ApiV1RdapIpAddressRoute: typeof ApiV1RdapIpAddressRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -131,6 +157,20 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ApiV1MeEndpointRouteImport
       parentRoute: typeof ApiV1MeRoute
     }
+    '/api/v1/rdap/domain/$domain': {
+      id: '/api/v1/rdap/domain/$domain'
+      path: '/api/v1/rdap/domain/$domain'
+      fullPath: '/api/v1/rdap/domain/$domain'
+      preLoaderRoute: typeof ApiV1RdapDomainDomainRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/v1/rdap/ip/$address': {
+      id: '/api/v1/rdap/ip/$address'
+      path: '/api/v1/rdap/ip/$address'
+      fullPath: '/api/v1/rdap/ip/$address'
+      preLoaderRoute: typeof ApiV1RdapIpAddressRouteImport
+      parentRoute: typeof rootRouteImport
+    }
   }
 }
 
@@ -150,6 +190,8 @@ const rootRouteChildren: RootRouteChildren = {
   ApiV1HealthRoute: ApiV1HealthRoute,
   ApiV1MeRoute: ApiV1MeRouteWithChildren,
   ApiV1IpAddressRoute: ApiV1IpAddressRoute,
+  ApiV1RdapDomainDomainRoute: ApiV1RdapDomainDomainRoute,
+  ApiV1RdapIpAddressRoute: ApiV1RdapIpAddressRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
