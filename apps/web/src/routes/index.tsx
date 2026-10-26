@@ -1,6 +1,7 @@
 import { ArrowRight, Search } from "@netscry/ui/lib/icons";
 import { createFileRoute } from "@tanstack/react-router";
 
+import { getColoAirportReference } from "../features/maps/colo-location";
 import { NetworkMap } from "../features/maps/network-map";
 import { getVisitorMapLocation } from "../features/maps/visitor-location";
 import { AppShell } from "../features/shell/app-shell";
@@ -53,6 +54,11 @@ const HomePage = () => {
   const visitorLocation =
     visitorState.status === "ready"
       ? getVisitorMapLocation(visitorState.data.location)
+      : null;
+
+  const coloAirportReference =
+    visitorState.status === "ready"
+      ? getColoAirportReference(visitorState.data.edge.colo)
       : null;
 
   return (
@@ -131,22 +137,77 @@ const HomePage = () => {
             </div>
           </section>
 
-          <section
-            aria-labelledby="location-map-title"
-            className="border-border rounded-xl border"
-            id="location-map"
-          >
-            <div className="border-border border-b px-5 py-4 sm:px-6">
-              <h2 className="text-sm font-medium" id="location-map-title">
-                Approximate visitor IP location
-              </h2>
-              <p className="text-muted-foreground mt-1 text-sm">
-                Network-level estimates do not identify a device&apos;s precise
-                location.
-              </p>
-            </div>
-            <NetworkMap location={visitorLocation} />
-          </section>
+          <div className="space-y-4" id="location-map">
+            <section
+              aria-labelledby="location-map-title"
+              className="border-border rounded-xl border"
+            >
+              <div className="border-border border-b px-5 py-4 sm:px-6">
+                <h2 className="text-sm font-medium" id="location-map-title">
+                  Approximate visitor IP location
+                </h2>
+                <p className="text-muted-foreground mt-1 text-sm">
+                  Network-level estimates do not identify a device&apos;s
+                  precise location.
+                </p>
+              </div>
+              <NetworkMap location={visitorLocation} />
+            </section>
+
+            <section
+              aria-labelledby="colo-map-title"
+              className="border-border rounded-xl border"
+            >
+              <div className="border-border border-b px-5 py-4 sm:px-6">
+                <h2 className="text-sm font-medium" id="colo-map-title">
+                  Cloudflare connected colo · airport reference
+                </h2>
+                <p className="text-muted-foreground mt-1 text-sm">
+                  The point marks the airport associated with the colo code, not
+                  a Cloudflare data center. Anycast routing can serve a
+                  different location from the geographically closest one.
+                </p>
+              </div>
+              <NetworkMap
+                caption={
+                  <>
+                    Cloudflare documents colo codes as nearby airport IATA
+                    codes. Coordinates are an airport reference, not the
+                    data-center location. Sources:{" "}
+                    <a
+                      href="https://developers.cloudflare.com/support/troubleshooting/general-troubleshooting/gathering-information-for-troubleshooting-sites/"
+                      rel="noreferrer"
+                      target="_blank"
+                    >
+                      Cloudflare&apos;s location guide
+                    </a>
+                    ,{" "}
+                    <a
+                      href="https://www.cloudflarestatus.com/locations"
+                      rel="noreferrer"
+                      target="_blank"
+                    >
+                      status locations
+                    </a>
+                    , and{" "}
+                    <a
+                      href="https://ourairports.com/data/"
+                      rel="noreferrer"
+                      target="_blank"
+                    >
+                      OurAirports
+                    </a>{" "}
+                    (public-domain data; no accuracy guarantee). Your browser
+                    requests map tiles directly from OpenFreeMap.
+                  </>
+                }
+                emptyDescription="A reference point is shown only when the Cloudflare colo code has a verified airport match. No data-center coordinates are inferred."
+                location={coloAirportReference}
+                mapLabel="Cloudflare colo airport reference map"
+                screenReaderDescription="This marker is the approximate airport reference associated with the Cloudflare colo code, not a Cloudflare data center."
+              />
+            </section>
+          </div>
         </div>
 
         <footer

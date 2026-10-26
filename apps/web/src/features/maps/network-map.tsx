@@ -10,7 +10,7 @@ import type {
   MarkerLabelProps,
 } from "@netscry/ui/components/map";
 import { MapPin } from "@netscry/ui/lib/icons";
-import type { ComponentType } from "react";
+import type { ComponentType, ReactNode } from "react";
 import { useEffect, useState } from "react";
 
 interface MapComponents {
@@ -34,6 +34,10 @@ interface LoadedMapProps {
 
 interface NetworkMapProps {
   location: NetworkLocation | null;
+  mapLabel?: string;
+  caption?: ReactNode;
+  emptyDescription?: string;
+  screenReaderDescription?: string;
 }
 
 const mapStyles = {
@@ -50,7 +54,16 @@ const isValidLatitude = (latitude: number) =>
 const isValidLocation = ({ longitude, latitude }: NetworkLocation) =>
   isValidLongitude(longitude) && isValidLatitude(latitude);
 
-const LoadedNetworkMap = ({ location }: LoadedMapProps) => {
+const LoadedNetworkMap = ({
+  location,
+  mapLabel,
+  caption,
+  screenReaderDescription,
+}: LoadedMapProps & {
+  mapLabel: string;
+  caption: ReactNode;
+  screenReaderDescription: string;
+}) => {
   const [components, setComponents] = useState<MapComponents>();
   const [loadFailed, setLoadFailed] = useState(false);
 
@@ -102,7 +115,7 @@ const LoadedNetworkMap = ({ location }: LoadedMapProps) => {
   return (
     <div className="space-y-2">
       <section
-        aria-label="Approximate network location map"
+        aria-label={mapLabel}
         className="border-border relative h-64 min-h-60 w-full overflow-hidden rounded-lg border sm:h-80"
       >
         <MapView
@@ -141,14 +154,9 @@ const LoadedNetworkMap = ({ location }: LoadedMapProps) => {
             OpenStreetMap
           </a>
         </div>
-        <p className="sr-only">
-          This is an approximate network location, not a device location.
-        </p>
+        <p className="sr-only">{screenReaderDescription}</p>
       </section>
-      <p className="text-muted-foreground text-xs">
-        The map shows an approximate network location, not a device location.
-        Your browser requests map tiles directly from OpenFreeMap.
-      </p>
+      <p className="text-muted-foreground text-xs">{caption}</p>
     </div>
   );
 };
@@ -157,11 +165,17 @@ const LoadedNetworkMap = ({ location }: LoadedMapProps) => {
  * Renders an approximate network location only when real coordinates exist.
  * @returns A map, loading, empty, or invalid-data state.
  */
-export const NetworkMap = ({ location }: NetworkMapProps) => {
+export const NetworkMap = ({
+  location,
+  mapLabel = "Approximate network location map",
+  caption = "The map shows an approximate network location, not a device location. Your browser requests map tiles directly from OpenFreeMap.",
+  emptyDescription = "A map appears when a supported source provides approximate network coordinates. NetScry does not use device location.",
+  screenReaderDescription = "This is an approximate network location, not a device location.",
+}: NetworkMapProps) => {
   if (location === null) {
     return (
       <EmptyState
-        description="A map appears when a supported source provides approximate network coordinates. NetScry does not use device location."
+        description={emptyDescription}
         icon={<MapPin aria-hidden="true" size={18} />}
         title="Location data unavailable"
       />
@@ -177,5 +191,12 @@ export const NetworkMap = ({ location }: NetworkMapProps) => {
     );
   }
 
-  return <LoadedNetworkMap location={location} />;
+  return (
+    <LoadedNetworkMap
+      caption={caption}
+      location={location}
+      mapLabel={mapLabel}
+      screenReaderDescription={screenReaderDescription}
+    />
+  );
 };
