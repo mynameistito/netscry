@@ -61,6 +61,8 @@ describe(AppShell, () => {
     );
 
     const menuButton = screen.getByRole("button", { name: "Open navigation" });
+    expect(menuButton.className).toContain("lg:hidden");
+    expect(screen.getByRole("complementary").className).toContain("lg:static");
     fireEvent.click(menuButton);
 
     expect(menuButton.getAttribute("aria-expanded")).toBe("true");

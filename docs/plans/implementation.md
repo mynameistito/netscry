@@ -157,7 +157,15 @@
   - Commit: `e808a6e`
 - [x] Add API integration tests for all `/me` endpoints, IPv4/IPv6, unavailable fields, `Accept` variants, no-store behavior, errors, and redaction.
   - Verified: 21 API handler integration cases exercise every route and schema, IPv4/IPv6 identity, local unavailable IP, weighted/wildcard Accept negotiation, no-store, typed 404/406/503 errors, and cookie/authorization exclusion. All 234 unit tests and strict typecheck pass; targeted Ultracite passes. Full repository check reports only the documented baseline formatting issues in `PROMPT.md` and `README.md`.
-- [ ] Build the visitor overview with IP, ASN/network, location, edge, connection, and security panels that distinguish missing data honestly.
+- [x] Build the visitor overview with IP, ASN/network, location, edge, connection, and security panels that distinguish missing data honestly.
+  - Screen question: what request metadata did the Cloudflare edge provide for this visitor?
+  - Screen direction: keep the selected framed-sheet style and blue-grey observability frame; use IBM Plex Mono for IPs, Ray IDs, and protocol identifiers.
+  - Product signature: show the request path from visitor through the Cloudflare colo to the NetScry Worker, using the same API values as the detail panels.
+  - Layout decision: keep metadata panels stacked below 1280px and use balanced three-column groups on wide screens; fold the shared sidebar below 1024px to preserve room for the data.
+  - Data inventory: visitor IP and version, ASN and organization, 11 approximate location fields, colo and Ray ID, seven connection/transport fields, and five security signals; every value comes from the schema-validated request response, with no sample or inferred network values.
+  - Verification run: focused UI and shell tests (5 passed), full suite (237 passed), strict typecheck, targeted Ultracite, and the web production build passed. The app-screen inspector reports no findings at 1440, 768, and 390px; runtime review confirmed local fields retain their local-runtime provenance and unavailable values remain explicit.
+  - Existing check findings: bun run check reports only the baseline formatting errors in unchanged PROMPT.md and README.md. React Doctor's changed-scope scan reports existing findings only in packages/ui/src/components/map.tsx; it reports none in the dashboard or shell changes. The production build retains the existing MapLibre chunk and CSS sourcemap advisories.
+- [ ] Resolve the theme-toggle hydration mismatch observed during live dashboard rendering and add browser verification.
 - [ ] Add the safe raw JSON viewer/export, copy controls, responsive states, and dashboard browser tests.
 
 ## Phase 5 — Public network intelligence

@@ -38,7 +38,7 @@ export const AppShell = ({ children }: AppShellProps) => {
       <div className="mx-auto flex min-h-screen max-w-[1800px]">
         <aside
           aria-label="Product sidebar"
-          className={`${menuOpen ? "flex" : "hidden"} bg-muted/70 fixed inset-y-0 left-0 z-30 w-64 flex-col px-4 py-5 md:static md:flex md:w-[228px] md:shrink-0 md:px-4`}
+          className={`${menuOpen ? "flex" : "hidden"} bg-muted/70 fixed inset-y-0 left-0 z-30 w-64 flex-col px-4 py-5 lg:static lg:flex lg:w-[228px] lg:shrink-0 lg:px-4`}
         >
           <a
             className="flex h-10 items-center gap-2 px-2 font-semibold tracking-tight"
@@ -83,7 +83,7 @@ export const AppShell = ({ children }: AppShellProps) => {
         {menuOpen ? (
           <button
             aria-label="Close navigation"
-            className="bg-foreground/20 fixed inset-0 z-20 cursor-default md:hidden"
+            className="bg-foreground/20 fixed inset-0 z-20 cursor-default lg:hidden"
             onClick={() => {
               setMenuOpen(false);
             }}
@@ -96,7 +96,7 @@ export const AppShell = ({ children }: AppShellProps) => {
             <button
               aria-expanded={menuOpen}
               aria-label={menuOpen ? "Close navigation" : "Open navigation"}
-              className="text-muted-foreground hover:bg-background focus-visible:outline-ring inline-flex size-9 items-center justify-center rounded-md focus-visible:outline-2 md:hidden"
+              className="text-muted-foreground hover:bg-background focus-visible:outline-ring inline-flex size-9 items-center justify-center rounded-md focus-visible:outline-2 lg:hidden"
               onClick={() => {
                 setMenuOpen(!menuOpen);
               }}
@@ -145,7 +145,7 @@ export const AppShell = ({ children }: AppShellProps) => {
             </div>
           </header>
 
-          <div className="border-border bg-background flex-1 rounded-t-xl border md:rounded-xl">
+          <div className="border-border bg-background flex-1 rounded-t-xl border lg:rounded-xl">
             <div className="mx-auto w-full max-w-[1440px] px-5 py-7 sm:px-7 lg:px-8 lg:py-9">
               <p
                 aria-live="polite"
