@@ -14,6 +14,21 @@ export { normalizeDomain } from "./domain.ts";
 
 export type { DomainParseError } from "./domain.ts";
 
+export { parseDnsRecordData, parseDnsTtl } from "./dns.ts";
+
+export type {
+  DnsAddressRecordData,
+  DnsCaaRecordData,
+  DnsMxRecordData,
+  DnsRecordData,
+  DnsRecordError,
+  DnsRecordType,
+  DnsSoaRecordData,
+  DnsSrvRecordData,
+  DnsTargetRecordData,
+  DnsTxtRecordData,
+} from "./dns.ts";
+
 export { parseIpAddress, parseIpv4, parseIpv6 } from "./ip.ts";
 
 export type { IpAddress, IpAddressParseError, IpVersion } from "./ip.ts";
