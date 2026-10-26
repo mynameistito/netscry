@@ -169,7 +169,11 @@
   - Fix: keep the server and first client render on a stable light placeholder via `useSyncExternalStore`, then show the resolved theme after hydration.
   - Verification run: a jsdom SSR-to-hydrate regression test covers a saved dark theme, with no recoverable hydration errors. Full suite passes (238 tests), strict typecheck and web production build pass, and targeted Ultracite passes.
   - Existing check findings: full `bun run check` continues to fail only on baseline formatting in unchanged `PROMPT.md` and `README.md`; the web build retains the existing large-chunk and CSS sourcemap advisories.
-- [ ] Add the safe raw JSON viewer/export, copy controls, responsive states, and dashboard browser tests.
+- [x] Add the safe raw JSON viewer/export, copy controls, responsive states, and dashboard browser tests.
+  - Implementation: load `/api/v1/me/raw` independently from the normalized dashboard response, validate it against `RawCloudflareMetadataSchema`, show the schema-preserved provenance and redaction envelopes in a scrollable disclosure, and provide copy/download actions plus copyable IP, ASN, and Ray ID values. Raw-data failures leave the visitor panels usable.
+  - Privacy and responsive decisions: disclose that IP, Ray ID, and location values may be personal; explicitly note security material redaction; retain a narrow, scrollable code block and wrapping action row for small screens.
+  - Verification run: dashboard UI tests cover copy, export link, redaction visibility, and raw-only failure; all 241 tests pass, strict typecheck passes, targeted Ultracite passes, and the web production build passes.
+  - Existing check findings: full `bun run check` reports only baseline formatting in unchanged `PROMPT.md` and `README.md`; production build retains the existing large-chunk and CSS sourcemap advisories.
 
 ## Phase 5 — Public network intelligence
 

@@ -4,12 +4,14 @@ import type {
   DataSource,
   IntegerDataFieldSchema,
   NumberDataFieldSchema,
+  RawCloudflareMetadata,
   StringDataFieldSchema,
   UnavailableReason,
 } from "@netscry/schemas";
 import { IpAddressSchema } from "@netscry/schemas";
 import { ArrowRight } from "@netscry/ui/lib/icons";
 import { Schema } from "effect";
+import { useState } from "react";
 
 type MetadataField =
   | typeof BooleanDataFieldSchema.Type
@@ -23,7 +25,13 @@ type MetadataPrimitive = Extract<MetadataField, { _tag: "Available" }>["value"];
 type VisitorState =
   | { status: "loading" }
   | { status: "error" }
-  | { status: "ready"; data: ApiMeResponse };
+  | {
+      status: "ready";
+      data: ApiMeResponse;
+      raw:
+        | { status: "ready"; data: RawCloudflareMetadata }
+        | { status: "error" };
+    };
 
 const sourceLabels = {
   "cloudflare-request": "Cloudflare request",
@@ -60,23 +68,71 @@ const displayValue = (value: MetadataPrimitive) => {
     : String(value);
 };
 
+const CopyValue = ({ label, value }: { label: string; value: string }) => {
+  const [status, setStatus] = useState<"idle" | "copied" | "error">("idle");
+
+  const copyValue = async () => {
+    try {
+      if (navigator.clipboard === undefined) {
+        setStatus("error");
+
+        return;
+      }
+
+      await navigator.clipboard.writeText(value);
+      setStatus("copied");
+    } catch {
+      setStatus("error");
+    }
+  };
+
+  return (
+    <span className="inline-flex items-center gap-1.5">
+      <button
+        aria-label={`Copy ${label}`}
+        className="text-primary focus-visible:outline-ring rounded px-1 text-xs hover:underline focus-visible:outline-2 focus-visible:outline-offset-2"
+        onClick={() => {
+          void copyValue();
+        }}
+        type="button"
+      >
+        {status === "copied" ? "Copied" : "Copy"}
+      </button>
+      {status === "error" ? (
+        <output aria-live="polite" className="text-destructive text-xs">
+          Copy failed
+        </output>
+      ) : null}
+    </span>
+  );
+};
+
 const MetadataFieldValue = ({
   field,
   mono = false,
+  copyLabel,
 }: {
   field: MetadataField;
   mono?: boolean;
+  copyLabel?: string;
 }) => {
   if (field._tag === "Available") {
+    const value = displayValue(field.value);
+
+    const valueToCopy = Schema.is(IpAddressSchema)(field.value)
+      ? field.value.address
+      : value;
+
     return (
       <div className="space-y-1">
         <span>
           {mono ? (
-            <code className="font-mono tabular-nums">
-              {displayValue(field.value)}
-            </code>
+            <code className="font-mono tabular-nums">{value}</code>
           ) : (
-            displayValue(field.value)
+            value
+          )}
+          {copyLabel === undefined ? null : (
+            <CopyValue label={copyLabel} value={valueToCopy} />
           )}
           {field.units === undefined ? null : (
             <span className="text-muted-foreground ml-1.5 text-xs">
@@ -110,7 +166,12 @@ const MetadataPanel = ({
   id,
   title,
 }: {
-  fields: { label: string; field: MetadataField; mono?: boolean }[];
+  fields: {
+    label: string;
+    field: MetadataField;
+    mono?: boolean;
+    copyLabel?: string;
+  }[];
   id: string;
   title: string;
 }) => (
@@ -124,7 +185,7 @@ const MetadataPanel = ({
       </h2>
     </div>
     <dl className="px-4">
-      {fields.map(({ field, label, mono }) => (
+      {fields.map(({ copyLabel, field, label, mono }) => (
         <div
           className="border-border flex min-w-0 items-start justify-between gap-3 border-b py-2 last:border-b-0"
           key={label}
@@ -133,7 +194,11 @@ const MetadataPanel = ({
             {label}
           </dt>
           <dd className="w-2/3 min-w-0 text-right text-sm break-words tabular-nums">
-            <MetadataFieldValue field={field} mono={mono} />
+            <MetadataFieldValue
+              copyLabel={copyLabel}
+              field={field}
+              mono={mono}
+            />
           </dd>
         </div>
       ))}
@@ -146,8 +211,18 @@ const panelFields = (data: ApiMeResponse) => [
     id: "visitor-network",
     title: "Network identity",
     fields: [
-      { label: "Visitor IP", field: data.network.ip, mono: true },
-      { label: "Autonomous system", field: data.network.asn, mono: true },
+      {
+        label: "Visitor IP",
+        field: data.network.ip,
+        mono: true,
+        copyLabel: "visitor IP",
+      },
+      {
+        label: "Autonomous system",
+        field: data.network.asn,
+        mono: true,
+        copyLabel: "autonomous system number",
+      },
       { label: "AS organization", field: data.network.asOrganization },
     ],
   },
@@ -173,7 +248,12 @@ const panelFields = (data: ApiMeResponse) => [
     title: "Cloudflare edge",
     fields: [
       { label: "Connected colo", field: data.edge.colo, mono: true },
-      { label: "Ray ID", field: data.edge.rayId, mono: true },
+      {
+        label: "Ray ID",
+        field: data.edge.rayId,
+        mono: true,
+        copyLabel: "Ray ID",
+      },
     ],
   },
   {
@@ -212,6 +292,51 @@ const panelFields = (data: ApiMeResponse) => [
     ],
   },
 ];
+
+const RawJsonViewer = ({
+  state,
+}: {
+  state: Exclude<VisitorState, { status: "loading" | "error" }>["raw"];
+}) => (
+  <details className="border-border min-w-0 rounded-lg border">
+    <summary className="focus-visible:outline-ring cursor-pointer px-4 py-3.5 text-sm font-medium focus-visible:outline-2 focus-visible:outline-offset-2">
+      Safe raw Cloudflare metadata
+    </summary>
+    {state.status === "ready" ? (
+      <div className="border-border space-y-3 border-t px-4 py-4">
+        <div className="flex flex-wrap items-center justify-between gap-2">
+          <p className="text-muted-foreground max-w-2xl text-xs leading-5">
+            Original field names are preserved. Personal values such as IP, Ray
+            ID, and location may appear; sensitive security material is
+            redacted.
+          </p>
+          <div className="flex shrink-0 items-center gap-2">
+            <CopyValue
+              label="raw JSON"
+              value={JSON.stringify(state.data, null, 2)}
+            />
+            <a
+              className="text-primary focus-visible:outline-ring rounded px-1 text-xs hover:underline focus-visible:outline-2 focus-visible:outline-offset-2"
+              download="netscry-raw-metadata.json"
+              href="/api/v1/me/raw"
+            >
+              Download JSON
+            </a>
+          </div>
+        </div>
+        <pre className="bg-muted/60 max-h-96 overflow-auto rounded-md p-3 text-xs leading-5">
+          <code className="font-mono">
+            {JSON.stringify(state.data, null, 2)}
+          </code>
+        </pre>
+      </div>
+    ) : (
+      <output className="border-border text-muted-foreground block border-t px-4 py-4 text-sm">
+        Safe raw metadata is unavailable for this request.
+      </output>
+    )}
+  </details>
+);
 
 const requestPathValueClassName = "mt-1 min-w-0";
 
@@ -318,6 +443,7 @@ export const VisitorOverview = ({ state }: { state: VisitorState }) => {
       {state.status === "ready" ? (
         <div className="space-y-4">
           <RequestPath data={state.data} />
+          <RawJsonViewer state={state.raw} />
           <div className="space-y-4 xl:grid xl:grid-cols-3 xl:items-start xl:gap-4 xl:space-y-0">
             <div className="space-y-4">
               {renderPanel("visitor-network")}

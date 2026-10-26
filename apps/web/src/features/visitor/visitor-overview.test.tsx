@@ -1,7 +1,13 @@
 // @vitest-environment jsdom
 
-import { cleanup, render, screen } from "@testing-library/react";
-import { afterEach, describe, expect, it } from "vitest";
+import {
+  cleanup,
+  fireEvent,
+  render,
+  screen,
+  waitFor,
+} from "@testing-library/react";
+import { afterEach, describe, expect, it, vi } from "vitest";
 
 import { VisitorOverview } from "./visitor-overview";
 
@@ -64,6 +70,24 @@ const visitorData = () => ({
 const readyState = () => ({
   status: "ready" as const,
   data: visitorData(),
+  raw: {
+    status: "ready" as const,
+    data: {
+      colo: available("AKL"),
+      "cf-connecting-ip": {
+        _tag: "Available" as const,
+        source: "cloudflare-request" as const,
+        value: "2001:db8::1",
+        sensitivity: "personal" as const,
+      },
+      botManagement: {
+        _tag: "Unavailable" as const,
+        source: "cloudflare-request" as const,
+        reason: "redacted" as const,
+        sensitivity: "sensitive" as const,
+      },
+    },
+  },
 });
 
 describe(VisitorOverview, () => {
@@ -92,6 +116,71 @@ describe(VisitorOverview, () => {
     expect(overview).toContain("Approximate location");
     expect(overview).toContain("Security signals");
     expect(overview).toContain("Not provided by this request");
+  });
+
+  it("copies available identity values and confirms the result accessibly", async () => {
+    const writeText = vi
+      .fn<(value: string) => Promise<void>>()
+      .mockResolvedValue(undefined);
+
+    Object.defineProperty(navigator, "clipboard", {
+      configurable: true,
+      value: { writeText },
+    });
+    render(<VisitorOverview state={readyState()} />);
+
+    fireEvent.click(screen.getByRole("button", { name: "Copy visitor IP" }));
+
+    await waitFor(() => {
+      expect(writeText).toHaveBeenCalledWith("2001:db8::1");
+      expect(screen.getByText("Copied")).toBeTruthy();
+    });
+  });
+
+  it("shows the safe raw representation, redactions, copy, and download actions", async () => {
+    const writeText = vi
+      .fn<(value: string) => Promise<void>>()
+      .mockResolvedValue(undefined);
+
+    Object.defineProperty(navigator, "clipboard", {
+      configurable: true,
+      value: { writeText },
+    });
+    render(<VisitorOverview state={readyState()} />);
+
+    fireEvent.click(
+      screen.getByText("Safe raw Cloudflare metadata", { selector: "summary" })
+    );
+
+    expect(
+      screen.getByText(/sensitive security material is redacted/u)
+    ).toBeTruthy();
+    expect(screen.getByText(/botManagement/u)).toBeTruthy();
+    const download = screen.getByRole("link", { name: "Download JSON" });
+    expect(download.getAttribute("href")).toBe("/api/v1/me/raw");
+    expect(download.getAttribute("download")).toBe("netscry-raw-metadata.json");
+
+    fireEvent.click(screen.getByRole("button", { name: "Copy raw JSON" }));
+
+    await waitFor(() => {
+      expect(writeText).toHaveBeenCalledWith(
+        JSON.stringify(readyState().raw.data, null, 2)
+      );
+    });
+  });
+
+  it("keeps the visitor panels available when raw metadata is unavailable", () => {
+    const state = readyState();
+
+    render(<VisitorOverview state={{ ...state, raw: { status: "error" } }} />);
+
+    expect(screen.getByText("Example Network")).toBeTruthy();
+    fireEvent.click(
+      screen.getByText("Safe raw Cloudflare metadata", { selector: "summary" })
+    );
+    expect(
+      screen.getByText("Safe raw metadata is unavailable for this request.")
+    ).toBeTruthy();
   });
 
   it("shows an unavailable state and retries when the visitor read fails", async () => {
