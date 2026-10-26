@@ -14,6 +14,13 @@ export { normalizeDomain } from "./domain.ts";
 
 export type { DomainParseError } from "./domain.ts";
 
+export { parsePublicLookupQuery } from "./lookup-query.ts";
+
+export type {
+  PublicLookupQuery,
+  PublicLookupQueryError,
+} from "./lookup-query.ts";
+
 export { parseDnsRecordData, parseDnsTtl } from "./dns.ts";
 
 export type {
