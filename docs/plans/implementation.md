@@ -30,6 +30,7 @@
 - Registry metadata checked during setup: TanStack Start `1.169.4` requires Vite 8 and React; React `19.3.1`, Vite `8.3.5`, Cloudflare Vite plugin `1.65.0` (Vite 6/7/8, Wrangler 4.152+), Tailwind Vite plugin `4.3.3`, Effect `4.0.6`, Alchemy `2.0.0-beta.84` (Vite 8.0.7+, Effect 4.0.5+), Blume `2.2.6` (Node 22.19+), Vitest `5.0.5` (Node 22.12+), and Playwright `1.64.1` (Node 20+) are mutually aligned for this Bun 1.4.4 project. Alchemy's beta API is the current published release and will be validated against its official docs/types before infrastructure implementation.
 - Wrangler `4.152.0` local dev rejected compatibility date `2026-10-27` as unsupported; `2026-10-19` starts the Worker-mode dev server successfully. Revisit this date when the Wrangler/Miniflare bundle supports a newer date.
 - Official sources reviewed: <https://effect.website/docs/v4/schema/introduction>, <https://effect.website/docs/v4/schema/filters>, <https://tanstack.com/start/latest/docs/framework/react/guide/hosting>, <https://developers.cloudflare.com/workers/framework-guides/web-apps/tanstack-start/>, <https://ui.shadcn.com/docs/monorepo>, <https://ui.shadcn.com/docs/installation/tanstack>, <https://www.mapcn.dev/docs/installation>, <https://www.npmjs.com/package/blume>, <https://github.com/mynameistito/alchemy-deploy>.
+- IP special-purpose classification follows the IANA <https://www.iana.org/assignments/iana-ipv4-special-registry> and <https://www.iana.org/assignments/iana-ipv6-special-registry>; the registries explicitly caution that special-purpose allocation alone does not guarantee routability.
 - Blume workspace configuration and its static build follow the official <https://useblume.dev/docs/quickstart>, <https://useblume.dev/docs/configuration/theming>, and <https://useblume.dev/docs/cli> references.
 - Bun workspace filters target each app; `concurrently` manages both processes and kills their process trees on interruption. Blume accepts explicit host/port options, while Vite also supports strict port binding (<https://bun.sh/docs/pm/filter>, <https://github.com/open-cli-tools/concurrently>, <https://useblume.dev/docs/cli>).
 - The map setup follows mapcn's current <https://www.mapcn.dev/docs/installation> and <https://www.mapcn.dev/docs/basic-map> guidance. OpenFreeMap's <https://openfreemap.org/quick_start/> and <https://openfreemap.org/tos/> document its public MapLibre styles, required attribution, and terms.
@@ -97,8 +98,13 @@
 - [x] Add the shared typed external-provider error model and reusable bounded Effect HTTP client policy.
   - Commit: `453696a`
   - Verified: frozen-lockfile install, targeted Ultracite, strict typecheck, 62 tests, and the web Cloudflare production build pass. Full `bun run check` still reports only the documented baseline formatting errors in `PROMPT.md` and `README.md`.
-- [ ] Add an Effect cache service with request-safe separation and TTL behavior for public lookup data.
-- [ ] Extend core utilities with CIDR calculations, ASN and domain normalization, DNS record handling, network formatting, geographic distance, and timing calculations with unit tests.
+- [x] Add an Effect cache service with request-safe separation and TTL behavior for public lookup data.
+  - Commit: `fb706dd`
+  - Verified: targeted Ultracite, strict typecheck, all 68 tests, and web Cloudflare production build pass. Full `bun run check` still reports only the documented baseline formatting errors in `PROMPT.md` and `README.md`.
+- [ ] Add CIDR parsing, canonical network calculations, range bounds, and containment checks to the portable core package, with IPv4/IPv6 boundary tests.
+- [ ] Add standards-informed IP classification to the portable core package, with IPv4/IPv6 special-purpose boundary tests.
+- [ ] Add ASN and domain normalization plus DNS record utilities to the portable core package, with unit tests.
+- [ ] Add network data formatting, geographic distance, and RTT/jitter calculations to the portable core package, with unit tests.
 - [ ] Define Alchemy-managed Worker infrastructure and typed native bindings, stage separation, and local development behavior.
 - [ ] Implement metadata availability/source/units/sensitivity modeling and safe raw metadata output with redaction tests.
 
