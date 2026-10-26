@@ -72,3 +72,15 @@ export const IntegerDataFieldSchema = createDataFieldSchema(Schema.Int);
 
 /** Field schema for boolean values. */
 export const BooleanDataFieldSchema = createDataFieldSchema(Schema.Boolean);
+
+/** Field envelope for values retained in the safe raw metadata representation. */
+export const RawMetadataFieldSchema = createDataFieldSchema(Schema.Json);
+
+/** Raw metadata preserves source field names while requiring provenance per field. */
+export const RawCloudflareMetadataSchema = Schema.Record(
+  Schema.String,
+  RawMetadataFieldSchema
+);
+
+/** Safe raw Cloudflare metadata inferred from {@link RawCloudflareMetadataSchema}. */
+export type RawCloudflareMetadata = typeof RawCloudflareMetadataSchema.Type;

@@ -11,12 +11,19 @@ export {
   DataSourceSchema,
   IntegerDataFieldSchema,
   NumberDataFieldSchema,
+  RawCloudflareMetadataSchema,
+  RawMetadataFieldSchema,
   SensitivitySchema,
   StringDataFieldSchema,
   UnavailableReasonSchema,
 } from "./metadata.ts";
 
-export type { DataSource, Sensitivity, UnavailableReason } from "./metadata.ts";
+export type {
+  DataSource,
+  RawCloudflareMetadata,
+  Sensitivity,
+  UnavailableReason,
+} from "./metadata.ts";
 
 export {
   ConnectionMetadataSchema,

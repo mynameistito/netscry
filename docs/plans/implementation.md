@@ -136,8 +136,10 @@
   - Verified: frozen-lockfile install, strict typecheck, and targeted Ultracite pass.
 - [x] Implement Alchemy-managed Cloudflare Worker infrastructure with typed native bindings, isolated local/live stages, and a process-tree-safe local Vite/Worker launcher.
   - Verified: Alchemy beta.84 Vite integration, `bun run dev:web` HTTP 200, and SIGINT shutdown with no Alchemy child processes or port 5173 listener remaining; targeted Ultracite, strict typecheck, 192 unit tests, and web production build pass. Full repository check retains the baseline formatting issues in `PROMPT.md` and `README.md`.
+  - Commit: `302f475`
+- [x] Implement a safe raw Cloudflare metadata schema and Effect sanitizer with availability/provenance labels and redaction coverage.
+  - Verified: 7 sanitizer tests cover preserved names/provenance/units, unavailable fields, local header handling, sensitive TLS/bot/custom metadata redaction, malformed values, unknown future fields, and cookie/authorization exclusion; all 199 unit tests pass, strict typecheck and web production build pass, and targeted Ultracite passes. Full repository check reports only the documented baseline formatting issues in `PROMPT.md` and `README.md`.
   - Commit: recorded in the next implementation task's plan update.
-- [ ] Implement metadata availability/source/units/sensitivity modeling and safe raw metadata output with redaction tests.
 
 ## Phase 4 — `/me` API and visitor dashboard
 
