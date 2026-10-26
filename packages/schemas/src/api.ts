@@ -120,6 +120,7 @@ export const ApiErrorCodeSchema = Schema.Literals([
   "invalid-input",
   "not-acceptable",
   "not-found",
+  "rate-limited",
   "unavailable",
   "internal-error",
 ]);

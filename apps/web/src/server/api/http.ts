@@ -177,18 +177,28 @@ const apiTextResponse = (body: string) =>
  * @param code - Stable API error code.
  * @param message - Safe, user-facing error message.
  * @param status - HTTP status code.
+ * @param headers - Optional response headers such as `Retry-After`.
  * @returns A secured JSON error response.
  */
 export const apiErrorResponse = (
   code: ApiErrorResponse["error"]["code"],
   message: string,
-  status: number
+  status: number,
+  headers?: HeadersInit
 ) => {
   const body = Schema.decodeUnknownSync(ApiErrorResponseSchema)({
     error: { code, message },
   });
 
-  return apiJsonResponse(body, status);
+  const response = apiJsonResponse(body, status);
+
+  if (headers !== undefined) {
+    for (const [name, value] of new Headers(headers)) {
+      response.headers.set(name, value);
+    }
+  }
+
+  return response;
 };
 
 /**

@@ -1,6 +1,8 @@
 import { createFileRoute } from "@tanstack/react-router";
 
+import { handleRateLimitedPublicLookup } from "../../../../server/api/public-lookup.ts";
 import { handleRdapDomainLookup } from "../../../../server/api/rdap.ts";
+import { getCloudflareEnv } from "../../../../server/cloudflare-env.ts";
 
 const getRdapDomainLookup = async ({
   params,
@@ -8,7 +10,15 @@ const getRdapDomainLookup = async ({
 }: {
   params: { readonly domain: string };
   request: Request;
-}) => await handleRdapDomainLookup(request, params.domain);
+}) => {
+  const workerEnv = await getCloudflareEnv();
+
+  return await handleRateLimitedPublicLookup(
+    request,
+    workerEnv.PUBLIC_LOOKUP_RATE_LIMIT,
+    async () => await handleRdapDomainLookup(request, params.domain)
+  );
+};
 
 export const Route = createFileRoute("/api/v1/rdap/domain/$domain")({
   server: {
