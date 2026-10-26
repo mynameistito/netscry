@@ -240,8 +240,13 @@
   - Commit: `ab553b3`
   - Implementation: add `/ip/:address` for canonical IPv4/IPv6 and CIDR queries; fetch local range facts, normalized RDAP registration, and RouteViews observations independently with schema validation and separate loading/error states. Show allocation details, registered range/events, observed origins, peer AS paths, source links, and the limitation that RouteViews only reflects participating collectors.
   - Verification run: four UI cases cover independent loading, populated local/RDAP/BGP data and provenance, partial RDAP failure, CIDR URL encoding, and invalid input without fetches. All 386 tests pass; strict typecheck, scoped Ultracite, React Doctor review, and `bun --filter @netscry/web build` pass. React Doctor reports the same pre-existing `packages/ui/src/components/map.tsx` findings. The full `bun run check` confirmed baseline formatting errors in unchanged `PROMPT.md` and `README.md`, then its workspace-wide Oxlint phase stalled; the touched-file Ultracite check passes.
-- [ ] Extract the schema-validated public lookup HTTP boundary for reuse across detail views.
+- [x] Extract the schema-validated public lookup HTTP boundary for reuse across detail views.
+  - Commit: `f3eb8a0`
+  - Implementation: move the existing cancellable fetch, stable error handling, and Effect Schema response decoding into `features/lookups/public-lookup-client.ts`; keep the IP page behavior unchanged while making the client reusable by the next detail views.
+  - Verification run: all 386 tests, strict typecheck, scoped Ultracite, and the web production build pass. Only the existing large-bundle and CSS sourcemap build advisories remain.
 - [ ] Build ASN and BGP detail views with announced prefixes, observed routes, RouteViews coverage, and provenance.
+  - Implementation: add `/asn/:asn` and `/bgp?prefix=…` with independent schema-validated lookups, registration/prefix/origin/peer details, RouteViews source and collector coverage, partial/unavailable states, and links between ASN and prefix views.
+  - Verification run: all six focused UI cases, all 392 repository tests, strict typecheck, scoped Ultracite, and the web production build pass. React Doctor reports only the existing `packages/ui/src/components/map.tsx` findings. The build retains the existing MapLibre chunk-size and CSS sourcemap advisories.
 - [ ] Build public domain registration details and cross-link them to the existing DNS lookup view.
 - [ ] Add a reusable lookup search to the shell and connect the home lookup index to all completed detail views.
   - Design decision: use the existing light `framed-sheet` developer-tool direction, retaining NetScry's blue-grey frame, semantic tokens, and IBM Plex Mono for identifiers. Put each lookup's main answer first, keep source and uncertainty beside it, and use data-driven states instead of sample records.

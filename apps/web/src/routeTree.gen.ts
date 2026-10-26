@@ -10,7 +10,9 @@
 
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as BgpRouteImport } from './routes/bgp'
 import { Route as DnsRouteImport } from './routes/dns'
+import { Route as AsnAsnRouteImport } from './routes/asn.$asn'
 import { Route as IpAddressRouteImport } from './routes/ip.$address'
 import { Route as ApiV1BgpRouteImport } from './routes/api/v1/bgp'
 import { Route as ApiV1HealthRouteImport } from './routes/api/v1/health'
@@ -27,9 +29,19 @@ const IndexRoute = IndexRouteImport.update({
   path: '/',
   getParentRoute: () => rootRouteImport,
 } as any)
+const BgpRoute = BgpRouteImport.update({
+  id: '/bgp',
+  path: '/bgp',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const DnsRoute = DnsRouteImport.update({
   id: '/dns',
   path: '/dns',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AsnAsnRoute = AsnAsnRouteImport.update({
+  id: '/asn/$asn',
+  path: '/asn/$asn',
   getParentRoute: () => rootRouteImport,
 } as any)
 const IpAddressRoute = IpAddressRouteImport.update({
@@ -85,7 +97,9 @@ const ApiV1RdapIpAddressRoute = ApiV1RdapIpAddressRouteImport.update({
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
+  '/bgp': typeof BgpRoute
   '/dns': typeof DnsRoute
+  '/asn/$asn': typeof AsnAsnRoute
   '/ip/$address': typeof IpAddressRoute
   '/api/v1/bgp': typeof ApiV1BgpRoute
   '/api/v1/health': typeof ApiV1HealthRoute
@@ -99,7 +113,9 @@ export interface FileRoutesByFullPath {
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
+  '/bgp': typeof BgpRoute
   '/dns': typeof DnsRoute
+  '/asn/$asn': typeof AsnAsnRoute
   '/ip/$address': typeof IpAddressRoute
   '/api/v1/bgp': typeof ApiV1BgpRoute
   '/api/v1/health': typeof ApiV1HealthRoute
@@ -114,7 +130,9 @@ export interface FileRoutesByTo {
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
+  '/bgp': typeof BgpRoute
   '/dns': typeof DnsRoute
+  '/asn/$asn': typeof AsnAsnRoute
   '/ip/$address': typeof IpAddressRoute
   '/api/v1/bgp': typeof ApiV1BgpRoute
   '/api/v1/health': typeof ApiV1HealthRoute
@@ -130,7 +148,9 @@ export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
   fullPaths:
     | '/'
+    | '/bgp'
     | '/dns'
+    | '/asn/$asn'
     | '/ip/$address'
     | '/api/v1/bgp'
     | '/api/v1/health'
@@ -144,7 +164,9 @@ export interface FileRouteTypes {
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
+    | '/bgp'
     | '/dns'
+    | '/asn/$asn'
     | '/ip/$address'
     | '/api/v1/bgp'
     | '/api/v1/health'
@@ -158,7 +180,9 @@ export interface FileRouteTypes {
   id:
     | '__root__'
     | '/'
+    | '/bgp'
     | '/dns'
+    | '/asn/$asn'
     | '/ip/$address'
     | '/api/v1/bgp'
     | '/api/v1/health'
@@ -173,7 +197,9 @@ export interface FileRouteTypes {
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
+  BgpRoute: typeof BgpRoute
   DnsRoute: typeof DnsRoute
+  AsnAsnRoute: typeof AsnAsnRoute
   IpAddressRoute: typeof IpAddressRoute
   ApiV1BgpRoute: typeof ApiV1BgpRoute
   ApiV1HealthRoute: typeof ApiV1HealthRoute
@@ -194,11 +220,25 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/bgp': {
+      id: '/bgp'
+      path: '/bgp'
+      fullPath: '/bgp'
+      preLoaderRoute: typeof BgpRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/dns': {
       id: '/dns'
       path: '/dns'
       fullPath: '/dns'
       preLoaderRoute: typeof DnsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/asn/$asn': {
+      id: '/asn/$asn'
+      path: '/asn/$asn'
+      fullPath: '/asn/$asn'
+      preLoaderRoute: typeof AsnAsnRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/ip/$address': {
@@ -287,7 +327,9 @@ const ApiV1MeRouteWithChildren =
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
+  BgpRoute: BgpRoute,
   DnsRoute: DnsRoute,
+  AsnAsnRoute: AsnAsnRoute,
   IpAddressRoute: IpAddressRoute,
   ApiV1BgpRoute: ApiV1BgpRoute,
   ApiV1HealthRoute: ApiV1HealthRoute,
