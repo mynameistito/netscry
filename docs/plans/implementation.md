@@ -25,6 +25,7 @@
 - mapcn installation expects Tailwind and shadcn/ui to be configured first; its component uses MapLibre and documents tile and worker/CSP implications.
 - Blume's current npm documentation specifies its own `blume dev` and `blume build` commands and static output. It does not require a hand-built Astro application.
 - The checked-out `mynameistito/alchemy-deploy` repository documents a root action pinned to an immutable release SHA, `workflow_run` exact-SHA gating, and artifact-backed previews. Its current documented release is v3.1.5; use the exact current release SHA and actual template/interface when adding deployment workflows. CI builds must not receive deployment credentials.
+- Registry metadata checked during setup: TanStack Start `1.169.4` requires Vite 8 and React; React `19.3.1`, Vite `8.0.8`, Cloudflare Vite plugin `1.65.0` (Vite 6/7/8, Wrangler 4.152+), Tailwind Vite plugin `4.3.3`, Effect `4.0.6`, Alchemy `2.0.0-beta.84` (Vite 8, Effect 4), Blume `2.2.6` (Node 22.19+), Vitest `5.0.5` (Node 22.12+), and Playwright `1.64.1` (Node 20+) are mutually aligned for this Bun 1.4.4 project. Alchemy's beta API is the current published release and will be validated against its official docs/types before infrastructure implementation.
 - Official sources reviewed: <https://effect.website/docs/v4/schema/introduction>, <https://tanstack.com/start/latest/docs/framework/react/guide/hosting>, <https://ui.shadcn.com/docs/monorepo>, <https://www.mapcn.dev/docs/installation>, <https://www.npmjs.com/package/blume>, <https://github.com/mynameistito/alchemy-deploy>.
 
 ## Phase 1 — Repository and monorepo foundation
@@ -32,7 +33,7 @@
 - [x] Establish Git history for the currently unversioned starter, record the initial baseline, and configure repository-local unsigned commits.
   - Commit: `a9d10f9`
   - Verified: starter files are committed; `.vscode/` and `.zed/` remain untracked and unchanged; local signing is disabled.
-- [ ] Verify compatible current package versions and establish Bun workspaces, package ownership, and a single reproducible lockfile.
+- [ ] Verify compatible current package versions, declare Bun workspace boundaries, and confirm a reproducible lockfile.
 - [ ] Configure shared TypeScript settings and root check, typecheck, test, build, and development scripts while preserving Ultracite.
 - [ ] Add CI checks for formatting/lint, typechecking, tests, and builds without deployment credentials.
 - [ ] Add reusable `packages/core`, `packages/schemas`, and `packages/config` foundations with correct exports and boundaries.
