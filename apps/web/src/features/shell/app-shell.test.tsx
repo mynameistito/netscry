@@ -27,7 +27,7 @@ describe(AppShell, () => {
     cleanup();
   });
 
-  it("explains that public lookup is unavailable instead of implying a result", () => {
+  it("routes the product search to the working DNS lookup page", () => {
     render(
       <ThemeProvider defaultTheme="light" enableSystem={false}>
         <AppShell>
@@ -36,19 +36,18 @@ describe(AppShell, () => {
       </ThemeProvider>
     );
 
-    fireEvent.change(
-      screen.getByRole("searchbox", {
-        name: "Search IP address, ASN, or domain",
-      }),
-      { target: { value: "192.0.2.1" } }
-    );
-    fireEvent.click(screen.getByRole("button", { name: "Search" }));
+    const search = screen.getByRole("searchbox", {
+      name: "Search a domain for DNS records",
+    });
 
+    const form = search.closest("form");
+
+    expect(form?.getAttribute("action")).toBe("/dns");
+    expect(form?.getAttribute("method")).toBe("get");
+    expect(search.getAttribute("name")).toBe("query");
     expect(
-      screen.getByText("Public lookup for “192.0.2.1” is not available yet.", {
-        selector: "span",
-      })
-    ).toBeTruthy();
+      form?.querySelector('input[name="type"]')?.getAttribute("value")
+    ).toBe("A");
   });
 
   it("provides a responsive navigation toggle", () => {

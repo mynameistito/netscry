@@ -31,6 +31,7 @@ export {
 } from "./errors.ts";
 
 export {
+  DNS_RECORD_TYPES,
   DnsAttributionSchema,
   DnsLookupResponseSchema,
   DnsRecordDataSchema,

@@ -1,7 +1,7 @@
 import { Schema } from "effect";
 
 /** DNS resource record types supported by the public lookup service. */
-export const DnsRecordTypeSchema = Schema.Literals([
+export const DNS_RECORD_TYPES = [
   "A",
   "AAAA",
   "CAA",
@@ -12,7 +12,9 @@ export const DnsRecordTypeSchema = Schema.Literals([
   "SOA",
   "SRV",
   "TXT",
-]);
+] as const;
+
+export const DnsRecordTypeSchema = Schema.Literals(DNS_RECORD_TYPES);
 
 const DnsUint16Schema = Schema.Int.check(
   Schema.isBetween({ minimum: 0, maximum: 65_535 })

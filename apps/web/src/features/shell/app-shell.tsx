@@ -30,8 +30,6 @@ interface AppShellProps {
  */
 export const AppShell = ({ children }: AppShellProps) => {
   const [menuOpen, setMenuOpen] = useState(false);
-  const [query, setQuery] = useState("");
-  const [searchMessage, setSearchMessage] = useState("");
 
   return (
     <div className="bg-muted/70 text-foreground min-h-screen">
@@ -107,14 +105,8 @@ export const AppShell = ({ children }: AppShellProps) => {
             <form
               role="search"
               className="border-input bg-background focus-within:border-ring focus-within:ring-ring/20 mx-auto flex h-8 w-full max-w-xl items-center gap-2 rounded-md border px-2.5 focus-within:ring-2"
-              onSubmit={(event) => {
-                event.preventDefault();
-                setSearchMessage(
-                  query.trim()
-                    ? `Public lookup for “${query.trim()}” is not available yet.`
-                    : "Enter an IP address, ASN, or domain to search."
-                );
-              }}
+              action="/dns"
+              method="get"
             >
               <Search
                 aria-hidden="true"
@@ -122,16 +114,13 @@ export const AppShell = ({ children }: AppShellProps) => {
                 size={15}
               />
               <input
-                aria-describedby="lookup-search-status"
-                aria-label="Search IP address, ASN, or domain"
+                aria-label="Search a domain for DNS records"
                 className="placeholder:text-muted-foreground min-w-0 flex-1 bg-transparent text-xs outline-none"
-                onChange={(event) => {
-                  setQuery(event.currentTarget.value);
-                }}
-                placeholder="Search IP, ASN, or domain…"
+                name="query"
+                placeholder="Search a domain for DNS records…"
                 type="search"
-                value={query}
               />
+              <input name="type" type="hidden" value="A" />
               <button
                 aria-label="Search"
                 className="text-muted-foreground hover:bg-muted hover:text-foreground focus-visible:outline-ring inline-flex size-6 shrink-0 items-center justify-center rounded focus-visible:outline-2"
@@ -147,28 +136,6 @@ export const AppShell = ({ children }: AppShellProps) => {
 
           <div className="border-border bg-background flex-1 rounded-t-xl border lg:rounded-xl">
             <div className="mx-auto w-full max-w-[1440px] px-5 py-7 sm:px-7 lg:px-8 lg:py-9">
-              <p
-                aria-live="polite"
-                className="sr-only"
-                id="lookup-search-status"
-              >
-                {searchMessage}
-              </p>
-              {searchMessage ? (
-                <div className="border-border bg-muted/50 text-muted-foreground mb-5 flex items-center justify-between gap-4 rounded-md border px-3 py-2 text-sm">
-                  <span>{searchMessage}</span>
-                  <button
-                    aria-label="Dismiss search message"
-                    className="hover:bg-muted rounded p-1"
-                    onClick={() => {
-                      setSearchMessage("");
-                    }}
-                    type="button"
-                  >
-                    <X aria-hidden="true" size={14} />
-                  </button>
-                </div>
-              ) : null}
               {children}
             </div>
           </div>
