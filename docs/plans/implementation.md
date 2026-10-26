@@ -14,6 +14,7 @@
 - Baseline `bun run test`: unavailable (`Script not found "test"`).
 - Baseline `bun run build`: unavailable (`Script not found "build"`).
 - Baseline `bunx ultracite check`: reports the same pre-existing `PROMPT.md` formatting issue.
+- The first repository-wide checks after Git setup also report formatting issues in the unchanged starter `README.md`; subsequent checks confirm only `PROMPT.md` and `README.md` fail formatting, and both are outside the current implementation diff.
 - Existing dependency/toolchain baseline: Bun 1.4.4. The root manifest has only starter and lint/format dependencies; no framework, Effect, Cloudflare, testing, docs, UI, or infrastructure dependencies are installed as project dependencies.
 - Commit handling requested by the user: configure this repository for unsigned commits to avoid signing prompts during unattended work. Required validation and review still run before commits.
 
@@ -24,8 +25,8 @@
 - shadcn/ui's current CLI supports a TanStack Start monorepo and installs shared UI components into the UI workspace.
 - mapcn installation expects Tailwind and shadcn/ui to be configured first; its component uses MapLibre and documents tile and worker/CSP implications.
 - Blume's current npm documentation specifies its own `blume dev` and `blume build` commands and static output. It does not require a hand-built Astro application.
-- The checked-out `mynameistito/alchemy-deploy` repository documents a root action pinned to an immutable release SHA, `workflow_run` exact-SHA gating, and artifact-backed previews. Its current documented release is v3.1.5; use the exact current release SHA and actual template/interface when adding deployment workflows. CI builds must not receive deployment credentials.
-- Registry metadata checked during setup: TanStack Start `1.169.4` requires Vite 8 and React; React `19.3.1`, Vite `8.0.8`, Cloudflare Vite plugin `1.65.0` (Vite 6/7/8, Wrangler 4.152+), Tailwind Vite plugin `4.3.3`, Effect `4.0.6`, Alchemy `2.0.0-beta.84` (Vite 8, Effect 4), Blume `2.2.6` (Node 22.19+), Vitest `5.0.5` (Node 22.12+), and Playwright `1.64.1` (Node 20+) are mutually aligned for this Bun 1.4.4 project. Alchemy's beta API is the current published release and will be validated against its official docs/types before infrastructure implementation.
+- The checked-out `mynameistito/alchemy-deploy` repository provides a root action pinned to an immutable release SHA, `workflow_run` exact-SHA gating, and artifact-backed previews. The latest local release tag is v3.1.8 at `68f577f3032660bd4919dfcc5725db21d5b64f9d`; inspect that exact release's template/interface before deployment integration. CI builds must not receive deployment credentials.
+- Registry metadata checked during setup: TanStack Start `1.169.4` requires Vite 8 and React; React `19.3.1`, Vite `8.3.5`, Cloudflare Vite plugin `1.65.0` (Vite 6/7/8, Wrangler 4.152+), Tailwind Vite plugin `4.3.3`, Effect `4.0.6`, Alchemy `2.0.0-beta.84` (Vite 8.0.7+, Effect 4.0.5+), Blume `2.2.6` (Node 22.19+), Vitest `5.0.5` (Node 22.12+), and Playwright `1.64.1` (Node 20+) are mutually aligned for this Bun 1.4.4 project. Alchemy's beta API is the current published release and will be validated against its official docs/types before infrastructure implementation.
 - Official sources reviewed: <https://effect.website/docs/v4/schema/introduction>, <https://tanstack.com/start/latest/docs/framework/react/guide/hosting>, <https://ui.shadcn.com/docs/monorepo>, <https://www.mapcn.dev/docs/installation>, <https://www.npmjs.com/package/blume>, <https://github.com/mynameistito/alchemy-deploy>.
 
 ## Phase 1 — Repository and monorepo foundation
@@ -33,10 +34,13 @@
 - [x] Establish Git history for the currently unversioned starter, record the initial baseline, and configure repository-local unsigned commits.
   - Commit: `a9d10f9`
   - Verified: starter files are committed; `.vscode/` and `.zed/` remain untracked and unchanged; local signing is disabled.
-- [ ] Verify compatible current package versions, declare Bun workspace boundaries, and confirm a reproducible lockfile.
-- [ ] Configure shared TypeScript settings and root check, typecheck, test, build, and development scripts while preserving Ultracite.
+- [x] Verify compatible current package versions, declare Bun workspace boundaries, and confirm a reproducible lockfile.
+  - Commit: `9b65da3`
+  - Verified: Bun recognized the workspace patterns; `bun install --frozen-lockfile` passed with no lockfile changes; targeted formatting checks passed. Project-wide formatting/typecheck remain blocked by the recorded, unchanged `PROMPT.md` and `README.md`; test/build scripts did not exist yet.
+- [ ] Add the first real `@netscry/core` workspace with strict IPv4/IPv6 parsing, canonicalization, Vitest coverage, and a working root typecheck/test command.
+- [ ] Complete shared TypeScript settings and root check, typecheck, test, build, and development commands across workspaces while preserving Ultracite.
 - [ ] Add CI checks for formatting/lint, typechecking, tests, and builds without deployment credentials.
-- [ ] Add reusable `packages/core`, `packages/schemas`, and `packages/config` foundations with correct exports and boundaries.
+- [ ] Add `packages/schemas` and `packages/config` with correct exports and boundaries; `packages/core` starts in the preceding task.
 
 ## Phase 2 — Web, docs, and UI foundation
 
@@ -50,7 +54,7 @@
 ## Phase 3 — Effect, contracts, and Cloudflare integration
 
 - [ ] Add Effect v4 services and inferred Effect Schema contracts for visitor, network, enrichment, provenance, availability, and error data.
-- [ ] Implement pure core utilities for IP/IPv4/IPv6/CIDR, ASN, domains/DNS, formatting, distance, and timing calculations with unit tests.
+- [ ] Extend core utilities with CIDR calculations, ASN and domain normalization, DNS record handling, network formatting, geographic distance, and timing calculations with unit tests.
 - [ ] Define Alchemy-managed Worker infrastructure and typed native bindings, stage separation, and local development behavior.
 - [ ] Implement request-scoped extraction of all supported and safe Cloudflare request metadata, with explicit live/local/fixture modes.
 - [ ] Implement metadata availability/source/units/sensitivity modeling and safe raw metadata output with redaction tests.
