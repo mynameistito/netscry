@@ -10,6 +10,7 @@
   "module": "index.ts",
   "scripts": {
     "typecheck": "tsc --noEmit",
+    "dev": "concurrently --kill-others --names web,docs \"bun --filter @netscry/web dev\" \"bun --filter @netscry/docs dev\"",
     "check": "ultracite check",
     "fix": "ultracite fix",
     "test": "vitest run",

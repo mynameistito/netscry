@@ -3,7 +3,7 @@
   "private": true,
   "type": "module",
   "scripts": {
-    "dev": "blume dev",
+    "dev": "blume dev --host 127.0.0.1 --port 4321",
     "build": "blume build",
     "check": "blume check",
     "doctor": "blume doctor",
