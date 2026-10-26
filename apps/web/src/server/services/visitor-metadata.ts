@@ -403,6 +403,12 @@ export interface VisitorMetadataServiceContract {
   readonly readAsn: (
     request: VisitorMetadataRequest
   ) => Effect.Effect<VisitorMetadata["network"]["asn"], Schema.SchemaError>;
+  readonly readAsOrganization: (
+    request: VisitorMetadataRequest
+  ) => Effect.Effect<
+    VisitorMetadata["network"]["asOrganization"],
+    Schema.SchemaError
+  >;
   readonly readCountry: (
     request: VisitorMetadataRequest
   ) => Effect.Effect<
@@ -456,6 +462,15 @@ const makeCloudflareReader = (
       VisitorMetadataSchema.fields.network.fields.asn
     )(value);
   }),
+  readAsOrganization: Effect.fn("VisitorMetadataService.readAsOrganization")(
+    function* readAsOrganization(request: VisitorMetadataRequest) {
+      const value = stringField(request.cf?.asOrganization, source, PUBLIC);
+
+      return yield* Schema.decodeUnknownEffect(
+        VisitorMetadataSchema.fields.network.fields.asOrganization
+      )(value);
+    }
+  ),
   readCountry: Effect.fn("VisitorMetadataService.readCountry")(
     function* readCountry(request: VisitorMetadataRequest) {
       const value = stringField(request.cf?.country, source, PERSONAL);
@@ -485,6 +500,7 @@ const makeFixtureReader = (): VisitorMetadataServiceContract => {
     }),
     readIp: () => Effect.succeed(metadata.network.ip),
     readAsn: () => Effect.succeed(metadata.network.asn),
+    readAsOrganization: () => Effect.succeed(metadata.network.asOrganization),
     readCountry: () => Effect.succeed(metadata.location.country),
     readColo: () => Effect.succeed(metadata.edge.colo),
   };

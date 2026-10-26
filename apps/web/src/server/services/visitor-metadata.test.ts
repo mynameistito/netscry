@@ -66,12 +66,14 @@ describe(VisitorMetadataService, () => {
       return yield* Effect.all([
         service.readIp(request),
         service.readAsn(request),
+        service.readAsOrganization(request),
         service.readCountry(request),
         service.readColo(request),
       ]);
     }).pipe(Effect.provide(layerLive));
 
-    const [ip, asn, country, colo] = await Effect.runPromise(effect);
+    const [ip, asn, asOrganization, country, colo] =
+      await Effect.runPromise(effect);
 
     expect(ip).toStrictEqual({
       _tag: "Available",
@@ -83,6 +85,11 @@ describe(VisitorMetadataService, () => {
       _tag: "Available",
       source: "cloudflare-request",
       value: 13_335,
+    });
+    expect(asOrganization).toMatchObject({
+      _tag: "Available",
+      source: "cloudflare-request",
+      value: "Cloudflare, Inc.",
     });
     expect(country).toMatchObject({
       _tag: "Available",

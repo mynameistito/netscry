@@ -148,6 +148,9 @@
   - Commit: `6569b59`
 - [x] Add focused visitor metadata readers for the `/me/ip`, `/me/asn`, `/me/country`, and `/me/colo` fast paths.
   - Verified: scalar reader tests cover IPv6 and field provenance/source labels, plus rejection of spoofed Cloudflare-looking headers in local mode; all 213 unit tests pass, strict typecheck and web production build pass, and targeted Ultracite passes. Full repository check reports only the documented baseline formatting issues in `PROMPT.md` and `README.md`.
+  - Commit: `8a2262a`
+- [x] Add a focused visitor AS-organization reader for the `/me/asn` fast path.
+  - Verified: the fast-path test checks ASN and organization values with independent field availability and provenance; strict typecheck, all 213 unit tests, web production build, and targeted Ultracite pass. Full repository check reports only the documented baseline formatting issues in `PROMPT.md` and `README.md`.
 - [ ] Implement all required granular `/api/v1/me/*` endpoints from one request-scoped metadata snapshot, including fast scalar paths and plain-text IP/ASN responses.
 - [ ] Add API integration tests for all `/me` endpoints, IPv4/IPv6, unavailable fields, `Accept` variants, no-store behavior, and errors.
 - [ ] Build the visitor overview with IP, ASN/network, location, edge, connection, and security panels that distinguish missing data honestly.
