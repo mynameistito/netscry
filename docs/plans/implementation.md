@@ -314,9 +314,12 @@
 - [ ] Verify npm package name availability/ownership and resolve the project's licensing choice before enabling public SDK/shared package manifests.
   - Discovery: `npm view @netscry/sdk`, `@netscry/core`, and `@netscry/schemas` returned 404 responses that npm documents as either unclaimed names or insufficient access; registry ownership remains unverified. There is no repository LICENSE file or user-provided license choice, so keep packages private and do not assign a license.
 - [ ] Add `@changesets/cli` as a root development dependency.
+  - Commit: `6478db7`
   - Added `@changesets/cli@3.0.3` with Bun and updated the lockfile.
-  - Validation before commit: `bun install --frozen-lockfile`, CLI version check, and root package formatting pass.
+  - Verification: `bun install --frozen-lockfile`, CLI version check, and root package formatting pass.
 - [ ] Configure Changesets versioning and release conventions without publishing packages.
+  - Configured the `main` base branch, public access for eventual public scoped releases, generated changelogs, internal dependency updates, and explicit exclusion of private packages from versioning and tags. Added root status/version commands and contributor instructions; no publish command or workflow was added.
+  - Validation before commit: `bun run changeset:status` loads the config and reports no packages to bump; Oxfmt passes.
 - [ ] Write comprehensive Blume documentation for product, privacy, data sources, local modes, every implemented API route, SDK, development, and deployment.
 - [ ] Generate or validate API documentation from canonical schemas/contracts and ensure docs builds detect stale required artifacts.
 - [ ] Add consumer-facing READMEs, license/repository metadata, package contents checks, and runtime support declarations for publishable packages.
