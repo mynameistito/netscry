@@ -32,7 +32,8 @@
     "packages/**/*.ts",
     "packages/**/*.tsx",
     "apps/**/*.ts",
-    "apps/**/*.tsx"
+    "apps/**/*.tsx",
+    "scripts/**/*.ts"
   ],
   "exclude": ["node_modules", "dist"]
 }

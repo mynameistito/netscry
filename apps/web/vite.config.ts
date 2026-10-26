@@ -6,7 +6,9 @@ import { defineConfig } from "vite";
 
 export default defineConfig({
   plugins: [
-    cloudflare({ viteEnvironment: { name: "ssr" } }),
+    ...(process.env.ALCHEMY_CLOUDFLARE_VITE_INJECTED === "1"
+      ? []
+      : [cloudflare({ viteEnvironment: { name: "ssr" } })]),
     tanstackStart(),
     react(),
     tailwindcss(),

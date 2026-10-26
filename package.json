@@ -10,7 +10,8 @@
   "module": "index.ts",
   "scripts": {
     "typecheck": "tsc --noEmit",
-    "dev": "concurrently --kill-others --names web,docs \"bun --filter @netscry/web dev\" \"bun --filter @netscry/docs dev\"",
+    "dev": "concurrently --kill-others --names web,docs \"bun scripts/alchemy-dev.ts dev\" \"bun --filter @netscry/docs dev\"",
+    "dev:web": "bun scripts/alchemy-dev.ts dev",
     "check": "ultracite check",
     "fix": "ultracite fix",
     "test": "vitest run",
