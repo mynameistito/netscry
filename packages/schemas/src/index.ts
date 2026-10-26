@@ -84,6 +84,26 @@ export type {
   RdapRecordData,
 } from "./rdap.ts";
 
+export {
+  AsnNumberSchema,
+  AsnAnnouncedPrefixSchema,
+  BgpObservedRouteSchema,
+  BgpReportingPeerSchema,
+  PublicAsnLookupResponseSchema,
+  PublicBgpPrefixLookupResponseSchema,
+  RouteViewsAttributionSchema,
+} from "./routing.ts";
+
+export type {
+  AsnNumber,
+  AsnAnnouncedPrefix,
+  BgpObservedRoute,
+  BgpReportingPeer,
+  PublicAsnLookupResponse,
+  PublicBgpPrefixLookupResponse,
+  RouteViewsAttribution,
+} from "./routing.ts";
+
 export type {
   DataSource,
   RawCloudflareMetadata,
