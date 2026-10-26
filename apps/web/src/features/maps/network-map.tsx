@@ -21,7 +21,8 @@ interface MapComponents {
   MarkerLabel: ComponentType<MarkerLabelProps>;
 }
 
-interface NetworkLocation {
+/** Coordinates and marker label for a location supported by a trusted source. */
+export interface NetworkLocation {
   longitude: number;
   latitude: number;
   label: string;

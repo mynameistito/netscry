@@ -275,11 +275,15 @@
   - Commit: `5b13d61`
   - Implementation: add a user-started Effect workflow that measures five sequential same-origin `/api/v1/health` response timings with no-store requests, summarizes min/median/max and adjacent-sample variation using the core helper, and cancels active work when the panel unmounts. The UI labels the values as browser HTTP measurements, explains that they are not ICMP or packet-level jitter, and keeps samples in page state only.
   - Verification run: five measurement/UI tests plus existing dashboard tests (11 focused cases), all 407 repository tests, strict typecheck, root check (formatting, lint, Blume check/doctor/links), and production web/docs build pass. Direct Oxlint and Oxfmt pass. The web build retains its known MapLibre chunk-size and CSS sourcemap advisories.
-- [ ] Implement privacy-preserving browser diagnostics, kept distinct from edge-observed metadata.
+- [x] Implement privacy-preserving browser diagnostics, kept distinct from edge-observed metadata.
+  - Commit: `0f02402`
   - Planned scope: collect coarse browser/OS/device, language/timezone, display, preference, available connection, navigation timing, and capability fields only after the visitor requests them. Keep the data in local component state, expose full User-Agent only in a disclosure, identify every value as browser-derived, and make no diagnostics API call or persistent identifier.
   - Implementation: add an on-demand browser panel that derives browser/version, OS/device category, languages, timezone, screen and viewport, pixel ratio, online state, display preferences, available network hints, navigation timing, and safe capability checks. Label the values as local browser data, disclose fingerprinting considerations, and keep the full User-Agent collapsed. No diagnostics values are sent or persisted.
   - Verification run: browser normalization and UI tests plus dashboard tests (11 focused cases), all 412 repository tests, strict typecheck, root check (formatting/lint and Blume check/doctor/links), direct Oxlint, and production web/docs build pass. React Doctor found only existing MapLibre findings in `packages/ui/src/components/map.tsx`; it reported none in this feature. The web build retains existing MapLibre chunk-size and CSS sourcemap advisories.
-- [ ] Add approximate IP and connected-colo maps using mapcn with trustworthy data, theme behavior, accessibility, and non-blocking lazy loading.
+- [ ] Connect available Cloudflare visitor-IP coordinates to the existing lazy-loaded approximate map, requiring Cloudflare provenance and preserving unavailable states.
+  - Implementation: pass visitor coordinates to the existing map only when both latitude and longitude are available from `cloudflare-request`; suppress fixture/local values, retain the map's coordinate bounds check, and label the marker as an approximate visitor IP location.
+  - Verification run: four new provenance/fallback cases plus existing map/dashboard tests (12 focused cases), all 416 repository tests, strict typecheck, root check (formatting/lint and Blume check/doctor/links), and production web/docs build pass. The web build retains its known MapLibre chunk-size and CSS sourcemap advisories.
+- [ ] Add Cloudflare connected-colo visualization from verified location references; label any nearest-airport coordinate as an airport reference, not a data-center coordinate.
 - [ ] Add tests for timing calculations, missing fields, map inputs, and browser diagnostic boundaries.
 
 ## Phase 7 — SDK, documentation, and release readiness

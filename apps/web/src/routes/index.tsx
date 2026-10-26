@@ -2,6 +2,7 @@ import { ArrowRight, Search } from "@netscry/ui/lib/icons";
 import { createFileRoute } from "@tanstack/react-router";
 
 import { NetworkMap } from "../features/maps/network-map";
+import { getVisitorMapLocation } from "../features/maps/visitor-location";
 import { AppShell } from "../features/shell/app-shell";
 import { VisitorOverview } from "../features/visitor/visitor-overview";
 import { getVisitorDashboard } from "../server/api/visitor-dashboard.ts";
@@ -48,6 +49,11 @@ const lookupAreas: readonly LookupArea[] = [
 
 const HomePage = () => {
   const visitorState = Route.useLoaderData();
+
+  const visitorLocation =
+    visitorState.status === "ready"
+      ? getVisitorMapLocation(visitorState.data.location)
+      : null;
 
   return (
     <AppShell>
@@ -132,14 +138,14 @@ const HomePage = () => {
           >
             <div className="border-border border-b px-5 py-4 sm:px-6">
               <h2 className="text-sm font-medium" id="location-map-title">
-                Approximate location
+                Approximate visitor IP location
               </h2>
               <p className="text-muted-foreground mt-1 text-sm">
                 Network-level estimates do not identify a device&apos;s precise
                 location.
               </p>
             </div>
-            <NetworkMap location={null} />
+            <NetworkMap location={visitorLocation} />
           </section>
         </div>
 
