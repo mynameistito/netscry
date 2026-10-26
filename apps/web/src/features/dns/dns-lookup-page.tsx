@@ -1,3 +1,4 @@
+import { parsePublicLookupQuery } from "@netscry/core";
 import {
   ApiErrorResponseSchema,
   DNS_RECORD_TYPES,
@@ -394,6 +395,12 @@ export const DnsLookupPage = ({
   initialType,
 }: DnsLookupPageProps) => {
   const query = initialQuery?.trim() ?? "";
+  const parsedQuery = parsePublicLookupQuery(query);
+
+  const domain =
+    parsedQuery._tag === "Ok" && parsedQuery.value.kind === "domain"
+      ? parsedQuery.value.query
+      : undefined;
 
   const [copiedValue, setCopiedValue] = useState("");
   const [copyMessage, setCopyMessage] = useState("");
@@ -516,6 +523,19 @@ export const DnsLookupPage = ({
         </a>
         .
       </p>
+
+      {domain === undefined ? null : (
+        <p className="text-muted-foreground text-sm">
+          Looking for registration information?{" "}
+          <a
+            className="text-foreground underline underline-offset-4"
+            href={`/domain/${encodeURIComponent(domain)}`}
+          >
+            View RDAP registration for {domain}
+          </a>
+          .
+        </p>
+      )}
 
       <section aria-label="DNS lookup results" aria-live="polite">
         <DnsLookupResults

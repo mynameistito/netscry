@@ -252,6 +252,36 @@ describe(DnsLookupPage, () => {
     });
   });
 
+  it("links a normalized domain to its RDAP registration", async () => {
+    vi.stubGlobal(
+      "fetch",
+      vi.fn<typeof fetch>().mockResolvedValue(response(dnsAnswer))
+    );
+
+    renderPage({ initialQuery: "Example.COM.", initialType: "A" });
+
+    await screen.findByText("Cloudflare 1.1.1.1");
+    expect(
+      screen
+        .getByRole("link", { name: "View RDAP registration for example.com" })
+        .getAttribute("href")
+    ).toBe("/domain/example.com");
+  });
+
+  it("does not offer a domain registration link for an IP lookup", async () => {
+    vi.stubGlobal(
+      "fetch",
+      vi.fn<typeof fetch>().mockResolvedValue(response(dnsAnswer))
+    );
+
+    renderPage({ initialQuery: "192.0.2.5", initialType: "PTR" });
+
+    await screen.findByText("Cloudflare 1.1.1.1");
+    expect(
+      screen.queryByRole("link", { name: /RDAP registration/u })
+    ).toBeNull();
+  });
+
   it("shows a distinct NXDOMAIN empty answer", async () => {
     const fetchMock = vi.fn<typeof fetch>().mockResolvedValue(
       response({
