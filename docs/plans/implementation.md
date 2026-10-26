@@ -154,7 +154,9 @@
   - Commit: `54da224`
 - [x] Implement all required granular `/api/v1/me/*` endpoints from request-scoped metadata, including fast scalar paths and plain-text IP/ASN responses.
   - Verified: 17 endpoint tests cover every `/me` route, schema validation, local unavailable IP, plain-text scalar outputs, errors, and header-secret exclusion; all 230 tests pass, strict typecheck and web production build pass, and targeted Ultracite passes. Local Alchemy Worker returned HTTP 200 with `no-store` for `/me` and each granular endpoint; local IP text returned a safe typed 503 because the local runtime cannot establish the visitor's public IP. Full repository check reports only the documented baseline formatting issues in `PROMPT.md` and `README.md`.
-- [ ] Add API integration tests for all `/me` endpoints, IPv4/IPv6, unavailable fields, `Accept` variants, no-store behavior, and errors.
+  - Commit: `e808a6e`
+- [x] Add API integration tests for all `/me` endpoints, IPv4/IPv6, unavailable fields, `Accept` variants, no-store behavior, errors, and redaction.
+  - Verified: 21 API handler integration cases exercise every route and schema, IPv4/IPv6 identity, local unavailable IP, weighted/wildcard Accept negotiation, no-store, typed 404/406/503 errors, and cookie/authorization exclusion. All 234 unit tests and strict typecheck pass; targeted Ultracite passes. Full repository check reports only the documented baseline formatting issues in `PROMPT.md` and `README.md`.
 - [ ] Build the visitor overview with IP, ASN/network, location, edge, connection, and security panels that distinguish missing data honestly.
 - [ ] Add the safe raw JSON viewer/export, copy controls, responsive states, and dashboard browser tests.
 

@@ -36,12 +36,15 @@ const cloudflareMetadata = {
   tlsVersion: "TLSv1.3",
 } satisfies Partial<IncomingRequestCfProperties>;
 
-const makeRequest = (accept = "application/json") => {
+const makeRequest = (
+  accept = "application/json",
+  ipAddress = "2001:db8::1"
+) => {
   const request = new Request("https://netscry.example/api/v1/me", {
     headers: {
       accept,
       "accept-language": "en-NZ,en;q=0.9",
-      "cf-connecting-ip": "2001:db8::1",
+      "cf-connecting-ip": ipAddress,
       "cf-ray": "test-ray-AKL",
       cookie: "session=private-canary",
       authorization: "Bearer private-canary",
@@ -53,6 +56,30 @@ const makeRequest = (accept = "application/json") => {
 };
 
 describe("visitor API endpoints", () => {
+  it.each([
+    { ip: "192.0.2.1", version: 4 },
+    { ip: "2001:db8::1", version: 6 },
+  ] as const)(
+    "returns canonical IPv$version metadata for $ip",
+    async ({ ip, version }) => {
+      const response = await handleMeApiRequest(
+        makeRequest("application/json", ip),
+        "ip",
+        "live"
+      );
+
+      const body = Schema.decodeUnknownSync(ApiMeIpResponseSchema)(
+        await response.json()
+      );
+
+      expect(response.status).toBe(200);
+      expect(body.ip).toMatchObject({
+        _tag: "Available",
+        value: { address: ip, version },
+      });
+    }
+  );
+
   it("returns the complete schema-validated snapshot from the request metadata", async () => {
     const response = await handleMeApiOverview(makeRequest(), "live");
 
@@ -127,6 +154,47 @@ describe("visitor API endpoints", () => {
 
     expect(response.status).toBe(503);
     expect(response.headers.get("content-type")).toBe(
+      "application/json; charset=utf-8"
+    );
+  });
+
+  it("keeps a missing local IP explicitly unavailable in the JSON contract", async () => {
+    const response = await handleMeApiRequest(
+      new Request("https://netscry.example/api/v1/me/ip", {
+        headers: {
+          accept: "application/json",
+          "cf-connecting-ip": "198.51.100.7",
+        },
+      }),
+      "ip",
+      "local"
+    );
+
+    const body = Schema.decodeUnknownSync(ApiMeIpResponseSchema)(
+      await response.json()
+    );
+
+    expect(body.ip).toMatchObject({
+      _tag: "Unavailable",
+      source: "local-runtime",
+      reason: "not-provided",
+    });
+  });
+
+  it("honors Accept quality values and wildcards for scalar responses", async () => {
+    const plainText = await handleMeApiRequest(
+      makeRequest("application/json;q=0.2, text/plain;q=0.8"),
+      "ip",
+      "live"
+    );
+
+    const wildcard = await handleMeApiRequest(makeRequest("*/*"), "ip", "live");
+
+    expect(plainText.headers.get("content-type")).toBe(
+      "text/plain; charset=utf-8"
+    );
+    await expect(plainText.text()).resolves.toBe("2001:db8::1\n");
+    expect(wildcard.headers.get("content-type")).toBe(
       "application/json; charset=utf-8"
     );
   });
