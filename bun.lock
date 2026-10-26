@@ -36,6 +36,7 @@
     "apps/web": {
       "name": "@netscry/web",
       "dependencies": {
+        "@netscry/core": "workspace:*",
         "@netscry/schemas": "workspace:*",
         "@netscry/ui": "workspace:*",
         "@tanstack/react-router": "^1.170.45",

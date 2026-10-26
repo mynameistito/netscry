@@ -82,11 +82,15 @@
 
 ## Phase 3 — Effect, contracts, and Cloudflare integration
 
-- [ ] Declare direct Effect v4 and shared-schema workspace dependencies in the web application before adding app-owned services.
-- [ ] Add Effect v4 services for visitor, network, enrichment, caching, and typed external-provider errors.
+- [x] Declare direct Effect v4 and shared-schema workspace dependencies in the web application before adding app-owned services.
+  - Commit: `7fc7705`
+  - Verified: frozen-lockfile install, strict typecheck, and 42 tests pass; targeted Ultracite passes. Full `bun run check` reports only the baseline formatting errors in `PROMPT.md` and `README.md`.
+- [ ] Declare the direct `@netscry/core` workspace dependency needed by web-side network service code.
+- [ ] Implement a request-scoped visitor metadata Effect service with typed Cloudflare request properties and explicit live, local, and fixture Layers.
+- [ ] Add the shared typed external-provider error model and reusable bounded Effect HTTP client policy.
+- [ ] Add an Effect cache service with request-safe separation and TTL behavior for public lookup data.
 - [ ] Extend core utilities with CIDR calculations, ASN and domain normalization, DNS record handling, network formatting, geographic distance, and timing calculations with unit tests.
 - [ ] Define Alchemy-managed Worker infrastructure and typed native bindings, stage separation, and local development behavior.
-- [ ] Implement request-scoped extraction of all supported and safe Cloudflare request metadata, with explicit live/local/fixture modes.
 - [ ] Implement metadata availability/source/units/sensitivity modeling and safe raw metadata output with redaction tests.
 
 ## Phase 4 — `/me` API and visitor dashboard
