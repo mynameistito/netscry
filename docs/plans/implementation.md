@@ -28,7 +28,7 @@
 - The checked-out `mynameistito/alchemy-deploy` repository provides a root action pinned to an immutable release SHA, `workflow_run` exact-SHA gating, and artifact-backed previews. The latest local release tag is v3.1.8 at `68f577f3032660bd4919dfcc5725db21d5b64f9d`; inspect that exact release's template/interface before deployment integration. CI builds must not receive deployment credentials.
 - Registry metadata checked during setup: TanStack Start `1.169.4` requires Vite 8 and React; React `19.3.1`, Vite `8.3.5`, Cloudflare Vite plugin `1.65.0` (Vite 6/7/8, Wrangler 4.152+), Tailwind Vite plugin `4.3.3`, Effect `4.0.6`, Alchemy `2.0.0-beta.84` (Vite 8.0.7+, Effect 4.0.5+), Blume `2.2.6` (Node 22.19+), Vitest `5.0.5` (Node 22.12+), and Playwright `1.64.1` (Node 20+) are mutually aligned for this Bun 1.4.4 project. Alchemy's beta API is the current published release and will be validated against its official docs/types before infrastructure implementation.
 - Wrangler `4.152.0` local dev rejected compatibility date `2026-10-27` as unsupported; `2026-10-19` starts the Worker-mode dev server successfully. Revisit this date when the Wrangler/Miniflare bundle supports a newer date.
-- Official sources reviewed: <https://effect.website/docs/v4/schema/introduction>, <https://effect.website/docs/v4/schema/filters>, <https://tanstack.com/start/latest/docs/framework/react/guide/hosting>, <https://developers.cloudflare.com/workers/framework-guides/web-apps/tanstack-start/>, <https://ui.shadcn.com/docs/monorepo>, <https://www.mapcn.dev/docs/installation>, <https://www.npmjs.com/package/blume>, <https://github.com/mynameistito/alchemy-deploy>.
+- Official sources reviewed: <https://effect.website/docs/v4/schema/introduction>, <https://effect.website/docs/v4/schema/filters>, <https://tanstack.com/start/latest/docs/framework/react/guide/hosting>, <https://developers.cloudflare.com/workers/framework-guides/web-apps/tanstack-start/>, <https://ui.shadcn.com/docs/monorepo>, <https://ui.shadcn.com/docs/installation/tanstack>, <https://www.mapcn.dev/docs/installation>, <https://www.npmjs.com/package/blume>, <https://github.com/mynameistito/alchemy-deploy>.
 - First product-screen direction selected for the visitor diagnostics overview: framed sheet, seed `819559637`; a blue-grey frame, mono type for IDs, and a request-path trace as the product-specific element. The screen's question and its dataset will be documented before that screen's markup is implemented.
 
 ## Phase 1 — Repository and monorepo foundation
@@ -52,8 +52,10 @@
 ## Phase 2 — Web, docs, and UI foundation
 
 - [x] Create the Cloudflare-compatible TanStack Start application and verify its local and production builds.
+  - Commit: `3a694c0`
   - Verified: local Worker-mode dev server returned HTTP 200 and rendered the NetScry route; TanStack Start produced client and Cloudflare SSR builds; shared typecheck, all 33 unit tests, targeted Ultracite, and frozen-lockfile checks pass. The full formatter check still reports only unchanged `PROMPT.md` and `README.md`.
-- [ ] Create `packages/ui` and configure shadcn's monorepo component paths, Tailwind CSS v4 tokens, and accessible theme switching.
+- [x] Create `packages/ui` and configure shadcn's monorepo component paths, Tailwind CSS v4 tokens, and accessible theme switching.
+  - Verified: shadcn CLI recognizes TanStack Start, Tailwind v4, shared UI paths, and both workspace aliases; the app source generates shared Tailwind utilities; IBM Plex fonts are bundled locally; theme toggle tests pass in light and dark modes; local Worker mode returns HTTP 200; React Doctor scores 100/100. Shared typecheck, all 35 tests, web production build, targeted Ultracite, and frozen-lockfile checks pass. Full Ultracite still reports only unchanged `PROMPT.md` and `README.md`.
 - [ ] Create the runnable Blume docs workspace with verified configuration and local/build commands.
 - [ ] Establish app shell, navigation, search, responsive layouts, and shared loading, empty, error, and data-display components.
 - [ ] Integrate mapcn/MapLibre after UI setup, with SSR-safe loading, attribution, appropriate tiles, and mobile behavior.

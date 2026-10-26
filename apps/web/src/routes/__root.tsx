@@ -1,3 +1,4 @@
+import { ThemeProvider } from "@netscry/ui/components/theme-provider";
 import {
   HeadContent,
   Scripts,
@@ -8,12 +9,14 @@ import {
 import appCss from "~/styles/app.css?url";
 
 const RootDocument = () => (
-  <html lang="en">
+  <html lang="en" suppressHydrationWarning>
     <head>
       <HeadContent />
     </head>
-    <body>
-      <Outlet />
+    <body className="bg-background text-foreground font-sans antialiased">
+      <ThemeProvider>
+        <Outlet />
+      </ThemeProvider>
       <Scripts />
     </body>
   </html>

@@ -1,17 +1,4 @@
-:root {
-  color-scheme: light;
-  font-family: "IBM Plex Sans", Inter, system-ui, sans-serif;
-  font-synthesis: none;
-  text-rendering: optimizeLegibility;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-  --ground: #f9fbfc;
-  --surface: #fff;
-  --text: #131416;
-  --muted: #5d5f60;
-  --accent: #1b6c80;
-  --border: #e8eaec;
-}
+@import "@netscry/ui/styles.css";
 
 * {
   box-sizing: border-box;
@@ -21,8 +8,6 @@ body {
   margin: 0;
   min-width: 320px;
   min-height: 100vh;
-  background: var(--ground);
-  color: var(--text);
 }
 
 h1 {
@@ -37,7 +22,7 @@ h1 {
 main > p:last-child {
   max-width: 560px;
   margin: 20px 0 0;
-  color: var(--muted);
+  color: var(--muted-foreground);
   font-size: 17px;
   line-height: 1.65;
 }
@@ -45,4 +30,23 @@ main > p:last-child {
 main {
   min-height: 100vh;
   padding: clamp(32px, 7vw, 96px);
+}
+
+button {
+  padding: 7px 12px;
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  background: var(--card);
+  color: var(--foreground);
+  cursor: pointer;
+  font: inherit;
+}
+
+button:hover {
+  background: var(--secondary);
+}
+
+button:focus-visible {
+  outline: 2px solid var(--ring);
+  outline-offset: 2px;
 }

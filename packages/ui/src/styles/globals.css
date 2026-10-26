@@ -1,0 +1,91 @@
+@import "tailwindcss";
+@import "tw-animate-css";
+@import "@fontsource-variable/ibm-plex-sans";
+@import "@fontsource/ibm-plex-mono/400.css";
+@import "@fontsource/ibm-plex-mono/500.css";
+
+@source "../../../../apps/web/src";
+@source "../";
+
+@custom-variant dark (&:is(.dark *));
+
+:root {
+  color-scheme: light;
+  --background: #f9fbfc;
+  --foreground: #131416;
+  --card: #fff;
+  --card-foreground: #131416;
+  --popover: #fff;
+  --popover-foreground: #131416;
+  --primary: #1b6c80;
+  --primary-foreground: #fff;
+  --secondary: #f4f6f8;
+  --secondary-foreground: #131416;
+  --muted: #f4f6f8;
+  --muted-foreground: #5d5f60;
+  --accent: #ebedee;
+  --accent-foreground: #131416;
+  --destructive: #c4242a;
+  --border: #e8eaec;
+  --input: #cdced1;
+  --ring: #1b6c80;
+  --chart-1: #1b6c80;
+  --chart-2: #2f70bb;
+  --chart-3: #a86f0c;
+  --radius: 0.5rem;
+}
+
+.dark {
+  color-scheme: dark;
+  --background: #131416;
+  --foreground: #f4f6f8;
+  --card: #191b1d;
+  --card-foreground: #f4f6f8;
+  --popover: #191b1d;
+  --popover-foreground: #f4f6f8;
+  --primary: #77c5d3;
+  --primary-foreground: #102327;
+  --secondary: #242729;
+  --secondary-foreground: #f4f6f8;
+  --muted: #242729;
+  --muted-foreground: #b4b8ba;
+  --accent: #242729;
+  --accent-foreground: #f4f6f8;
+  --destructive: #ff7c78;
+  --border: #34383a;
+  --input: #555b5d;
+  --ring: #77c5d3;
+  --chart-1: #77c5d3;
+  --chart-2: #79aef0;
+  --chart-3: #e5ad4b;
+}
+
+@theme inline {
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-card: var(--card);
+  --color-card-foreground: var(--card-foreground);
+  --color-popover: var(--popover);
+  --color-popover-foreground: var(--popover-foreground);
+  --color-primary: var(--primary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-secondary: var(--secondary);
+  --color-secondary-foreground: var(--secondary-foreground);
+  --color-muted: var(--muted);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-accent: var(--accent);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-destructive: var(--destructive);
+  --color-border: var(--border);
+  --color-input: var(--input);
+  --color-ring: var(--ring);
+  --color-chart-1: var(--chart-1);
+  --color-chart-2: var(--chart-2);
+  --color-chart-3: var(--chart-3);
+  --font-sans: "IBM Plex Sans Variable", sans-serif;
+  --font-mono: "IBM Plex Mono", monospace;
+  --radius-sm: calc(var(--radius) - 4px);
+  --radius-md: calc(var(--radius) - 2px);
+  --radius-lg: var(--radius);
+  --radius-xl: calc(var(--radius) + 4px);
+}
