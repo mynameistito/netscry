@@ -195,7 +195,12 @@
   - Implementation: expose `GET /api/v1/rdap/ip/:address` (including CIDR) and `GET /api/v1/rdap/domain/:domain`; validate bounded path input before external work; apply the shared JSON negotiation, response schema, security headers, and safe typed failures; register both TanStack server routes.
   - Verification run: nine API integration cases cover schema-valid IP/CIDR/domain results, IDN input, malformed/oversized values without provider calls, unsupported `Accept`, and provider error redaction. TanStack route generation and targeted formatting pass; all 279 tests, strict typecheck, and `bun --filter @netscry/web build` pass.
   - Existing check findings: full `bun run check` reports only the baseline formatting issues in unchanged `PROMPT.md` and `README.md`; production build retains the existing large-chunk and CSS sourcemap advisories. Public lookup routes currently inherit the shared API `no-store` policy until the planned public cache policy task.
-- [ ] Implement DNS lookup routes/pages for the requested record types using a documented resolver and TTL-aware caching.
+- [x] Add a validated `Accept`-header option to the bounded external provider HTTP client.
+  - Implementation: allow callers to request a provider media type while retaining pinned HTTPS origins, timeout/size limits, schema validation, retries, and redirect blocking; reject empty, oversized, and control-character values before transport.
+  - Verified: focused provider-client tests pass (12 cases), full unit suite passes (281 tests), strict typecheck and web production build pass, and targeted Ultracite passes. Repository-wide `bun run check` retains only the documented baseline formatting failures in unchanged `PROMPT.md` and `README.md`.
+- [ ] Implement schema-validated DNS-over-HTTPS lookups for all requested record types, with documented resolver behavior and TTL-aware caching.
+- [ ] Expose DNS lookup through a schema-validated REST API route.
+- [ ] Add DNS lookup search and detail views as part of the public lookup interface.
 - [ ] Implement replaceable public ASN/BGP enrichment for announced prefixes and origin information, with attribution and graceful partial results.
 - [ ] Add public lookup cache policies, timeout/size/redirect protections, rate limiting, and provider failure tests.
 - [ ] Build lookup search and IP, ASN, domain, RDAP, DNS, and BGP detail views with provenance and uncertainty labels.

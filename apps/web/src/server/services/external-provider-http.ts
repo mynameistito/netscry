@@ -25,6 +25,8 @@ export interface ExternalProviderRequest {
   readonly provider: string;
   readonly operation: string;
   readonly url: string;
+  /** Optional media type requested from the provider. */
+  readonly accept?: string;
   /** Optional tighter limits; callers cannot raise the service-wide caps. */
   readonly timeoutMs?: number;
   readonly maxResponseBytes?: number;
@@ -68,6 +70,32 @@ const makeProviderError = (
 const isSecureHttpsUrl = (url: URL) =>
   url.protocol === HTTPS_SCHEME && url.username === "" && url.password === "";
 
+const isValidAcceptHeader = (value: string | undefined) => {
+  if (value === undefined) {
+    return true;
+  }
+
+  const decoded = Schema.decodeUnknownResult(Schema.NonEmptyString)(value);
+
+  if (decoded._tag === "Failure") {
+    return false;
+  }
+
+  if (decoded.success.length > 256) {
+    return false;
+  }
+
+  for (const character of decoded.success) {
+    const code = character.codePointAt(0) ?? 0;
+
+    if (code <= 31 || code > 126) {
+      return false;
+    }
+  }
+
+  return true;
+};
+
 const validateRequest = (
   request: ExternalProviderRequest,
   providerOrigins: ExternalProviderOrigins
@@ -86,7 +114,13 @@ const validateRequest = (
     request.operation
   );
 
-  if (!(provider._tag === "Success" && operation._tag === "Success")) {
+  if (
+    !(
+      provider._tag === "Success" &&
+      operation._tag === "Success" &&
+      isValidAcceptHeader(request.accept)
+    )
+  ) {
     return makeProviderError(request, INVALID_REQUEST, false);
   }
 
@@ -241,7 +275,10 @@ const readProviderJson = <S extends Schema.Constraint>(
   return Effect.scoped(
     Effect.gen(function* readProviderResponse() {
       const response = yield* boundedClient
-        .get(validated.url)
+        .get(
+          validated.url,
+          request.accept === undefined ? undefined : { accept: request.accept }
+        )
         .pipe(Effect.mapError((error) => mapHttpError(request, error)));
 
       const bytes = yield* collectBody(

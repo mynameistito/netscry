@@ -6,6 +6,7 @@ import {
   HttpClientError,
   HttpClientResponse,
 } from "effect/http";
+import type { HttpClientRequest as HttpClientRequestType } from "effect/http/HttpClientRequest";
 import { describe, expect, it } from "vitest";
 
 import {
@@ -30,14 +31,15 @@ const providerOrigins = {
 
 type FetchStub = (
   url: URL,
-  signal: AbortSignal
+  signal: AbortSignal,
+  request: HttpClientRequestType
 ) => Response | Promise<Response>;
 
 const mockClient = (fetch: FetchStub) =>
   HttpClient.make((request, url, signal) =>
     Effect.tryPromise({
       try: async () =>
-        HttpClientResponse.fromWeb(request, await fetch(url, signal)),
+        HttpClientResponse.fromWeb(request, await fetch(url, signal, request)),
       catch: (cause) =>
         new HttpClientError.HttpClientError({
           reason: new HttpClientError.TransportError({ request, cause }),
@@ -81,6 +83,43 @@ describe(ExternalProviderHttpClient, () => {
     );
 
     expect(result).toStrictEqual({ value: "resolved" });
+  });
+
+  it("sends a validated provider-specific Accept header", async () => {
+    let acceptHeader: string | undefined;
+
+    const client = mockClient((_url, _signal, request) => {
+      acceptHeader = request.headers.accept;
+
+      return Response.json({ value: "resolved" }, { status: 200 });
+    });
+
+    const result = await lookup(client, {
+      ...providerRequest,
+      accept: "application/dns-json",
+    });
+
+    expect(result).toStrictEqual({ value: "resolved" });
+    expect(acceptHeader).toBe("application/dns-json");
+  });
+
+  it("rejects invalid Accept header values before fetching", async () => {
+    let requests = 0;
+
+    const error = await lookupFailure(
+      mockClient(() => {
+        requests += 1;
+
+        return Response.json({ value: "unexpected" });
+      }),
+      { ...providerRequest, accept: "application/json\r\nX-Injected: yes" }
+    );
+
+    expect(error).toMatchObject({
+      reason: "invalid-request",
+      retryable: false,
+    });
+    expect(requests).toBe(0);
   });
 
   it("rejects non-HTTPS and cross-origin requests before fetching", async () => {
