@@ -27,7 +27,7 @@ describe(AppShell, () => {
     cleanup();
   });
 
-  it("routes the product search to the working DNS lookup page", () => {
+  it("routes the product search to the shared public lookup resolver", () => {
     render(
       <ThemeProvider defaultTheme="light" enableSystem={false}>
         <AppShell>
@@ -37,12 +37,12 @@ describe(AppShell, () => {
     );
 
     const search = screen.getByRole("searchbox", {
-      name: "Search a domain for DNS records",
+      name: "Search an IP, ASN, or domain",
     });
 
     const form = search.closest("form");
 
-    expect(form?.getAttribute("action")).toBe("/dns");
+    expect(form?.getAttribute("action")).toBe("/lookup");
     expect(form?.getAttribute("method")).toBe("get");
     expect(search.getAttribute("name")).toBe("query");
     expect(

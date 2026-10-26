@@ -9,23 +9,40 @@ import { getVisitorDashboard } from "../server/api/visitor-dashboard.ts";
 interface LookupArea {
   readonly title: string;
   readonly description: string;
-  readonly href?: string;
+  readonly href: string;
+  readonly action: string;
 }
 
 const lookupAreas: readonly LookupArea[] = [
   {
     title: "IP & network",
-    description: "Registration, ASN, announced prefixes, and public context.",
+    description: "Registration and routing context for an address or CIDR.",
+    href: "/ip/192.0.2.1",
+    action: "Open example IP",
+  },
+  {
+    title: "ASN registration",
+    description: "Holder information and announced IPv4/IPv6 prefixes.",
+    href: "/asn/AS64496",
+    action: "Open example ASN",
+  },
+  {
+    title: "BGP prefix",
+    description: "Observed origins, RPKI status, peers, and AS paths.",
+    href: "/bgp?prefix=192.0.2.0%2F24",
+    action: "Open example prefix",
   },
   {
     title: "Domain & DNS",
-    description:
-      "DNS answers are available; domain registration records are planned.",
-    href: "/dns",
+    description: "Public domain registration and recursive DNS answers.",
+    href: "/domain/example.com",
+    action: "Open example domain",
   },
   {
-    title: "RDAP records",
-    description: "Authoritative public registration data with its source.",
+    title: "DNS records",
+    description: "Resolver answers for a domain, record type, or PTR name.",
+    href: "/dns",
+    action: "Open DNS lookup",
   },
 ];
 
@@ -96,19 +113,13 @@ const HomePage = () => {
                       {lookupArea.description}
                     </p>
                   </div>
-                  {lookupArea.href === undefined ? (
-                    <span className="text-muted-foreground shrink-0 text-sm">
-                      Planned
-                    </span>
-                  ) : (
-                    <a
-                      className="text-primary focus-visible:outline-ring inline-flex min-h-10 shrink-0 items-center gap-1 rounded-sm text-sm focus-visible:outline-2 focus-visible:outline-offset-2"
-                      href={lookupArea.href}
-                    >
-                      Open DNS lookup
-                      <ArrowRight aria-hidden="true" size={14} />
-                    </a>
-                  )}
+                  <a
+                    className="text-primary focus-visible:outline-ring inline-flex min-h-10 shrink-0 items-center gap-1 rounded-sm text-sm focus-visible:outline-2 focus-visible:outline-offset-2"
+                    href={lookupArea.href}
+                  >
+                    {lookupArea.action}
+                    <ArrowRight aria-hidden="true" size={14} />
+                  </a>
                 </div>
               ))}
             </div>

@@ -12,6 +12,7 @@ import { Route as rootRouteImport } from './routes/__root'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as BgpRouteImport } from './routes/bgp'
 import { Route as DnsRouteImport } from './routes/dns'
+import { Route as LookupRouteImport } from './routes/lookup'
 import { Route as AsnAsnRouteImport } from './routes/asn.$asn'
 import { Route as DomainDomainRouteImport } from './routes/domain.$domain'
 import { Route as IpAddressRouteImport } from './routes/ip.$address'
@@ -38,6 +39,11 @@ const BgpRoute = BgpRouteImport.update({
 const DnsRoute = DnsRouteImport.update({
   id: '/dns',
   path: '/dns',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const LookupRoute = LookupRouteImport.update({
+  id: '/lookup',
+  path: '/lookup',
   getParentRoute: () => rootRouteImport,
 } as any)
 const AsnAsnRoute = AsnAsnRouteImport.update({
@@ -105,6 +111,7 @@ export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/bgp': typeof BgpRoute
   '/dns': typeof DnsRoute
+  '/lookup': typeof LookupRoute
   '/asn/$asn': typeof AsnAsnRoute
   '/domain/$domain': typeof DomainDomainRoute
   '/ip/$address': typeof IpAddressRoute
@@ -122,6 +129,7 @@ export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/bgp': typeof BgpRoute
   '/dns': typeof DnsRoute
+  '/lookup': typeof LookupRoute
   '/asn/$asn': typeof AsnAsnRoute
   '/domain/$domain': typeof DomainDomainRoute
   '/ip/$address': typeof IpAddressRoute
@@ -140,6 +148,7 @@ export interface FileRoutesById {
   '/': typeof IndexRoute
   '/bgp': typeof BgpRoute
   '/dns': typeof DnsRoute
+  '/lookup': typeof LookupRoute
   '/asn/$asn': typeof AsnAsnRoute
   '/domain/$domain': typeof DomainDomainRoute
   '/ip/$address': typeof IpAddressRoute
@@ -159,6 +168,7 @@ export interface FileRouteTypes {
     | '/'
     | '/bgp'
     | '/dns'
+    | '/lookup'
     | '/asn/$asn'
     | '/domain/$domain'
     | '/ip/$address'
@@ -176,6 +186,7 @@ export interface FileRouteTypes {
     | '/'
     | '/bgp'
     | '/dns'
+    | '/lookup'
     | '/asn/$asn'
     | '/domain/$domain'
     | '/ip/$address'
@@ -193,6 +204,7 @@ export interface FileRouteTypes {
     | '/'
     | '/bgp'
     | '/dns'
+    | '/lookup'
     | '/asn/$asn'
     | '/domain/$domain'
     | '/ip/$address'
@@ -211,6 +223,7 @@ export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   BgpRoute: typeof BgpRoute
   DnsRoute: typeof DnsRoute
+  LookupRoute: typeof LookupRoute
   AsnAsnRoute: typeof AsnAsnRoute
   DomainDomainRoute: typeof DomainDomainRoute
   IpAddressRoute: typeof IpAddressRoute
@@ -245,6 +258,13 @@ declare module '@tanstack/react-router' {
       path: '/dns'
       fullPath: '/dns'
       preLoaderRoute: typeof DnsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/lookup': {
+      id: '/lookup'
+      path: '/lookup'
+      fullPath: '/lookup'
+      preLoaderRoute: typeof LookupRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/asn/$asn': {
@@ -349,6 +369,7 @@ const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   BgpRoute: BgpRoute,
   DnsRoute: DnsRoute,
+  LookupRoute: LookupRoute,
   AsnAsnRoute: AsnAsnRoute,
   DomainDomainRoute: DomainDomainRoute,
   IpAddressRoute: IpAddressRoute,

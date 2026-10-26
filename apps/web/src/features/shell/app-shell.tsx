@@ -105,7 +105,7 @@ export const AppShell = ({ children }: AppShellProps) => {
             <form
               role="search"
               className="border-input bg-background focus-within:border-ring focus-within:ring-ring/20 mx-auto flex h-8 w-full max-w-xl items-center gap-2 rounded-md border px-2.5 focus-within:ring-2"
-              action="/dns"
+              action="/lookup"
               method="get"
             >
               <Search
@@ -114,10 +114,10 @@ export const AppShell = ({ children }: AppShellProps) => {
                 size={15}
               />
               <input
-                aria-label="Search a domain for DNS records"
+                aria-label="Search an IP, ASN, or domain"
                 className="placeholder:text-muted-foreground min-w-0 flex-1 bg-transparent text-xs outline-none"
                 name="query"
-                placeholder="Search a domain for DNS records…"
+                placeholder="Search an IP, ASN, or domain…"
                 type="search"
               />
               <input name="type" type="hidden" value="A" />

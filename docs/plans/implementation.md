@@ -248,10 +248,13 @@
   - Commit: `4c9ca26`
   - Implementation: add `/asn/:asn` and `/bgp?prefix=…` with independent schema-validated lookups, registration/prefix/origin/peer details, RouteViews source and collector coverage, partial/unavailable states, and links between ASN and prefix views.
   - Verification run: all six focused UI cases, all 392 repository tests, strict typecheck, scoped Ultracite, and the web production build pass. React Doctor reports only the existing `packages/ui/src/components/map.tsx` findings. The build retains the existing MapLibre chunk-size and CSS sourcemap advisories.
-- [ ] Build public domain registration details and cross-link them to the existing DNS lookup view.
+- [x] Build public domain registration details and cross-link them to the existing DNS lookup view.
+  - Commit: `0016684`
   - Implementation: add `/domain/:domain` using IDNA normalization and the existing schema-validated RDAP endpoint; show the selected registry record, dates, nameservers, public registration/abuse contacts, attribution, and expandable raw response. Link the registration view to DNS and valid domain queries in DNS back to RDAP.
   - Verification run: all 19 focused DNS/domain UI cases and all 396 repository tests pass; strict typecheck, web production build, Oxfmt, and direct scoped Oxlint pass. Scoped Ultracite formatting passes, while its Oxlint wrapper stalled; React Doctor reports only the existing `packages/ui/src/components/map.tsx` findings. The build retains the known MapLibre chunk-size and CSS sourcemap advisories.
 - [ ] Add a reusable lookup search to the shell and connect the home lookup index to all completed detail views.
+  - Implementation: route shell searches through `/lookup`, classify and canonicalize IPv4/IPv6, CIDR, ASN, and IDNA domains, redirect to the corresponding detail route, and show a safe validation state for unsupported input. Add home index links to IP, ASN, BGP, domain RDAP, and DNS views.
+  - Verification run: five target-normalization/route cases plus shell wiring pass; all 402 repository tests, strict typecheck, scoped Ultracite, and web production build pass. React Doctor reports only the existing `packages/ui/src/components/map.tsx` findings. The build retains the existing MapLibre chunk-size and CSS sourcemap advisories.
   - Design decision: use the existing light `framed-sheet` developer-tool direction, retaining NetScry's blue-grey frame, semantic tokens, and IBM Plex Mono for identifiers. Put each lookup's main answer first, keep source and uncertainty beside it, and use data-driven states instead of sample records.
 
 ## Phase 6 — Diagnostics and mapping
