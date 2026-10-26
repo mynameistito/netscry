@@ -13,7 +13,7 @@ export {
   PublicIpClassificationSchema,
   PublicIpLookupResponseSchema,
   PublicNetworkLookupResponseSchema,
-} from "./api.ts";
+} from "./api.js";
 
 export type {
   ApiErrorResponse,
@@ -23,12 +23,12 @@ export type {
   PublicIpClassification,
   PublicIpLookupResponse,
   PublicNetworkLookupResponse,
-} from "./api.ts";
+} from "./api.js";
 
 export {
   ExternalProviderError,
   ExternalProviderErrorSchema,
-} from "./errors.ts";
+} from "./errors.js";
 
 export {
   DNS_RECORD_TYPES,
@@ -37,7 +37,7 @@ export {
   DnsRecordDataSchema,
   DnsRecordTypeSchema,
   DnsResourceRecordSchema,
-} from "./dns.ts";
+} from "./dns.js";
 
 export type {
   DnsAttribution,
@@ -45,9 +45,9 @@ export type {
   DnsRecordData,
   DnsRecordType,
   DnsResourceRecord,
-} from "./dns.ts";
+} from "./dns.js";
 
-export type { ExternalProviderErrorFields } from "./errors.ts";
+export type { ExternalProviderErrorFields } from "./errors.js";
 
 export {
   BooleanDataFieldSchema,
@@ -60,7 +60,7 @@ export {
   SensitivitySchema,
   StringDataFieldSchema,
   UnavailableReasonSchema,
-} from "./metadata.ts";
+} from "./metadata.js";
 
 export {
   RdapBootstrapRegistrySchema,
@@ -71,7 +71,7 @@ export {
   RdapNormalizedRecordSchema,
   RdapRawRecordSchema,
   RdapRecordDataSchema,
-} from "./rdap.ts";
+} from "./rdap.js";
 
 export type {
   RdapAttribution,
@@ -82,7 +82,7 @@ export type {
   RdapNormalizedRecord,
   RdapRawRecord,
   RdapRecordData,
-} from "./rdap.ts";
+} from "./rdap.js";
 
 export {
   AsnNumberSchema,
@@ -92,7 +92,7 @@ export {
   PublicAsnLookupResponseSchema,
   PublicBgpPrefixLookupResponseSchema,
   RouteViewsAttributionSchema,
-} from "./routing.ts";
+} from "./routing.js";
 
 export type {
   AsnNumber,
@@ -102,14 +102,14 @@ export type {
   PublicAsnLookupResponse,
   PublicBgpPrefixLookupResponse,
   RouteViewsAttribution,
-} from "./routing.ts";
+} from "./routing.js";
 
 export type {
   DataSource,
   RawCloudflareMetadata,
   Sensitivity,
   UnavailableReason,
-} from "./metadata.ts";
+} from "./metadata.js";
 
 export {
   ConnectionMetadataSchema,
@@ -119,7 +119,7 @@ export {
   NetworkIdentitySchema,
   SecurityMetadataSchema,
   VisitorMetadataSchema,
-} from "./network.ts";
+} from "./network.js";
 
 export type {
   ConnectionMetadata,
@@ -129,4 +129,4 @@ export type {
   NetworkIdentity,
   SecurityMetadata,
   VisitorMetadata,
-} from "./network.ts";
+} from "./network.js";

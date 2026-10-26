@@ -7,7 +7,7 @@ import {
   IntegerDataFieldSchema,
   NumberDataFieldSchema,
   StringDataFieldSchema,
-} from "./metadata.ts";
+} from "./metadata.js";
 
 /** Shared, syntax-checked IP address contract for public API and visitor data. */
 export const IpAddressSchema = Schema.Struct({

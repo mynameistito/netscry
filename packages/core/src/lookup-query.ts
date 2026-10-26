@@ -1,9 +1,9 @@
-import { parseAsn } from "./asn.ts";
-import { parseCidr } from "./cidr.ts";
-import { normalizeDomain } from "./domain.ts";
-import { parseIpAddress } from "./ip.ts";
-import { err, ok } from "./result.ts";
-import type { Result } from "./result.ts";
+import { parseAsn } from "./asn.js";
+import { parseCidr } from "./cidr.js";
+import { normalizeDomain } from "./domain.js";
+import { parseIpAddress } from "./ip.js";
+import { err, ok } from "./result.js";
+import type { Result } from "./result.js";
 
 /** Parsed address or prefix lookup query. */
 type AddressLookupQuery =

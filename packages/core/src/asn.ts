@@ -1,5 +1,5 @@
-import { err, ok } from "./result.ts";
-import type { Result } from "./result.ts";
+import { err, ok } from "./result.js";
+import type { Result } from "./result.js";
 
 const ASN_PATTERN = /^(?:AS)?(?<digits>\d+)$/iu;
 const MAX_ASN = 4_294_967_295;

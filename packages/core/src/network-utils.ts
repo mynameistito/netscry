@@ -1,5 +1,5 @@
-import { err, ok } from "./result.ts";
-import type { Result } from "./result.ts";
+import { err, ok } from "./result.js";
+import type { Result } from "./result.js";
 
 const EARTH_MEAN_RADIUS_KM = 6371;
 const DEGREES_TO_RADIANS = Math.PI / 180;

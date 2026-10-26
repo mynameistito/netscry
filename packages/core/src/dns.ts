@@ -1,8 +1,8 @@
-import { normalizeDomain } from "./domain.ts";
-import { parseIpAddress } from "./ip.ts";
-import type { IpAddress } from "./ip.ts";
-import { err, ok } from "./result.ts";
-import type { Result } from "./result.ts";
+import { normalizeDomain } from "./domain.js";
+import { parseIpAddress } from "./ip.js";
+import type { IpAddress } from "./ip.js";
+import { err, ok } from "./result.js";
+import type { Result } from "./result.js";
 
 const CAA_ESCAPED_CHARACTER = /\\(?<escaped>.)/gu;
 const UINT32_MAX = 4_294_967_295;

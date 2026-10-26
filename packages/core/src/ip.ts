@@ -1,5 +1,5 @@
-import { err, ok } from "./result.ts";
-import type { Result } from "./result.ts";
+import { err, ok } from "./result.js";
+import type { Result } from "./result.js";
 
 /** IP address family number used by network protocols. */
 export type IpVersion = 4 | 6;

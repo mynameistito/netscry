@@ -1,7 +1,7 @@
-import { parseIpAddress } from "./ip.ts";
-import type { IpAddress, IpVersion } from "./ip.ts";
-import { err, ok } from "./result.ts";
-import type { Result } from "./result.ts";
+import { parseIpAddress } from "./ip.js";
+import type { IpAddress, IpVersion } from "./ip.js";
+import { err, ok } from "./result.js";
+import type { Result } from "./result.js";
 
 /** A parsed network range with normalized network and final addresses. */
 export interface IpCidr {

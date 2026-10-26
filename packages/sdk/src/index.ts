@@ -1,7 +1,7 @@
-export { NetScrySdkError, createNetScryClient } from "./client.ts";
+export { NetScrySdkError, createNetScryClient } from "./client.js";
 
 export type {
   NetScryClient,
   NetScryClientOptions,
   NetScryFetch,
-} from "./client.ts";
+} from "./client.js";

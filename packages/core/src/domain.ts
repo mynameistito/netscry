@@ -1,6 +1,6 @@
-import { parseIpAddress } from "./ip.ts";
-import { err, ok } from "./result.ts";
-import type { Result } from "./result.ts";
+import { parseIpAddress } from "./ip.js";
+import { err, ok } from "./result.js";
+import type { Result } from "./result.js";
 
 const DOMAIN_LABEL = /^(?:[a-z\d](?:[a-z\d-]{0,61}[a-z\d])?)$/u;
 

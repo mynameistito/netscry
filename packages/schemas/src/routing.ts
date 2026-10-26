@@ -1,8 +1,8 @@
 import { parseCidr } from "@netscry/core";
 import { Schema } from "effect";
 
-import { createDataFieldSchema, StringDataFieldSchema } from "./metadata.ts";
-import { IpAddressSchema } from "./network.ts";
+import { createDataFieldSchema, StringDataFieldSchema } from "./metadata.js";
+import { IpAddressSchema } from "./network.js";
 
 /** IANA 32-bit ASN value excluding the two reserved endpoints. */
 export const AsnNumberSchema = Schema.Int.check(

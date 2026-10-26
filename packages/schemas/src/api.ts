@@ -4,12 +4,12 @@ import {
   createDataFieldSchema,
   DataSourceSchema,
   StringDataFieldSchema,
-} from "./metadata.ts";
+} from "./metadata.js";
 import {
   IpAddressSchema,
   NetworkIdentitySchema,
   VisitorMetadataSchema,
-} from "./network.ts";
+} from "./network.js";
 
 /** Selected IP purpose categories recognized by the local range table. */
 export const PublicIpClassificationSchema = Schema.Literals([

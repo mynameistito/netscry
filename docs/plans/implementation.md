@@ -299,10 +299,12 @@
   - Commit: `2ee8717`
   - Implementation: add isolated `@netscry/sdk` workspace package with health, current-request metadata, network/IP, ASN, BGP, DNS, and RDAP methods. Each method returns an Effect whose success type comes from `@netscry/schemas`; the client accepts an injected standard Fetch function and base URL, forwards Effect interruption to fetch, decodes success and error envelopes, and reports configuration/network/HTTP/JSON/contract failures as a tagged `NetScrySdkError`. It has no Worker, React, or TanStack dependencies.
   - Verification run: five SDK tests, all 424 repository tests, strict typecheck, full root check (Ultracite formatting/lint and Blume check/doctor/links), `bun install --frozen-lockfile`, and targeted SDK Ultracite pass. The package follows existing workspace source exports and has no independent build script; emitted package artifacts are part of the package-readiness task.
-- [ ] Record the workspace-source versus consumer-build package boundary in an ADR before changing package exports.
+- [x] Record the workspace-source versus consumer-build package boundary in an ADR before changing package exports.
+  - Commit: `a815e49`
 - [ ] Add ESM JavaScript and declaration builds for the SDK and its shared core/schema dependencies, then verify a consumer can import the built packages without workspace source aliases.
   - Discovery: Node's TypeScript runtime cannot execute `.ts` files from `node_modules`, so the current source-only workspace exports are unsuitable for an npm tarball. Generate `.js` and `.d.ts` artifacts and test the resolved package entrypoints in a Node consumer.
   - Reference: <https://nodejs.org/api/typescript.html>.
+  - Validation before commit: all 424 tests pass; SDK Node consumer smoke test, package builds, strict typecheck, web production build, and docs production build pass. Oxfmt reports all files formatted. `bun run check` completed formatting but its Oxlint stage stalled without diagnostics; direct scoped Oxlint and `bun run check:docs` also stalled without diagnostics. Record this tool/runtime limitation and retry during phase validation.
 - [ ] Verify npm naming and prepare publishable manifests, exports, package contents, and runtime support for SDK and shared dependencies without publishing.
 - [ ] Add Changesets versioning and release conventions without publishing packages.
 - [ ] Write comprehensive Blume documentation for product, privacy, data sources, local modes, every implemented API route, SDK, development, and deployment.

@@ -1,7 +1,7 @@
 // oxlint-disable sonarjs/no-hardcoded-ip -- These are IANA classification prefixes, never network destinations.
-import { containsIpAddress, parseCidr } from "./cidr.ts";
-import type { IpCidr } from "./cidr.ts";
-import type { IpAddress } from "./ip.ts";
+import { containsIpAddress, parseCidr } from "./cidr.js";
+import type { IpCidr } from "./cidr.js";
+import type { IpAddress } from "./ip.js";
 
 /** A known address-purpose category, not a guarantee of network reachability. */
 export type IpClassification =
