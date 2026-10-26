@@ -91,7 +91,9 @@
 - [x] Implement a request-scoped visitor metadata Effect service with typed Cloudflare request properties and explicit live, local, and fixture Layers.
   - Commit: `7de31d2`
   - Verified: `wrangler types`, targeted Ultracite, strict typecheck, 50 tests, and the web Cloudflare production build pass. Full `bun run check` still reports only the documented baseline formatting errors in `PROMPT.md` and `README.md`.
-- [ ] Document provider HTTP trust boundaries and resource limits in an ADR before shared provider client integration.
+- [x] Document provider HTTP trust boundaries and resource limits in an ADR before shared provider client integration.
+  - Commit: `f80f847`
+  - Verified: targeted Ultracite formatting and lint check passes.
 - [ ] Add the shared typed external-provider error model and reusable bounded Effect HTTP client policy.
 - [ ] Add an Effect cache service with request-safe separation and TTL behavior for public lookup data.
 - [ ] Extend core utilities with CIDR calculations, ASN and domain normalization, DNS record handling, network formatting, geographic distance, and timing calculations with unit tests.

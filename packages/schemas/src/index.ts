@@ -1,4 +1,11 @@
 export {
+  ExternalProviderError,
+  ExternalProviderErrorSchema,
+} from "./errors.ts";
+
+export type { ExternalProviderErrorFields } from "./errors.ts";
+
+export {
   BooleanDataFieldSchema,
   createDataFieldSchema,
   DataSourceSchema,
