@@ -296,6 +296,8 @@
 ## Phase 7 — SDK, documentation, and release readiness
 
 - [ ] Implement a small ESM typed fetch-based SDK with injectable fetch/base URL, schema-aligned results, and SDK tests if package boundaries permit.
+  - Implementation: add isolated `@netscry/sdk` workspace package with health, current-request metadata, network/IP, ASN, BGP, DNS, and RDAP methods. Each method returns an Effect whose success type comes from `@netscry/schemas`; the client accepts an injected standard Fetch function and base URL, forwards Effect interruption to fetch, decodes success and error envelopes, and reports configuration/network/HTTP/JSON/contract failures as a tagged `NetScrySdkError`. It has no Worker, React, or TanStack dependencies.
+  - Verification run: five SDK tests, all 424 repository tests, strict typecheck, full root check (Ultracite formatting/lint and Blume check/doctor/links), `bun install --frozen-lockfile`, and targeted SDK Ultracite pass. The package follows existing workspace source exports and has no independent build script; emitted package artifacts are part of the package-readiness task.
 - [ ] Prepare publishable package metadata/exports and Changesets conventions without publishing packages; verify npm naming before assigning public names.
 - [ ] Write comprehensive Blume documentation for product, privacy, data sources, local modes, every implemented API route, SDK, development, and deployment.
 - [ ] Generate or validate API documentation from canonical schemas/contracts and ensure docs builds detect stale required artifacts.

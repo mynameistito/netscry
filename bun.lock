@@ -74,6 +74,14 @@
         "effect": "4.0.6",
       },
     },
+    "packages/sdk": {
+      "name": "@netscry/sdk",
+      "version": "0.1.0",
+      "dependencies": {
+        "@netscry/schemas": "workspace:*",
+        "effect": "4.0.6",
+      },
+    },
     "packages/ui": {
       "name": "@netscry/ui",
       "dependencies": {
@@ -519,6 +527,8 @@
     "@netscry/docs": ["@netscry/docs@workspace:apps/docs"],
 
     "@netscry/schemas": ["@netscry/schemas@workspace:packages/schemas"],
+
+    "@netscry/sdk": ["@netscry/sdk@workspace:packages/sdk"],
 
     "@netscry/ui": ["@netscry/ui@workspace:packages/ui"],
 
