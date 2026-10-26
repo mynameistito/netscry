@@ -1,0 +1,120 @@
+# NetScry implementation plan
+
+`PROMPT.md` is the source of truth for product requirements. This plan is the execution record. Each implementation task is completed, validated, reviewed, and committed separately. Production deployments, publishing, paid services, and live DNS changes remain out of scope without explicit approval.
+
+## Preflight record
+
+- Baseline branch at first inspection: Git could not resolve this directory as a repository. The existing upstream `origin/main` points to `b8ca548` (`first commit`, README only). A T3 checkpoint snapshot also exists at `53288c6`; it includes the starter files and editor settings.
+- Working tree at first inspection: root project files present; no app or package source beyond the Bun `index.ts` greeting. The pre-existing `.vscode/` and `.zed/` settings are intentionally left untracked and untouched.
+- Git setup performed to satisfy the requested per-task history: `main` now tracks `origin/main`; `a9d10f9` records the starter files as the initial project baseline. Repository-local `commit.gpgsign=false` overrides the user's global signing setting for unattended unsigned commits. No `Co-Authored-By` trailer is used.
+- Applicable instruction: `C:\Users\mynameistito\AGENTS.md` says not to add `Co-Authored-By` lines.
+- Repository: Bun 1.4.4, `bun.lock` lockfile version 2, private root package. Existing checks are `bun run check` (`ultracite check`) and `bun run typecheck` (`bun check`). There are no test, build, e2e, workspace, CI, deployment, changeset, or application scripts/configurations yet. TypeScript strict mode and Ultracite/Oxlint/Oxfmt configuration exist.
+- Baseline `bun run check`: fails because the supplied `PROMPT.md` is not formatted by the installed Ultracite formatter.
+- Baseline `bun run typecheck`: fails for the same pre-existing `PROMPT.md` formatting issue; the script delegates to `bun check`/Ultracite.
+- Baseline `bun run test`: unavailable (`Script not found "test"`).
+- Baseline `bun run build`: unavailable (`Script not found "build"`).
+- Baseline `bunx ultracite check`: reports the same pre-existing `PROMPT.md` formatting issue.
+- Existing dependency/toolchain baseline: Bun 1.4.4. The root manifest has only starter and lint/format dependencies; no framework, Effect, Cloudflare, testing, docs, UI, or infrastructure dependencies are installed as project dependencies.
+- Commit handling requested by the user: configure this repository for unsigned commits to avoid signing prompts during unattended work. Required validation and review still run before commits.
+
+## Verified implementation constraints
+
+- Effect v4 documentation uses the `effect/Schema` API and recommends strict TypeScript; keep shared contracts inferred from schemas.
+- TanStack Start's current Cloudflare guide uses Vite and `@cloudflare/vite-plugin`.
+- shadcn/ui's current CLI supports a TanStack Start monorepo and installs shared UI components into the UI workspace.
+- mapcn installation expects Tailwind and shadcn/ui to be configured first; its component uses MapLibre and documents tile and worker/CSP implications.
+- Blume's current npm documentation specifies its own `blume dev` and `blume build` commands and static output. It does not require a hand-built Astro application.
+- The checked-out `mynameistito/alchemy-deploy` repository documents a root action pinned to an immutable release SHA, `workflow_run` exact-SHA gating, and artifact-backed previews. Its current documented release is v3.1.5; use the exact current release SHA and actual template/interface when adding deployment workflows. CI builds must not receive deployment credentials.
+- Official sources reviewed: <https://effect.website/docs/v4/schema/introduction>, <https://tanstack.com/start/latest/docs/framework/react/guide/hosting>, <https://ui.shadcn.com/docs/monorepo>, <https://www.mapcn.dev/docs/installation>, <https://www.npmjs.com/package/blume>, <https://github.com/mynameistito/alchemy-deploy>.
+
+## Phase 1 — Repository and monorepo foundation
+
+- [x] Establish Git history for the currently unversioned starter, record the initial baseline, and configure repository-local unsigned commits.
+  - Commit: `a9d10f9`
+  - Verified: starter files are committed; `.vscode/` and `.zed/` remain untracked and unchanged; local signing is disabled.
+- [ ] Verify compatible current package versions and establish Bun workspaces, package ownership, and a single reproducible lockfile.
+- [ ] Configure shared TypeScript settings and root check, typecheck, test, build, and development scripts while preserving Ultracite.
+- [ ] Add CI checks for formatting/lint, typechecking, tests, and builds without deployment credentials.
+- [ ] Add reusable `packages/core`, `packages/schemas`, and `packages/config` foundations with correct exports and boundaries.
+
+## Phase 2 — Web, docs, and UI foundation
+
+- [ ] Create the Cloudflare-compatible TanStack Start application and verify its local and production builds.
+- [ ] Create `packages/ui` and configure shadcn's monorepo component paths, Tailwind CSS v4 tokens, and accessible theme switching.
+- [ ] Create the runnable Blume docs workspace with verified configuration and local/build commands.
+- [ ] Establish app shell, navigation, search, responsive layouts, and shared loading, empty, error, and data-display components.
+- [ ] Integrate mapcn/MapLibre after UI setup, with SSR-safe loading, attribution, appropriate tiles, and mobile behavior.
+- [ ] Add a cross-platform root development command for web and docs, with predictable ports and clean process shutdown.
+
+## Phase 3 — Effect, contracts, and Cloudflare integration
+
+- [ ] Add Effect v4 services and inferred Effect Schema contracts for visitor, network, enrichment, provenance, availability, and error data.
+- [ ] Implement pure core utilities for IP/IPv4/IPv6/CIDR, ASN, domains/DNS, formatting, distance, and timing calculations with unit tests.
+- [ ] Define Alchemy-managed Worker infrastructure and typed native bindings, stage separation, and local development behavior.
+- [ ] Implement request-scoped extraction of all supported and safe Cloudflare request metadata, with explicit live/local/fixture modes.
+- [ ] Implement metadata availability/source/units/sensitivity modeling and safe raw metadata output with redaction tests.
+
+## Phase 4 — `/me` API and visitor dashboard
+
+- [ ] Implement the versioned API shell, shared Effect services, schema-validated responses, typed errors, content negotiation, security headers, and health endpoint.
+- [ ] Implement all required granular `/api/v1/me/*` endpoints from one request-scoped metadata snapshot, including fast scalar paths and plain-text IP/ASN responses.
+- [ ] Add API integration tests for all `/me` endpoints, IPv4/IPv6, unavailable fields, `Accept` variants, no-store behavior, and errors.
+- [ ] Build the visitor overview with IP, ASN/network, location, edge, connection, and security panels that distinguish missing data honestly.
+- [ ] Add the safe raw JSON viewer/export, copy controls, responsive states, and dashboard browser tests.
+
+## Phase 5 — Public network intelligence
+
+- [ ] Implement validated IP and CIDR lookup routes/pages, using legitimate sources and never treating current-request `request.cf` data as arbitrary-IP enrichment.
+- [ ] Implement standards-based RDAP bootstrap/discovery for IP, ASN, and domain records with bounded upstream requests and normalization.
+- [ ] Implement DNS lookup routes/pages for the requested record types using a documented resolver and TTL-aware caching.
+- [ ] Implement replaceable public ASN/BGP enrichment for announced prefixes and origin information, with attribution and graceful partial results.
+- [ ] Add public lookup cache policies, timeout/size/redirect protections, rate limiting, and provider failure tests.
+- [ ] Build lookup search and IP, ASN, domain, RDAP, DNS, and BGP detail views with provenance and uncertainty labels.
+
+## Phase 6 — Diagnostics and mapping
+
+- [ ] Implement verified Cloudflare colo, protocol, TLS, RTT, and available connection/security field display with units and availability.
+- [ ] Implement real browser HTTP latency sampling and median/min/max/jitter calculations; label it as HTTP measurement rather than ICMP.
+- [ ] Implement privacy-preserving browser diagnostics, kept distinct from edge-observed metadata.
+- [ ] Add approximate IP and connected-colo maps using mapcn with trustworthy data, theme behavior, accessibility, and non-blocking lazy loading.
+- [ ] Add tests for timing calculations, missing fields, map inputs, and browser diagnostic boundaries.
+
+## Phase 7 — SDK, documentation, and release readiness
+
+- [ ] Implement a small ESM typed fetch-based SDK with injectable fetch/base URL, schema-aligned results, and SDK tests if package boundaries permit.
+- [ ] Prepare publishable package metadata/exports and Changesets conventions without publishing packages; verify npm naming before assigning public names.
+- [ ] Write comprehensive Blume documentation for product, privacy, data sources, local modes, every implemented API route, SDK, development, and deployment.
+- [ ] Generate or validate API documentation from canonical schemas/contracts and ensure docs builds detect stale required artifacts.
+- [ ] Add consumer-facing READMEs, license/repository metadata, package contents checks, and runtime support declarations for publishable packages.
+
+## Phase 8 — Hardening, deployment, and completion audit
+
+- [ ] Complete unit, service integration, API integration, and Playwright coverage for implemented requirements.
+- [ ] Audit input validation, SSRF boundaries, redirects, response sizes, rate limits, CORS/CSP, caching, logging, privacy, and metadata exposure.
+- [ ] Validate local live/local/fixture modes, Windows workflows, HMR, SSR, bindings, and clean shutdown.
+- [ ] Integrate the current `mynameistito/alchemy-deploy` action and artifact flow using immutable release pins and least-privilege CI; add no direct Wrangler deployment path.
+- [ ] Validate web/docs builds, Alchemy configuration, CI-equivalent checks, package consistency, changesets, and generated artifacts.
+- [ ] Re-read `PROMPT.md`, audit every requirement against code and command evidence, review all commits, and inspect final Git status.
+
+## Final completion
+
+- [ ] Every requirement in `PROMPT.md` audited
+- [ ] Every implementation task completed
+- [ ] Every completed implementation task committed
+- [ ] Commits are atomic and logically scoped
+- [ ] Ultracite passes
+- [ ] Formatting passes
+- [ ] Lint/static analysis passes
+- [ ] Typechecking passes
+- [ ] Unit tests pass
+- [ ] Integration tests pass where applicable
+- [ ] End-to-end tests pass where applicable
+- [ ] Production build passes
+- [ ] Relevant package builds pass
+- [ ] Documentation is current
+- [ ] Relevant ADRs exist
+- [ ] Required changesets exist
+- [ ] Deployment configuration verified
+- [ ] Final Git diff/status reviewed
+- [ ] No unintended working-tree changes remain
+- [ ] Final `PROMPT.md` audit completed
