@@ -92,6 +92,11 @@ export interface NetScryClient {
   readonly lookupRdapDomain: (
     domain: string
   ) => Effect.Effect<RdapNormalizedRecord, NetScrySdkError>;
+
+  /** Look up public registration data for a domain using the general domain route. */
+  readonly lookupDomain: (
+    domain: string
+  ) => Effect.Effect<RdapNormalizedRecord, NetScrySdkError>;
 }
 
 const makeConfigurationError = () =>
@@ -245,6 +250,11 @@ export const createNetScryClient = (
     lookupRdapDomain: (domain) =>
       request(
         `/api/v1/rdap/domain/${encodeURIComponent(domain)}`,
+        RdapNormalizedRecordSchema
+      ),
+    lookupDomain: (domain) =>
+      request(
+        `/api/v1/domain/${encodeURIComponent(domain)}`,
         RdapNormalizedRecordSchema
       ),
   };

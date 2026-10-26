@@ -31,6 +31,7 @@ All responses are JSON by default. The scalar routes listed below also support `
 | `GET /api/v1/asn/{asn}` | ASN registration holder and announced prefixes | Holder, prefixes, and source attribution |
 | `GET /api/v1/bgp?prefix={address-or-cidr}` | RouteViews observations for a prefix | Canonical prefix, observed routes, peers, and coverage attribution |
 | `GET /api/v1/dns/{name}?type={type}` | Resolve a DNS name and record type | DNS status, normalized records, TTL and resolver attribution |
+| `GET /api/v1/domain/{domain}` | General domain registration lookup | Normalized RDAP data, attribution, and validated raw record |
 | `GET /api/v1/rdap/ip/{address-or-cidr}` | RDAP registration record for an IP address or network | Normalized data, attribution, and validated raw record |
 | `GET /api/v1/rdap/domain/{domain}` | RDAP registration record for a domain | Normalized data, attribution, and validated raw record |
 
@@ -59,6 +60,7 @@ The `source` identifies Cloudflare request metadata, local runtime, request head
 - **ASN:** use a decimal ASN, with or without an `AS` prefix, such as `/api/v1/asn/15169`. Values must be within the supported 32-bit ASN range.
 - **BGP:** provide exactly one `prefix` query parameter. Bare IP addresses are accepted and interpreted as host prefixes. Example: `/api/v1/bgp?prefix=203.0.113.0%2F24`. RouteViews coverage is partial and observations are not a complete global routing view.
 - **DNS:** `type` is optional and defaults to `A`. Supported types are `A`, `AAAA`, `CAA`, `CNAME`, `MX`, `NS`, `PTR`, `SOA`, `SRV`, and `TXT`; lowercase is accepted. Duplicate `type` parameters are invalid. `PTR` accepts an IP address or reverse name. Responses identify Cloudflare 1.1.1.1 as the recursive resolver; an answer is not proof of an authoritative record.
+- **Domain:** `/domain/{domain}` is the general domain-registration route and returns the same RDAP contract as `/rdap/domain/{domain}`. Internationalized domain names are accepted.
 - **RDAP:** query an address or CIDR under `/rdap/ip/` or a domain under `/rdap/domain/`. Internationalized domain names are accepted. Results are resolved through IANA RDAP bootstrap data to the relevant registry; registration data does not establish reachability or current routing.
 
 ## Examples
@@ -71,6 +73,7 @@ curl https://netscry.example/api/v1/ip/192.0.2.0%2F24
 curl https://netscry.example/api/v1/asn/AS15169
 curl 'https://netscry.example/api/v1/bgp?prefix=203.0.113.0%2F24'
 curl 'https://netscry.example/api/v1/dns/example.com?type=MX'
+curl https://netscry.example/api/v1/domain/example.com
 curl https://netscry.example/api/v1/rdap/domain/example.com
 curl -H 'Accept: text/plain' https://netscry.example/api/v1/me/country
 ```

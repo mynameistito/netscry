@@ -48,6 +48,7 @@ The client accepts an absolute HTTP or HTTPS URL without embedded credentials. A
 | `lookupAsn(asn)` | `/api/v1/asn/{asn}` | ASN as text, optionally prefixed with `AS` | `PublicAsnLookupResponse` |
 | `lookupBgp(prefix)` | `/api/v1/bgp?prefix=...` | Address or CIDR prefix | `PublicBgpPrefixLookupResponse` |
 | `lookupDns(query, recordType?)` | `/api/v1/dns/{query}` | DNS name or reverse lookup address; optional `DnsRecordType` | `DnsLookupResponse` |
+| `lookupDomain(domain)` | `/api/v1/domain/{domain}` | Domain name | `RdapNormalizedRecord` |
 | `lookupRdapIp(addressOrCidr)` | `/api/v1/rdap/ip/{address-or-cidr}` | IP address or CIDR | `RdapNormalizedRecord` |
 | `lookupRdapDomain(domain)` | `/api/v1/rdap/domain/{domain}` | Domain name | `RdapNormalizedRecord` |
 

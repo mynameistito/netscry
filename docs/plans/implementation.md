@@ -345,10 +345,16 @@
   - Commit: `242f1ec`
   - Implementation: add `apps/docs/content/sdk/index.mdx` describing the private workspace-only package boundary, Node/ESM build requirements, client setup, Effect results, availability fields, supported methods, injectable Fetch, and tagged errors. Link it from the docs landing page.
   - Validation: docs production build, Blume doctor, link validation, and Oxfmt pass. Blume `check` stalled at page type-checking without diagnostics and was stopped; retry during phase validation.
-- [ ] Document development, validation, build, and Alchemy deployment workflows without enabling deployment.
+- [x] Document development, validation, build, and Alchemy deployment workflows without enabling deployment.
+  - Commit: `eb3fabf`
   - Implementation: add `apps/docs/content/development/index.mdx` covering Bun setup, actual workspace commands, CI-equivalent checks, generated package builds, Alchemy local development, and the current validation-only deployment state. Do not execute deployment or enable a deploy workflow.
   - Validation: docs production build, Blume doctor, link validation, and Oxfmt pass.
+- [ ] Implement the PROMPT-required `GET /api/v1/domain/{domain}` route by reusing the RDAP domain service and public lookup rate limit.
+  - Discovery: the `/api/v1` requirements explicitly list this general domain lookup route, while the current implementation only exposes the same RDAP data at `/api/v1/rdap/domain/{domain}`.
+  - Implementation: add the alias route over the existing schema-validated RDAP domain handler and shared rate limiter; expose it as `lookupDomain` in the SDK with URL-encoding coverage; update API and SDK route guides.
+  - Validation: focused API/SDK tests (14) and all 424 tests pass; typecheck, full `bun run build`, Blume doctor/link validation, and formatting pass. `bun run check` passed formatting then stalled in Oxlint without diagnostics; direct scoped Oxlint also stalled without diagnostics. The first combined build encountered a stale Blume lock from dead PID 42664; after confirming port 4321 had no listener and removing only that generated lock, the full build passed.
 - [ ] Generate or validate API documentation from canonical schemas/contracts and ensure docs builds detect stale required artifacts.
+  - Dependency: first implement the prompt-required `/api/v1/domain/{domain}` route so the generated route contract matches the completed API surface.
 - [ ] Add consumer-facing READMEs, license/repository metadata, package contents checks, and runtime support declarations for publishable packages.
 
 ## Phase 8 — Hardening, deployment, and completion audit

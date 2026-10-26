@@ -21,6 +21,7 @@ import { Route as ApiV1HealthRouteImport } from './routes/api/v1/health'
 import { Route as ApiV1MeRouteImport } from './routes/api/v1/me'
 import { Route as ApiV1AsnAsnRouteImport } from './routes/api/v1/asn.$asn'
 import { Route as ApiV1DnsQueryRouteImport } from './routes/api/v1/dns.$query'
+import { Route as ApiV1DomainDomainRouteImport } from './routes/api/v1/domain.$domain'
 import { Route as ApiV1IpAddressRouteImport } from './routes/api/v1/ip.$address'
 import { Route as ApiV1MeEndpointRouteImport } from './routes/api/v1/me.$endpoint'
 import { Route as ApiV1RdapDomainDomainRouteImport } from './routes/api/v1/rdap/domain.$domain'
@@ -86,6 +87,11 @@ const ApiV1DnsQueryRoute = ApiV1DnsQueryRouteImport.update({
   path: '/api/v1/dns/$query',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ApiV1DomainDomainRoute = ApiV1DomainDomainRouteImport.update({
+  id: '/api/v1/domain/$domain',
+  path: '/api/v1/domain/$domain',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const ApiV1IpAddressRoute = ApiV1IpAddressRouteImport.update({
   id: '/api/v1/ip/$address',
   path: '/api/v1/ip/$address',
@@ -120,6 +126,7 @@ export interface FileRoutesByFullPath {
   '/api/v1/me': typeof ApiV1MeRouteWithChildren
   '/api/v1/asn/$asn': typeof ApiV1AsnAsnRoute
   '/api/v1/dns/$query': typeof ApiV1DnsQueryRoute
+  '/api/v1/domain/$domain': typeof ApiV1DomainDomainRoute
   '/api/v1/ip/$address': typeof ApiV1IpAddressRoute
   '/api/v1/me/$endpoint': typeof ApiV1MeEndpointRoute
   '/api/v1/rdap/domain/$domain': typeof ApiV1RdapDomainDomainRoute
@@ -138,6 +145,7 @@ export interface FileRoutesByTo {
   '/api/v1/me': typeof ApiV1MeRouteWithChildren
   '/api/v1/asn/$asn': typeof ApiV1AsnAsnRoute
   '/api/v1/dns/$query': typeof ApiV1DnsQueryRoute
+  '/api/v1/domain/$domain': typeof ApiV1DomainDomainRoute
   '/api/v1/ip/$address': typeof ApiV1IpAddressRoute
   '/api/v1/me/$endpoint': typeof ApiV1MeEndpointRoute
   '/api/v1/rdap/domain/$domain': typeof ApiV1RdapDomainDomainRoute
@@ -157,6 +165,7 @@ export interface FileRoutesById {
   '/api/v1/me': typeof ApiV1MeRouteWithChildren
   '/api/v1/asn/$asn': typeof ApiV1AsnAsnRoute
   '/api/v1/dns/$query': typeof ApiV1DnsQueryRoute
+  '/api/v1/domain/$domain': typeof ApiV1DomainDomainRoute
   '/api/v1/ip/$address': typeof ApiV1IpAddressRoute
   '/api/v1/me/$endpoint': typeof ApiV1MeEndpointRoute
   '/api/v1/rdap/domain/$domain': typeof ApiV1RdapDomainDomainRoute
@@ -177,6 +186,7 @@ export interface FileRouteTypes {
     | '/api/v1/me'
     | '/api/v1/asn/$asn'
     | '/api/v1/dns/$query'
+    | '/api/v1/domain/$domain'
     | '/api/v1/ip/$address'
     | '/api/v1/me/$endpoint'
     | '/api/v1/rdap/domain/$domain'
@@ -195,6 +205,7 @@ export interface FileRouteTypes {
     | '/api/v1/me'
     | '/api/v1/asn/$asn'
     | '/api/v1/dns/$query'
+    | '/api/v1/domain/$domain'
     | '/api/v1/ip/$address'
     | '/api/v1/me/$endpoint'
     | '/api/v1/rdap/domain/$domain'
@@ -213,6 +224,7 @@ export interface FileRouteTypes {
     | '/api/v1/me'
     | '/api/v1/asn/$asn'
     | '/api/v1/dns/$query'
+    | '/api/v1/domain/$domain'
     | '/api/v1/ip/$address'
     | '/api/v1/me/$endpoint'
     | '/api/v1/rdap/domain/$domain'
@@ -232,6 +244,7 @@ export interface RootRouteChildren {
   ApiV1MeRoute: typeof ApiV1MeRouteWithChildren
   ApiV1AsnAsnRoute: typeof ApiV1AsnAsnRoute
   ApiV1DnsQueryRoute: typeof ApiV1DnsQueryRoute
+  ApiV1DomainDomainRoute: typeof ApiV1DomainDomainRoute
   ApiV1IpAddressRoute: typeof ApiV1IpAddressRoute
   ApiV1RdapDomainDomainRoute: typeof ApiV1RdapDomainDomainRoute
   ApiV1RdapIpAddressRoute: typeof ApiV1RdapIpAddressRoute
@@ -323,6 +336,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ApiV1DnsQueryRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/api/v1/domain/$domain': {
+      id: '/api/v1/domain/$domain'
+      path: '/api/v1/domain/$domain'
+      fullPath: '/api/v1/domain/$domain'
+      preLoaderRoute: typeof ApiV1DomainDomainRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/api/v1/ip/$address': {
       id: '/api/v1/ip/$address'
       path: '/api/v1/ip/$address'
@@ -378,6 +398,7 @@ const rootRouteChildren: RootRouteChildren = {
   ApiV1MeRoute: ApiV1MeRouteWithChildren,
   ApiV1AsnAsnRoute: ApiV1AsnAsnRoute,
   ApiV1DnsQueryRoute: ApiV1DnsQueryRoute,
+  ApiV1DomainDomainRoute: ApiV1DomainDomainRoute,
   ApiV1IpAddressRoute: ApiV1IpAddressRoute,
   ApiV1RdapDomainDomainRoute: ApiV1RdapDomainDomainRoute,
   ApiV1RdapIpAddressRoute: ApiV1RdapIpAddressRoute,

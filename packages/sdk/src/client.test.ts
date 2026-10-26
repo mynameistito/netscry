@@ -86,6 +86,7 @@ describe(createNetScryClient, () => {
       () => client.lookupDns("example.com", "AAAA"),
       () => client.lookupRdapIp("192.0.2.0/24"),
       () => client.lookupRdapDomain("bücher.example"),
+      () => client.lookupDomain("bücher.example"),
     ];
 
     await Promise.all(
@@ -101,6 +102,7 @@ describe(createNetScryClient, () => {
       "https://api.example.test/api/v1/dns/example.com?type=AAAA",
       "https://api.example.test/api/v1/rdap/ip/192.0.2.0%2F24",
       "https://api.example.test/api/v1/rdap/domain/b%C3%BCcher.example",
+      "https://api.example.test/api/v1/domain/b%C3%BCcher.example",
     ]);
   });
 
