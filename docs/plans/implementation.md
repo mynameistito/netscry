@@ -165,7 +165,10 @@
   - Data inventory: visitor IP and version, ASN and organization, 11 approximate location fields, colo and Ray ID, seven connection/transport fields, and five security signals; every value comes from the schema-validated request response, with no sample or inferred network values.
   - Verification run: focused UI and shell tests (5 passed), full suite (237 passed), strict typecheck, targeted Ultracite, and the web production build passed. The app-screen inspector reports no findings at 1440, 768, and 390px; runtime review confirmed local fields retain their local-runtime provenance and unavailable values remain explicit.
   - Existing check findings: bun run check reports only the baseline formatting errors in unchanged PROMPT.md and README.md. React Doctor's changed-scope scan reports existing findings only in packages/ui/src/components/map.tsx; it reports none in the dashboard or shell changes. The production build retains the existing MapLibre chunk and CSS sourcemap advisories.
-- [ ] Resolve the theme-toggle hydration mismatch observed during live dashboard rendering and add browser verification.
+- [x] Resolve the theme-toggle hydration mismatch observed during live dashboard rendering and add browser verification.
+  - Fix: keep the server and first client render on a stable light placeholder via `useSyncExternalStore`, then show the resolved theme after hydration.
+  - Verification run: a jsdom SSR-to-hydrate regression test covers a saved dark theme, with no recoverable hydration errors. Full suite passes (238 tests), strict typecheck and web production build pass, and targeted Ultracite passes.
+  - Existing check findings: full `bun run check` continues to fail only on baseline formatting in unchanged `PROMPT.md` and `README.md`; the web build retains the existing large-chunk and CSS sourcemap advisories.
 - [ ] Add the safe raw JSON viewer/export, copy controls, responsive states, and dashboard browser tests.
 
 ## Phase 5 — Public network intelligence

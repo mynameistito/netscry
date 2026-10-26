@@ -1,12 +1,15 @@
 // @vitest-environment jsdom
 
 import {
+  act,
   cleanup,
   fireEvent,
   render,
   screen,
   waitFor,
 } from "@testing-library/react";
+import { hydrateRoot } from "react-dom/client";
+import { renderToString } from "react-dom/server";
 import { afterEach, beforeEach, describe, expect, it } from "vitest";
 
 import { ThemeProvider } from "./theme-provider";
@@ -18,6 +21,12 @@ const renderToggle = () =>
       <ThemeToggle />
     </ThemeProvider>
   );
+
+const themeToggleTree = () => (
+  <ThemeProvider defaultTheme="light" enableSystem={false}>
+    <ThemeToggle />
+  </ThemeProvider>
+);
 
 describe(ThemeToggle, () => {
   beforeEach(() => {
@@ -65,6 +74,34 @@ describe(ThemeToggle, () => {
     fireEvent.click(toggle);
     await waitFor(() => {
       expect(toggle.getAttribute("aria-pressed")).toBe("false");
+    });
+  });
+
+  it("hydrates without a mismatch when a saved dark theme exists", () => {
+    localStorage.setItem("theme", "dark");
+    const serverMarkup = renderToString(themeToggleTree());
+    // oxlint-disable-next-line github/no-inner-html -- This is trusted markup rendered from the component tree under test.
+    document.body.innerHTML = serverMarkup;
+    const recoverableErrors: unknown[] = [];
+    let root: ReturnType<typeof hydrateRoot> | undefined;
+
+    act(() => {
+      root = hydrateRoot(document.body, themeToggleTree(), {
+        onRecoverableError: (error) => {
+          recoverableErrors.push(error);
+        },
+      });
+    });
+
+    expect(recoverableErrors).toStrictEqual([]);
+    expect(
+      screen
+        .getByRole("button", { name: "Toggle dark mode" })
+        .getAttribute("aria-pressed")
+    ).toBe("true");
+
+    act(() => {
+      root?.unmount();
     });
   });
 });

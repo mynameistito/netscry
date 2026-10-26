@@ -1,5 +1,11 @@
 import { Moon, Sun } from "lucide-react";
 import { useTheme } from "next-themes";
+import { useSyncExternalStore } from "react";
+
+// eslint-disable-next-line no-empty-function -- The client/server snapshot difference is one-time; there is no external store to subscribe to.
+const subscribe = () => () => {};
+const getClientSnapshot = () => true;
+const getServerSnapshot = () => false;
 
 /**
  * Renders an accessible control for switching between light and dark themes.
@@ -7,7 +13,14 @@ import { useTheme } from "next-themes";
  */
 export const ThemeToggle = () => {
   const { resolvedTheme, setTheme } = useTheme();
-  const isDark = resolvedTheme === "dark";
+
+  const mounted = useSyncExternalStore(
+    subscribe,
+    getClientSnapshot,
+    getServerSnapshot
+  );
+
+  const isDark = mounted && resolvedTheme === "dark";
 
   return (
     <button
