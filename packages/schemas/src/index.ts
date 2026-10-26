@@ -45,6 +45,13 @@ export {
   UnavailableReasonSchema,
 } from "./metadata.ts";
 
+export {
+  RdapBootstrapRegistrySchema,
+  RdapBootstrapServiceSchema,
+} from "./rdap.ts";
+
+export type { RdapBootstrapRegistry, RdapBootstrapService } from "./rdap.ts";
+
 export type {
   DataSource,
   RawCloudflareMetadata,
