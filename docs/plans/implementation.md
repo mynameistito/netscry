@@ -32,6 +32,7 @@
 - Official sources reviewed: <https://effect.website/docs/v4/schema/introduction>, <https://effect.website/docs/v4/schema/filters>, <https://tanstack.com/start/latest/docs/framework/react/guide/hosting>, <https://developers.cloudflare.com/workers/framework-guides/web-apps/tanstack-start/>, <https://ui.shadcn.com/docs/monorepo>, <https://ui.shadcn.com/docs/installation/tanstack>, <https://www.mapcn.dev/docs/installation>, <https://www.npmjs.com/package/blume>, <https://github.com/mynameistito/alchemy-deploy>.
 - IP special-purpose classification follows the IANA <https://www.iana.org/assignments/iana-ipv4-special-registry> and <https://www.iana.org/assignments/iana-ipv6-special-registry>; the registries explicitly caution that special-purpose allocation alone does not guarantee routability.
 - ASN parsing uses the IANA <https://www.iana.org/assignments/as-numbers> registry's 32-bit range and its reserved endpoint values; numeric normalization does not claim the number is allocated.
+- Domain normalization uses the WHATWG URL Standard's domain-to-ASCII processing for IDNA lookup and RFC 5891's A-label requirements (<https://url.spec.whatwg.org/>, <https://www.rfc-editor.org/rfc/rfc5891.html>).
 - Blume workspace configuration and its static build follow the official <https://useblume.dev/docs/quickstart>, <https://useblume.dev/docs/configuration/theming>, and <https://useblume.dev/docs/cli> references.
 - Bun workspace filters target each app; `concurrently` manages both processes and kills their process trees on interruption. Blume accepts explicit host/port options, while Vite also supports strict port binding (<https://bun.sh/docs/pm/filter>, <https://github.com/open-cli-tools/concurrently>, <https://useblume.dev/docs/cli>).
 - The map setup follows mapcn's current <https://www.mapcn.dev/docs/installation> and <https://www.mapcn.dev/docs/basic-map> guidance. OpenFreeMap's <https://openfreemap.org/quick_start/> and <https://openfreemap.org/tos/> document its public MapLibre styles, required attribution, and terms.
@@ -108,7 +109,9 @@
 - [x] Add standards-informed IP classification to the portable core package, with IPv4/IPv6 special-purpose boundary tests.
   - Commit: `e689265`
   - Verified: targeted Ultracite, strict typecheck, all 104 tests, and web Cloudflare production build pass. Full `bun run check` still reports only the documented baseline formatting errors in `PROMPT.md` and `README.md`.
-- [ ] Add ASN normalization and validation to the portable core package, with boundary tests.
+- [x] Add ASN normalization and validation to the portable core package, with boundary tests.
+  - Commit: `efae476`
+  - Verified: targeted Ultracite, strict typecheck, all 118 tests, and web Cloudflare production build pass. Full `bun run check` still reports only the documented baseline formatting errors in `PROMPT.md` and `README.md`.
 - [ ] Add IDNA-aware domain normalization to the portable core package, with boundary tests.
 - [ ] Add DNS record utilities to the portable core package, with typed records and unit tests.
 - [ ] Add network data formatting, geographic distance, and RTT/jitter calculations to the portable core package, with unit tests.
