@@ -1,0 +1,30 @@
+---
+title: Runtime data modes
+description: How live requests, local development, and test fixtures are separated.
+---
+
+# Runtime data modes
+
+NetScry labels request metadata by its source. Local development does not pretend to be a Cloudflare edge request, and deterministic fixtures are kept out of the public runtime.
+
+## Live Cloudflare requests
+
+In the deployed Worker, `/api/v1/me` uses the `cloudflare-request` source. It reads the connecting address from Cloudflare's `cf-connecting-ip` request header and reads other values from Cloudflare's request properties when available. The service validates these values against the shared schemas. A missing or invalid property is returned as unavailable with a reason.
+
+Cloudflare request properties vary by runtime and product. Availability in a deployed request is not guaranteed, and security signals can be restricted by product or plan. A value's source and sensitivity are included in the response.
+
+## Local development
+
+The `/api/v1/me` handlers select `local-runtime` when the application is running in development mode. The local metadata adapter deliberately marks the visitor IP and Cloudflare Ray ID unavailable, even if a request contains headers with those names. Other Cloudflare-specific fields are shown only if the local runtime actually exposes them, and are labeled as local-runtime data.
+
+Start the web application with `bun run dev:web`. This runs the Alchemy dev stage for the Cloudflare Worker application; it does not deploy the live stack. `bun run dev` starts the web app and the documentation site together. The docs-only development server is `bun --filter @netscry/docs dev`.
+
+Local mode applies to the current-request dashboard. Public lookup routes still perform their configured lookups against DNS, RDAP, or RouteViews providers. Local IP parsing and address-purpose classification are computed by NetScry's shared code.
+
+## Test fixtures
+
+The server has a deterministic fixture service for tests. Its sample address and location are documentation-range/example values, and its fields use the `fixture` source label. The running application does not select this layer through an environment variable or public route, and the web interface does not present fixture values as live visitor data.
+
+## Check the mode
+
+Look at the source label and availability reason beside a value in the dashboard or `/api/v1/me` response. In development, a `local-runtime` source means the value came from the local request adapter; an unavailable value does not imply that the corresponding Cloudflare property is missing in a live deployment.
