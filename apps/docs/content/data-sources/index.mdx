@@ -1,0 +1,46 @@
+---
+title: Data sources and limits
+description: Provenance, scope, and limitations for NetScry's network data.
+---
+
+# Data sources and limits
+
+NetScry combines local calculations, request metadata from Cloudflare, and public data from external providers. A result should be read with its source, observation time, and scope in mind.
+
+| Result | Source | What it means | Main limitation |
+| --- | --- | --- | --- |
+| IP syntax and purpose | NetScry's shared core and selected IANA special-purpose ranges | Parses an address or CIDR and identifies selected reserved, private, and special-purpose categories | The local table is a selected snapshot. `unclassified` does not mean globally reachable or public. |
+| Current request fields | Cloudflare request headers and `request.cf` properties | Metadata Cloudflare exposes for the request reaching this Worker | Values depend on the Cloudflare runtime, product, and plan; some are personal or sensitive and can be unavailable. |
+| IP, ASN, and domain registration | IANA RDAP bootstrap data and the authoritative registry RDAP service | Registration objects reported by the relevant Internet registry | Registration records describe registry data, not reachability, ownership guarantees, or the current BGP route. |
+| DNS answers | Cloudflare's public DNS-over-HTTPS JSON resolver | Recursive resolver answers for the queried name and type | A recursive answer is not proof of an authoritative record. See [DNS lookup behavior](/data-sources/dns). |
+| Announced prefixes and observed paths | RouteViews API and its participating collectors | Routes and peer paths observed in the available RouteViews data | Collector coverage is partial; it is not a complete or universal view of the global routing table. |
+| Visitor IP location | Coordinates Cloudflare exposes for the request | Approximate network-level location when both coordinates are present | It is not a device's precise location; coordinates can be absent or approximate. |
+| Connected-colo map marker | Cloudflare status location codes matched to OurAirports IATA references | Airport coordinate associated with a Cloudflare colo code | The marker is an airport reference, not a Cloudflare data-center coordinate. Anycast can use a different colo. |
+
+## Cloudflare request metadata
+
+The deployed Worker reads the incoming connecting IP from `cf-connecting-ip` and other Cloudflare-specific properties from the Worker's `request.cf` object. Cloudflare documents `request.cf` as a Workers-only extension; fields such as ASN, organization, location, colo, protocol, TLS, and bot-management details are available according to the runtime and product. NetScry validates values and attaches a source, sensitivity, and unavailable reason instead of assuming every property exists. See [Cloudflare Workers Request](https://developers.cloudflare.com/workers/runtime-apis/request/) for the runtime surface.
+
+Cloudflare colo codes are three-letter IATA airport codes for nearby major airports. They identify a useful location reference, not the exact data-center facility. Cloudflare's [troubleshooting guide](https://developers.cloudflare.com/support/troubleshooting/general-troubleshooting/gathering-information-for-troubleshooting-sites/) explains the colo code, and its [geographic traffic routing guide](https://developers.cloudflare.com/support/troubleshooting/general-troubleshooting/geographic-traffic-routing/) describes why anycast may not route to the geographically nearest data center.
+
+## Local calculations
+
+IPv4/IPv6 parsing, CIDR containment, ASN syntax, and network formatting run in NetScry's shared core. The address-purpose classifier covers selected ranges from the [IANA IPv4 special-purpose registry](https://www.iana.org/assignments/iana-ipv4-special-registry) and [IANA IPv6 special-purpose registry](https://www.iana.org/assignments/iana-ipv6-special-registry). The code does not automatically download these registries; update and review the local rules as a code change. As IANA notes, special-purpose classification does not by itself promise routability in a particular local or global context.
+
+## RDAP registration
+
+NetScry uses IANA's bootstrap registries to select a registry server for an IP address, ASN, or domain. This follows [RFC 9224](https://www.rfc-editor.org/rfc/rfc9224.html), which defines discovery of the authoritative RDAP service. Bootstrap documents are cached for up to 24 hours by a Worker isolate; query results are fetched from the selected registry and normalized into the shared response schema.
+
+The registry may return different fields for different object types or regions, and some public contact fields may be redacted. An RDAP record describes registry-reported registration data; it does not establish whether an address is reachable or a prefix is currently routed. See [IANA's RDAP bootstrap files](https://data.iana.org/rdap/).
+
+## RouteViews
+
+ASN prefix lists and prefix route observations come from the [RouteViews API](https://api.routeviews.org/docs/). RouteViews documents that its API uses a subset of its global collector infrastructure and the latest data available from participating exchanges. A missing route can mean no matching observation in that dataset; it is not proof that a prefix is unannounced everywhere. Timestamps, collector names, peer addresses, and AS paths are retained where available so the observation can be interpreted in context.
+
+## Location references
+
+Cloudflare's published location-code list is matched to airport records from [OurAirports](https://ourairports.com/data/). OurAirports releases its data to the public domain and disclaims accuracy guarantees. The bundled snapshot was generated on 27 October 2026 and contains 329 explicit code matches from 341 Cloudflare location codes available at that time. Unknown and unmatched codes remain unavailable; the map does not guess a location.
+
+## DNS
+
+DNS lookup behavior, supported record types, negative caching, resolver attribution, and query privacy are documented in [DNS lookups](/data-sources/dns). NetScry uses Cloudflare's [DNS-over-HTTPS JSON endpoint](https://developers.cloudflare.com/1.1.1.1/encryption/dns-over-https/make-api-requests/dns-json/). These JSON answers follow the resolver's view at lookup time, not an authoritative DNS zone transfer.

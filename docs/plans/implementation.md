@@ -329,10 +329,13 @@
   - Commit: `bcda207`
   - Documented request metadata sensitivity, the configured address-keyed lookup rate limit, provider query disclosure, browser-local diagnostics and HTTP timings, OpenFreeMap requests, and the boundary between application behavior and platform/provider retention.
   - Verification: Blume production build, doctor, link validation, and Oxfmt pass.
-- [ ] Document live, local development, and fixture data behavior.
+- [x] Document live, local development, and fixture data behavior.
+  - Commit: `cbeb2a3`
   - Documented live Cloudflare metadata, local-mode IP/Ray withholding, provider-backed lookups during local development, and the test-only fixture service.
-  - Validation before commit: Blume production build, doctor, link validation, and Oxfmt pass.
+  - Verification: Blume production build, doctor, link validation, and Oxfmt pass.
 - [ ] Document data source provenance and limitations for Cloudflare metadata, DNS, RDAP, RouteViews, and location references.
+  - Added a source matrix and detailed descriptions of local IANA ranges, Cloudflare request metadata/colo, RDAP bootstrap and scope, partial RouteViews coverage, DNS resolver behavior, and the versioned airport-reference snapshot.
+  - Validation before commit: Blume production build, doctor, link validation, and Oxfmt pass.
 - [ ] Document every implemented API v1 route with request, response, error, and availability behavior.
 - [ ] Document SDK installation constraints, Effect usage, supported methods, and consumer examples.
 - [ ] Document development, validation, build, and Alchemy deployment workflows without enabling deployment.
