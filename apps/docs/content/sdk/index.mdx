@@ -1,0 +1,118 @@
+---
+title: TypeScript SDK
+description: Current package status, client setup, Effect usage, methods, and errors.
+---
+
+# TypeScript SDK
+
+`@netscry/sdk` is a small TypeScript client for NetScry's versioned HTTP API. It uses the standard Fetch interface, validates successful responses against the shared `@netscry/schemas` contracts, and returns Effect values.
+
+## Availability and installation
+
+The SDK and its `@netscry/schemas` and `@netscry/core` dependencies are private workspace packages. The package names and project license have not been cleared for public distribution, so the packages cannot currently be installed from npm. Do not add an npm dependency on `@netscry/sdk` yet.
+
+Inside a checkout of this repository, use the Bun workspace packages directly. Build the ESM and declaration artifacts before using them from a Node consumer:
+
+```sh
+bun install
+bun run build:packages
+```
+
+The packages declare Node.js 20 or newer and emit ESM JavaScript with TypeScript declarations. `bun run verify:packages` also runs the SDK consumer smoke check. These build artifacts make the workspace package boundary testable; they do not make the private packages available from a registry.
+
+## Create a client
+
+Pass the origin of a deployed NetScry API as `baseUrl`. The SDK uses global `fetch` unless a Fetch-compatible function is supplied. Every request asks for JSON and uses the schemas package to validate the decoded response.
+
+```ts
+import { NetScrySdkError, createNetScryClient } from "@netscry/sdk";
+import { Effect } from "effect";
+
+const netscry = createNetScryClient({
+  baseUrl: "https://netscry.example",
+});
+
+const health = await Effect.runPromise(netscry.health());
+console.log(health.status, health.version);
+```
+
+The client accepts an absolute HTTP or HTTPS URL without embedded credentials. API paths are rooted at the origin, so provide the host origin rather than a deployment subpath. For local development, use the origin printed by the local NetScry web server.
+
+## Available methods
+
+| Method | API route | Input | Success type |
+| --- | --- | --- | --- |
+| `health()` | `/api/v1/health` | None | `ApiHealthResponse` |
+| `me()` | `/api/v1/me` | None | `ApiMeResponse` |
+| `lookupNetwork(addressOrCidr)` | `/api/v1/ip/{address-or-cidr}` | IPv4/IPv6 address or CIDR | `PublicNetworkLookupResponse` |
+| `lookupAsn(asn)` | `/api/v1/asn/{asn}` | ASN as text, optionally prefixed with `AS` | `PublicAsnLookupResponse` |
+| `lookupBgp(prefix)` | `/api/v1/bgp?prefix=...` | Address or CIDR prefix | `PublicBgpPrefixLookupResponse` |
+| `lookupDns(query, recordType?)` | `/api/v1/dns/{query}` | DNS name or reverse lookup address; optional `DnsRecordType` | `DnsLookupResponse` |
+| `lookupRdapIp(addressOrCidr)` | `/api/v1/rdap/ip/{address-or-cidr}` | IP address or CIDR | `RdapNormalizedRecord` |
+| `lookupRdapDomain(domain)` | `/api/v1/rdap/domain/{domain}` | Domain name | `RdapNormalizedRecord` |
+
+Path values are URL-encoded by the client. The BGP prefix is encoded as a query parameter. If `recordType` is omitted, the API defaults to `A`. The SDK currently provides the complete `/me` snapshot; use the HTTP API directly for the granular `/me/{endpoint}` routes and text/plain negotiation. See the [API v1 guide](/api/v1) for route inputs, output details, rate limits, and caching.
+
+Response types are exported through the schemas package rather than redefined by the SDK. Data fields preserve their `_tag` availability state and source metadata. Check `_tag` before reading `.value`:
+
+```ts
+const visitor = await Effect.runPromise(netscry.me());
+const ip = visitor.network.ip;
+
+if (ip._tag === "Available") {
+  console.log(ip.value.address, ip.source);
+} else {
+  console.log("IP unavailable:", ip.reason);
+}
+```
+
+## Inject Fetch
+
+Supply any standard Fetch-compatible function to customize transport or tests. The SDK passes an `AbortSignal` to each request, so Effect interruption can cancel an in-flight fetch.
+
+```ts
+const netscry = createNetScryClient({
+  baseUrl: "https://netscry.example",
+  fetch: (input, init) =>
+    fetch(input, {
+      ...init,
+      headers: {
+        ...init?.headers,
+        "x-client-name": "internal-tool",
+      },
+    }),
+});
+```
+
+For tests, return a `Response` from a stubbed Fetch function and pass the resulting Effect to `Effect.runPromise`, `Effect.runPromiseExit`, or another Effect runtime API. The SDK does not install global hooks or keep state between calls.
+
+## Failures
+
+Every method returns an `Effect` that may fail with the tagged `NetScrySdkError`. Its `reason` is one of:
+
+| Reason | Meaning |
+| --- | --- |
+| `configuration` | The base URL is invalid or uses a disallowed protocol |
+| `network` | Fetch could not reach the API |
+| `http` | The API returned a non-success status; `status` and, when decoded, API `code` are included |
+| `invalid-json` | A successful response did not contain readable JSON |
+| `invalid-response` | A successful JSON response did not match the shared schema |
+
+Handle expected failures in the Effect flow or at the runtime boundary. For example:
+
+```ts
+try {
+  const result = await Effect.runPromise(
+    netscry.lookupDns("example.com", "MX")
+  );
+  console.log(result.records);
+} catch (cause) {
+  if (cause instanceof NetScrySdkError) {
+    console.error(cause.reason, cause.status, cause.code, cause.message);
+  } else {
+    throw cause;
+  }
+}
+```
+
+Import `NetScrySdkError` alongside `createNetScryClient` to use the type guard in this example. Error messages intentionally omit raw provider response bodies. API `429` rate limits and other HTTP failures are reported as `reason: "http"` with the status and recognized API error code.

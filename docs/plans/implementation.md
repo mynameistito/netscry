@@ -337,10 +337,13 @@
   - Commit: `e36a38f`
   - Added a source matrix and detailed descriptions of local IANA ranges, Cloudflare request metadata/colo, RDAP bootstrap and scope, partial RouteViews coverage, DNS resolver behavior, and the versioned airport-reference snapshot.
   - Validation before commit: Blume production build, doctor, link validation, and Oxfmt pass.
-- [ ] Document every implemented API v1 route with request, response, error, and availability behavior.
+- [x] Document every implemented API v1 route with request, response, error, and availability behavior.
+  - Commit: `66edbcf`
   - Implementation: add `apps/docs/content/api/v1/index.mdx` with the current route inventory, inputs, examples, availability envelope, content negotiation, error codes, rate limit, cache behavior, and links to provenance/runtime guidance. Link it from the docs landing page.
   - Validation: docs production build, Blume doctor, link validation, and Oxfmt pass. Blume `check` stalled at page type-checking without diagnostics and was stopped; retry during phase validation.
 - [ ] Document SDK installation constraints, Effect usage, supported methods, and consumer examples.
+  - Implementation: add `apps/docs/content/sdk/index.mdx` describing the private workspace-only package boundary, Node/ESM build requirements, client setup, Effect results, availability fields, supported methods, injectable Fetch, and tagged errors. Link it from the docs landing page.
+  - Validation: docs production build, Blume doctor, link validation, and Oxfmt pass. Blume `check` stalled at page type-checking without diagnostics and was stopped; retry during phase validation.
 - [ ] Document development, validation, build, and Alchemy deployment workflows without enabling deployment.
 - [ ] Generate or validate API documentation from canonical schemas/contracts and ensure docs builds detect stale required artifacts.
 - [ ] Add consumer-facing READMEs, license/repository metadata, package contents checks, and runtime support declarations for publishable packages.
