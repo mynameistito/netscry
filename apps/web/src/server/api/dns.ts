@@ -89,6 +89,15 @@ export const handleDnsLookup = async (
   return await respondWithApiEffect(
     request,
     DnsLookupResponseSchema,
-    runLookup(query, recordType, serviceLayer)
+    runLookup(query, recordType, serviceLayer),
+    {
+      cacheControlFor: (response) => {
+        const ttl = Math.min(response.cacheTtlSeconds ?? 0, 60);
+
+        return ttl === 0
+          ? "no-store"
+          : `public, max-age=${ttl}, s-maxage=${ttl}, stale-while-revalidate=0`;
+      },
+    }
   );
 };

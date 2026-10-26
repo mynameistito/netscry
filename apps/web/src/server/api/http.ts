@@ -30,6 +30,8 @@ const API_SECURITY_HEADERS = {
 
 interface ApiResponseOptions<Body> {
   readonly plainText?: (body: Body) => string | null;
+  readonly cacheControl?: string;
+  readonly cacheControlFor?: (body: Body) => string;
 }
 
 const parseAcceptHeader = (header: string): readonly AcceptedMediaRange[] =>
@@ -147,9 +149,13 @@ export const negotiateApiRepresentation = (
   )[0]?.representation;
 };
 
-const apiJsonResponse = (body: typeof Schema.Json.Type, status = 200) =>
+const apiJsonResponse = (
+  body: typeof Schema.Json.Type,
+  status = 200,
+  cacheControl = "no-store"
+) =>
   new Response(JSON.stringify(body) ?? "null", {
-    headers: API_SECURITY_HEADERS,
+    headers: { ...API_SECURITY_HEADERS, "Cache-Control": cacheControl },
     status,
   });
 
@@ -245,7 +251,10 @@ export const respondWithApiEffect = async <
             : apiTextResponse(text);
         }
 
-        return apiJsonResponse(body);
+        const cacheControl =
+          options.cacheControlFor?.(body) ?? options.cacheControl;
+
+        return apiJsonResponse(body, 200, cacheControl);
       },
     })
   );

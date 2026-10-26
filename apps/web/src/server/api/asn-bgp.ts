@@ -61,7 +61,11 @@ export const handleAsnLookup = async (
   return await respondWithApiEffect(
     request,
     PublicAsnLookupResponseSchema,
-    runAsnLookup(candidate, serviceLayer)
+    runAsnLookup(candidate, serviceLayer),
+    {
+      cacheControl:
+        "public, max-age=60, s-maxage=300, stale-while-revalidate=600",
+    }
   );
 };
 
@@ -114,7 +118,11 @@ export const handleBgpPrefixLookup = async (
   return await respondWithApiEffect(
     request,
     PublicBgpPrefixLookupResponseSchema,
-    runPrefixLookup(candidate, serviceLayer)
+    runPrefixLookup(candidate, serviceLayer),
+    {
+      cacheControl:
+        "public, max-age=60, s-maxage=300, stale-while-revalidate=600",
+    }
   );
 };
 

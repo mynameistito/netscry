@@ -43,7 +43,11 @@ const handleLookup = async (
   return await respondWithApiEffect(
     request,
     RdapNormalizedRecordSchema,
-    runLookup(target, serviceLayer)
+    runLookup(target, serviceLayer),
+    {
+      cacheControl:
+        "public, max-age=60, s-maxage=300, stale-while-revalidate=600",
+    }
   );
 };
 

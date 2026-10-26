@@ -220,10 +220,14 @@
   - Commit: `6fe746c`
   - Implementation: add schema-inferred ASN prefix, route origin, RPKI, peer, AS-path, community, and observation fields; combine the existing IANA-bootstrap RDAP holder with the fixed-origin RouteViews API through injected Effect services. Each provider result carries public-source availability; a failure from one preserves the other source's data. RouteViews observations explicitly disclose partial collector coverage.
   - Verification run: eight focused service cases cover canonical ASNs, IPv4/IPv6 prefix lists, schema-valid outputs, RouteViews attribution, IP-to-host-prefix normalization, observed origins/RPKI/peers, empty observations, invalid inputs, malformed responses, and independent RDAP/RouteViews failures. Full suite passes (344 tests), strict typecheck, targeted Ultracite, and web production build pass. Full `bun run check` still reports only the documented baseline formatting errors in unchanged `PROMPT.md` and `README.md`.
-- [ ] Expose ASN and prefix-origin lookups through schema-validated REST API routes: `GET /api/v1/asn/:asn` and `GET /api/v1/bgp?prefix=…`.
+- [x] Expose ASN and prefix-origin lookups through schema-validated REST API routes: `GET /api/v1/asn/:asn` and `GET /api/v1/bgp?prefix=…`.
+  - Commit: `50d674f`
   - Implementation: route both lookups through the shared JSON negotiation, response schema, safe error mapping, and security headers; reject malformed, repeated, missing, and oversized inputs before provider work. Register TanStack file routes and generated route types. Public prefix queries accept IPv4/IPv6 addresses or CIDR ranges.
   - Verification run: 15 focused API cases cover ASN and IPv4/IPv6 CIDR routing, schema-valid output, partial source availability, invalid/repeated/missing input, unsupported `Accept`, and safe provider failures. Full suite passes (359 tests), strict typecheck, targeted Ultracite, and web production build pass. Full `bun run check` still reports only the documented baseline formatting errors in unchanged `PROMPT.md` and `README.md`.
-- [ ] Add public lookup cache policies, timeout/size/redirect protections, rate limiting, and provider failure tests.
+- [ ] Apply bounded public cache policies to public lookup responses while preserving `no-store` for visitor-specific API responses.
+  - Implementation: serve public IP, RDAP, ASN, and BGP lookups with short browser/shared-cache lifetimes; cap DNS HTTP cache freshness at the resolver-provided TTL and 60 seconds; keep zero-TTL or TTL-unknown DNS responses uncached. The existing Effect DNS cache remains TTL-aware, and the shared provider HTTP client already enforces pinned HTTPS origins, redirects blocked, an 8-second timeout, and a 1 MiB response limit.
+  - Verification run: all four public API suites pass (54 tests), the full suite passes (360 tests), strict typecheck and the production web build pass, and targeted Ultracite passes. Full `bun run check` reports only the pre-existing formatting issues in unchanged `PROMPT.md` and `README.md`.
+- [ ] Configure the native Cloudflare RateLimit binding for public lookups and add typed Effect adapter, enforcement, and provider-failure tests.
 - [ ] Build lookup search and IP, ASN, domain, RDAP, DNS, and BGP detail views with provenance and uncertainty labels.
 
 ## Phase 6 — Diagnostics and mapping

@@ -83,7 +83,11 @@ export const handlePublicIpLookup = async (
           source: "derived" as const,
           method: "canonical-cidr-arithmetic" as const,
         },
-      })
+      }),
+      {
+        cacheControl:
+          "public, max-age=60, s-maxage=300, stale-while-revalidate=600",
+      }
     );
   }
 
@@ -125,6 +129,10 @@ export const handlePublicIpLookup = async (
         source: "derived" as const,
         method: "selected-ip-purpose-ranges" as const,
       },
-    })
+    }),
+    {
+      cacheControl:
+        "public, max-age=60, s-maxage=300, stale-while-revalidate=600",
+    }
   );
 };

@@ -72,12 +72,25 @@ describe("public DNS lookup API", () => {
       contentType: response.headers.get("content-type"),
     }).toStrictEqual({
       status: 200,
-      cacheControl: "no-store",
+      cacheControl: "public, max-age=60, s-maxage=60, stale-while-revalidate=0",
       contentType: "application/json; charset=utf-8",
     });
     expect(body).toStrictEqual(dnsResponse);
     expect(receivedQuery).toBe("Example.com.");
     expect(receivedType).toBe("A");
+  });
+
+  it("does not cache DNS responses without a positive resolver TTL", async () => {
+    const response = await handleDnsLookup(
+      requestFor("example.com"),
+      "example.com",
+      makeServiceLayer(() =>
+        Effect.succeed({ ...dnsResponse, cacheTtlSeconds: 0 })
+      )
+    );
+
+    expect(response.status).toBe(200);
+    expect(response.headers.get("cache-control")).toBe("no-store");
   });
 
   it.each([
