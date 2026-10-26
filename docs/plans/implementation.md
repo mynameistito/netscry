@@ -29,6 +29,7 @@
 - The checked-out `mynameistito/alchemy-deploy` repository provides a root action pinned to an immutable release SHA, `workflow_run` exact-SHA gating, and artifact-backed previews. The latest local release tag is v3.1.8 at `68f577f3032660bd4919dfcc5725db21d5b64f9d`; inspect that exact release's template/interface before deployment integration. CI builds must not receive deployment credentials.
 - Registry metadata checked during setup: TanStack Start `1.169.4` requires Vite 8 and React; React `19.3.1`, Vite `8.3.5`, Cloudflare Vite plugin `1.65.0` (Vite 6/7/8, Wrangler 4.152+), Tailwind Vite plugin `4.3.3`, Effect `4.0.6`, Alchemy `2.0.0-beta.84` (Vite 8.0.7+, Effect 4.0.5+), Blume `2.2.6` (Node 22.19+), Vitest `5.0.5` (Node 22.12+), and Playwright `1.64.1` (Node 20+) are mutually aligned for this Bun 1.4.4 project. Alchemy's beta API is the current published release and will be validated against its official docs/types before infrastructure implementation.
 - Wrangler `4.152.0` local dev rejected compatibility date `2026-10-27` as unsupported; `2026-10-19` starts the Worker-mode dev server successfully. Revisit this date when the Wrangler/Miniflare bundle supports a newer date.
+- Alchemy `2.0.0-beta.84`'s documented `bun alchemy dev` path failed on Windows because the Worker child attempted to import the omitted `bin/register-dev-mode.js`; `node node_modules/alchemy/bin/cli.js dev` started the Vite/Worker stack and returned HTTP 200. Local scripts use the Node CLI entry while dependency issue is unresolved. Alchemy's Windows Ctrl+C path left a local sidecar process, which was stopped after verification; this shutdown behavior remains under review.
 - Official sources reviewed: <https://effect.website/docs/v4/schema/introduction>, <https://effect.website/docs/v4/schema/filters>, <https://tanstack.com/start/latest/docs/framework/react/guide/hosting>, <https://developers.cloudflare.com/workers/framework-guides/web-apps/tanstack-start/>, <https://ui.shadcn.com/docs/monorepo>, <https://ui.shadcn.com/docs/installation/tanstack>, <https://www.mapcn.dev/docs/installation>, <https://www.npmjs.com/package/blume>, <https://github.com/mynameistito/alchemy-deploy>.
 - IP special-purpose classification follows the IANA <https://www.iana.org/assignments/iana-ipv4-special-registry> and <https://www.iana.org/assignments/iana-ipv6-special-registry>; the registries explicitly caution that special-purpose allocation alone does not guarantee routability.
 - ASN parsing uses the IANA <https://www.iana.org/assignments/as-numbers> registry's 32-bit range and its reserved endpoint values; numeric normalization does not claim the number is allocated.
@@ -127,7 +128,11 @@
 - [x] Add the current Alchemy CLI and Cloudflare provider packages as pinned workspace development dependencies.
   - Commit: `2482b3b`
   - Verified: exact beta.84 package metadata checked; frozen-lockfile install, strict typecheck, and targeted Ultracite pass.
-- [ ] Add Alchemy's required Effect Node platform peer for Worker bundling and local development.
+- [x] Add Alchemy's required Effect Node platform peer for Worker bundling and local development.
+  - Commit: `82f75e4`
+  - Verified: frozen-lockfile install, strict typecheck, and targeted Ultracite pass.
+- [ ] Add a cross-platform process-tree termination dependency for Alchemy local development.
+- [ ] Implement an Alchemy dev launcher that clears Bun's inherited npm exec path and stops the entire Worker process tree on shutdown.
 - [ ] Define Alchemy-managed Worker infrastructure and typed native bindings, stage separation, and local development behavior.
 - [ ] Implement metadata availability/source/units/sensitivity modeling and safe raw metadata output with redaction tests.
 

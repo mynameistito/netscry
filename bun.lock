@@ -25,6 +25,7 @@
         "oxlint": "^1.89.0",
         "oxlint-plugin-react-doctor": "^0.9.18",
         "oxlint-tsgolint": "^7.0.2005",
+        "tree-kill": "1.2.2",
         "typescript": "npm:@typescript/typescript6@^6.0.2",
         "ultracite": "8.1.0",
         "vitest": "5.0.5",
