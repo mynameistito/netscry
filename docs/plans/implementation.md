@@ -59,10 +59,13 @@
 - [x] Add `@netscry/schemas` with Effect Schema contracts for provenance, availability, sensitivity, and typed network/visitor metadata.
   - Commit: `56e26d1`
   - Verified: 11 schema decode cases pass; shared typecheck passes; targeted Ultracite and frozen-lockfile checks pass.
-- [ ] Complete shared TypeScript settings and root check, typecheck, test, build, and development commands across workspaces while preserving Ultracite.
+- [x] Complete shared TypeScript settings and root check, typecheck, test, build, and development commands across workspaces while preserving Ultracite.
+  - Commit: `5ec1583`
   - Implementation: keep the strict shared root TypeScript config and make root typecheck also run the web app's own TypeScript config. Add a root build for the web and Blume docs workspaces; aggregate scoped Ultracite code checks and Blume check/doctor/link validation while excluding the known baseline root `PROMPT.md` and `README.md` formatting failures. Existing root test and combined dev commands remain the workspace entrypoints.
   - Verification run: `bun run check`, `bun run typecheck`, `bun run test` (402 tests), and `bun run build` all pass. Web build retains its existing MapLibre chunk-size and CSS sourcemap advisories. The docs build emits static pages and agent files.
 - [ ] Add CI checks for formatting/lint, typechecking, tests, and builds without deployment credentials.
+  - Implementation: add a least-privilege GitHub Actions workflow for pull requests and pushes to `main`. Pin checkout and Bun setup actions to immutable commit SHAs, disable persisted checkout credentials, install with the frozen lockfile, and run the root check, typecheck, test, and production build commands. The workflow has no deployment steps or secret references.
+  - Verification run: `actionlint .github/workflows/ci.yml`, `bun install --frozen-lockfile`, `bun run check`, `bun run typecheck`, `bun run test` (402 tests), and `bun run build` all pass. The web build retains its known MapLibre chunk-size and CSS sourcemap advisories.
 - [ ] Add `packages/config` only when shared configuration is justified; `packages/core` and `packages/schemas` are implemented in their own foundation tasks.
 
 ## Phase 2 — Web, docs, and UI foundation
