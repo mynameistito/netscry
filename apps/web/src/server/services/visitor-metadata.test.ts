@@ -54,6 +54,71 @@ const cfMetadata = {
 } satisfies CloudflareVisitorProperties;
 
 describe(VisitorMetadataService, () => {
+  it("reads fast-path identity and location fields with source labels", async () => {
+    const request = requestWithMetadata(
+      { "cf-connecting-ip": "2001:db8::1" },
+      cfMetadata
+    );
+
+    const effect = Effect.gen(function* readFastPaths() {
+      const service = yield* VisitorMetadataService;
+
+      return yield* Effect.all([
+        service.readIp(request),
+        service.readAsn(request),
+        service.readCountry(request),
+        service.readColo(request),
+      ]);
+    }).pipe(Effect.provide(layerLive));
+
+    const [ip, asn, country, colo] = await Effect.runPromise(effect);
+
+    expect(ip).toStrictEqual({
+      _tag: "Available",
+      source: "cloudflare-request",
+      value: { address: "2001:db8::1", version: 6 },
+      sensitivity: "personal",
+    });
+    expect(asn).toMatchObject({
+      _tag: "Available",
+      source: "cloudflare-request",
+      value: 13_335,
+    });
+    expect(country).toMatchObject({
+      _tag: "Available",
+      source: "cloudflare-request",
+      value: "NZ",
+    });
+    expect(colo).toMatchObject({
+      _tag: "Available",
+      source: "cloudflare-request",
+      value: "AKL",
+    });
+  });
+
+  it("does not trust Cloudflare-looking headers for the local IP fast path", async () => {
+    const request = requestWithMetadata(
+      {
+        "cf-connecting-ip": "198.51.100.5",
+        "x-forwarded-for": "192.0.2.9",
+      },
+      cfMetadata
+    );
+
+    const effect = Effect.gen(function* readLocalIp() {
+      const service = yield* VisitorMetadataService;
+
+      return yield* service.readIp(request);
+    }).pipe(Effect.provide(layerLocal));
+
+    await expect(Effect.runPromise(effect)).resolves.toStrictEqual({
+      _tag: "Unavailable",
+      source: "local-runtime",
+      reason: "not-provided",
+      sensitivity: "personal",
+    });
+  });
+
   it("normalizes trusted live Cloudflare properties with provenance", async () => {
     const metadata = await readMetadata(
       layerLive,

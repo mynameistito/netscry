@@ -397,6 +397,21 @@ export interface VisitorMetadataServiceContract {
   readonly read: (
     request: VisitorMetadataRequest
   ) => Effect.Effect<VisitorMetadata, Schema.SchemaError>;
+  readonly readIp: (
+    request: VisitorMetadataRequest
+  ) => Effect.Effect<VisitorMetadata["network"]["ip"], Schema.SchemaError>;
+  readonly readAsn: (
+    request: VisitorMetadataRequest
+  ) => Effect.Effect<VisitorMetadata["network"]["asn"], Schema.SchemaError>;
+  readonly readCountry: (
+    request: VisitorMetadataRequest
+  ) => Effect.Effect<
+    VisitorMetadata["location"]["country"],
+    Schema.SchemaError
+  >;
+  readonly readColo: (
+    request: VisitorMetadataRequest
+  ) => Effect.Effect<VisitorMetadata["edge"]["colo"], Schema.SchemaError>;
 }
 
 /** Effect service boundary for visitor request metadata. */
@@ -409,31 +424,83 @@ const decodeMetadata = Schema.decodeUnknownEffect(VisitorMetadataSchema);
 
 const makeCloudflareReader = (
   source: Exclude<MetadataSource, "fixture">
-): VisitorMetadataServiceContract["read"] =>
-  Effect.fn("VisitorMetadataService.read")(function* read(
+): VisitorMetadataServiceContract => ({
+  read: Effect.fn("VisitorMetadataService.read")(function* read(
     request: VisitorMetadataRequest
   ) {
     return yield* decodeMetadata(fromCloudflareRequest(request, source));
-  });
+  }),
+  readIp: Effect.fn("VisitorMetadataService.readIp")(function* readIp(
+    request: VisitorMetadataRequest
+  ) {
+    const value =
+      source === LOCAL_SOURCE
+        ? unavailable(source, PERSONAL)
+        : ipField(request.headers.get("cf-connecting-ip"), source);
+
+    return yield* Schema.decodeUnknownEffect(
+      VisitorMetadataSchema.fields.network.fields.ip
+    )(value);
+  }),
+  readAsn: Effect.fn("VisitorMetadataService.readAsn")(function* readAsn(
+    request: VisitorMetadataRequest
+  ) {
+    const value = integerField(
+      request.cf?.asn,
+      source,
+      PUBLIC,
+      [0, 4_294_967_295]
+    );
+
+    return yield* Schema.decodeUnknownEffect(
+      VisitorMetadataSchema.fields.network.fields.asn
+    )(value);
+  }),
+  readCountry: Effect.fn("VisitorMetadataService.readCountry")(
+    function* readCountry(request: VisitorMetadataRequest) {
+      const value = stringField(request.cf?.country, source, PERSONAL);
+
+      return yield* Schema.decodeUnknownEffect(
+        VisitorMetadataSchema.fields.location.fields.country
+      )(value);
+    }
+  ),
+  readColo: Effect.fn("VisitorMetadataService.readColo")(function* readColo(
+    request: VisitorMetadataRequest
+  ) {
+    const value = stringField(request.cf?.colo, source, PUBLIC);
+
+    return yield* Schema.decodeUnknownEffect(
+      VisitorMetadataSchema.fields.edge.fields.colo
+    )(value);
+  }),
+});
+
+const makeFixtureReader = (): VisitorMetadataServiceContract => {
+  const metadata = fromCloudflareRequest(fixtureRequest, "fixture");
+
+  return {
+    read: Effect.fn("VisitorMetadataService.readFixture")(function* read() {
+      return yield* decodeMetadata(metadata);
+    }),
+    readIp: () => Effect.succeed(metadata.network.ip),
+    readAsn: () => Effect.succeed(metadata.network.asn),
+    readCountry: () => Effect.succeed(metadata.location.country),
+    readColo: () => Effect.succeed(metadata.edge.colo),
+  };
+};
 
 export const layerLive = Layer.succeed(
   VisitorMetadataService,
-  VisitorMetadataService.of({
-    read: makeCloudflareReader("cloudflare-request"),
-  })
+  VisitorMetadataService.of(makeCloudflareReader("cloudflare-request"))
 );
 
 export const layerLocal = Layer.succeed(
   VisitorMetadataService,
-  VisitorMetadataService.of({
-    read: makeCloudflareReader("local-runtime"),
-  })
+  VisitorMetadataService.of(makeCloudflareReader("local-runtime"))
 );
 
 export const layerFixture = Layer.succeed(
   VisitorMetadataService,
-  VisitorMetadataService.of({
-    read: () =>
-      decodeMetadata(fromCloudflareRequest(fixtureRequest, "fixture")),
-  })
+  VisitorMetadataService.of(makeFixtureReader())
 );
