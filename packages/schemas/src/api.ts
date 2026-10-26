@@ -1,7 +1,69 @@
 import { Schema } from "effect";
 
-import { StringDataFieldSchema } from "./metadata.ts";
-import { NetworkIdentitySchema, VisitorMetadataSchema } from "./network.ts";
+import {
+  createDataFieldSchema,
+  DataSourceSchema,
+  StringDataFieldSchema,
+} from "./metadata.ts";
+import {
+  IpAddressSchema,
+  NetworkIdentitySchema,
+  VisitorMetadataSchema,
+} from "./network.ts";
+
+/** Selected IP purpose categories recognized by the local range table. */
+export const PublicIpClassificationSchema = Schema.Literals([
+  "unspecified",
+  "loopback",
+  "private-use",
+  "shared",
+  "link-local",
+  "documentation",
+  "benchmarking",
+  "multicast",
+  "limited-broadcast",
+  "reserved",
+  "ipv4-mapped",
+  "unique-local",
+  "discard-only",
+  "transition",
+  "unclassified",
+]);
+
+/** Parsed and locally classified IP address lookup response. */
+export const PublicIpLookupResponseSchema = Schema.Struct({
+  kind: Schema.Literals(["address"]),
+  input: Schema.NonEmptyString,
+  address: IpAddressSchema,
+  classification: createDataFieldSchema(PublicIpClassificationSchema),
+  classificationNote: StringDataFieldSchema,
+  provenance: Schema.Struct({
+    source: DataSourceSchema,
+    method: Schema.Literals(["selected-ip-purpose-ranges"]),
+  }),
+}).annotate({ identifier: "PublicIpLookupResponse" });
+
+/** Parsed network range lookup response with canonical bounds and size. */
+export const PublicCidrLookupResponseSchema = Schema.Struct({
+  kind: Schema.Literals(["cidr"]),
+  input: Schema.NonEmptyString,
+  network: Schema.NonEmptyString,
+  version: Schema.Literals([4, 6]),
+  prefixLength: Schema.Int,
+  networkAddress: IpAddressSchema,
+  lastAddress: IpAddressSchema,
+  addressCount: Schema.String,
+  provenance: Schema.Struct({
+    source: DataSourceSchema,
+    method: Schema.Literals(["canonical-cidr-arithmetic"]),
+  }),
+}).annotate({ identifier: "PublicCidrLookupResponse" });
+
+/** Either supported IP lookup result shape. */
+export const PublicNetworkLookupResponseSchema = Schema.Union([
+  PublicIpLookupResponseSchema,
+  PublicCidrLookupResponseSchema,
+]).annotate({ identifier: "PublicNetworkLookupResponse" });
 
 /** Stable status response for the versioned public API. */
 export const ApiHealthResponseSchema = Schema.Struct({
@@ -55,6 +117,7 @@ export const ApiMeTraceResponseSchema = Schema.Struct({
 
 /** Supported machine-readable API failure codes. */
 export const ApiErrorCodeSchema = Schema.Literals([
+  "invalid-input",
   "not-acceptable",
   "not-found",
   "unavailable",
@@ -77,3 +140,17 @@ export type ApiMeResponse = typeof ApiMeResponseSchema.Type;
 
 /** API error response inferred from {@link ApiErrorResponseSchema}. */
 export type ApiErrorResponse = typeof ApiErrorResponseSchema.Type;
+
+/** Locally recognized IP purpose inferred from its schema. */
+export type PublicIpClassification = typeof PublicIpClassificationSchema.Type;
+
+/** Parsed address response inferred from {@link PublicIpLookupResponseSchema}. */
+export type PublicIpLookupResponse = typeof PublicIpLookupResponseSchema.Type;
+
+/** Parsed CIDR response inferred from {@link PublicCidrLookupResponseSchema}. */
+export type PublicCidrLookupResponse =
+  typeof PublicCidrLookupResponseSchema.Type;
+
+/** Union of public address and CIDR lookup responses. */
+export type PublicNetworkLookupResponse =
+  typeof PublicNetworkLookupResponseSchema.Type;

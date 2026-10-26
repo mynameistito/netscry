@@ -177,7 +177,10 @@
 
 ## Phase 5 — Public network intelligence
 
-- [ ] Implement validated IP and CIDR lookup routes/pages, using legitimate sources and never treating current-request `request.cf` data as arbitrary-IP enrichment.
+- [x] Implement schema-validated public IP and CIDR API routes using canonical parsing and local range facts, without treating current-request `request.cf` data as arbitrary-IP enrichment.
+  - Scope: this API returns canonical address/range facts and a clearly limited selected special-purpose classification; RDAP, ASN ownership, geography, and browser lookup views remain in their separate Phase 5 tasks.
+  - Verification run: 10 focused API cases cover IPv4, IPv6, canonical CIDR bounds and exact size, malformed and oversized input, unsupported representations, schema validation, and `no-store`. Full suite passes (251 tests), strict typecheck and web build pass, targeted Ultracite passes.
+  - Existing check findings: `bun run check` reports only baseline formatting issues in unchanged `PROMPT.md` and `README.md`; production build retains the existing large-chunk and CSS sourcemap advisories.
 - [ ] Implement standards-based RDAP bootstrap/discovery for IP, ASN, and domain records with bounded upstream requests and normalization.
 - [ ] Implement DNS lookup routes/pages for the requested record types using a documented resolver and TTL-aware caching.
 - [ ] Implement replaceable public ASN/BGP enrichment for announced prefixes and origin information, with attribution and graceful partial results.

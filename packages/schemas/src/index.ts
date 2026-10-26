@@ -9,12 +9,20 @@ export {
   ApiMeIpResponseSchema,
   ApiMeResponseSchema,
   ApiMeTraceResponseSchema,
+  PublicCidrLookupResponseSchema,
+  PublicIpClassificationSchema,
+  PublicIpLookupResponseSchema,
+  PublicNetworkLookupResponseSchema,
 } from "./api.ts";
 
 export type {
   ApiErrorResponse,
   ApiHealthResponse,
   ApiMeResponse,
+  PublicCidrLookupResponse,
+  PublicIpClassification,
+  PublicIpLookupResponse,
+  PublicNetworkLookupResponse,
 } from "./api.ts";
 
 export {
