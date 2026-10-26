@@ -313,14 +313,23 @@
   - Verification: all three package builds and the SDK Node consumer smoke pass; Oxfmt and both npm/Bun pack dry-runs pass.
 - [ ] Verify npm package name availability/ownership and resolve the project's licensing choice before enabling public SDK/shared package manifests.
   - Discovery: `npm view @netscry/sdk`, `@netscry/core`, and `@netscry/schemas` returned 404 responses that npm documents as either unclaimed names or insufficient access; registry ownership remains unverified. There is no repository LICENSE file or user-provided license choice, so keep packages private and do not assign a license.
-- [ ] Add `@changesets/cli` as a root development dependency.
+- [x] Add `@changesets/cli` as a root development dependency.
   - Commit: `6478db7`
   - Added `@changesets/cli@3.0.3` with Bun and updated the lockfile.
   - Verification: `bun install --frozen-lockfile`, CLI version check, and root package formatting pass.
-- [ ] Configure Changesets versioning and release conventions without publishing packages.
+- [x] Configure Changesets versioning and release conventions without publishing packages.
+  - Commit: `01b592c`
   - Configured the `main` base branch, public access for eventual public scoped releases, generated changelogs, internal dependency updates, and explicit exclusion of private packages from versioning and tags. Added root status/version commands and contributor instructions; no publish command or workflow was added.
-  - Validation before commit: `bun run changeset:status` loads the config and reports no packages to bump; Oxfmt passes.
-- [ ] Write comprehensive Blume documentation for product, privacy, data sources, local modes, every implemented API route, SDK, development, and deployment.
+  - Verification: `bun run changeset:status` loads the config and reports no packages to bump; Oxfmt passes.
+- [ ] Refresh the Blume landing page with the implemented product scope, architecture, and documentation map.
+  - Updated the landing page to describe request and public lookup features, evidence labels and approximation limits, app/package architecture, and the separate Cloudflare Worker and static documentation deployments.
+  - Validation before commit: Blume production build, doctor, link validation, and Oxfmt pass. Blume's separate `check` command stalled without output; retry during broader documentation validation.
+- [ ] Document privacy boundaries, browser-local diagnostics, and third-party request disclosures.
+- [ ] Document live, local development, and fixture data behavior.
+- [ ] Document data source provenance and limitations for Cloudflare metadata, DNS, RDAP, RouteViews, and location references.
+- [ ] Document every implemented API v1 route with request, response, error, and availability behavior.
+- [ ] Document SDK installation constraints, Effect usage, supported methods, and consumer examples.
+- [ ] Document development, validation, build, and Alchemy deployment workflows without enabling deployment.
 - [ ] Generate or validate API documentation from canonical schemas/contracts and ensure docs builds detect stale required artifacts.
 - [ ] Add consumer-facing READMEs, license/repository metadata, package contents checks, and runtime support declarations for publishable packages.
 

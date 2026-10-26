@@ -1,10 +1,32 @@
 ---
 title: NetScry
-description: Guides and references for NetScry's network diagnostics and public lookups.
+description: Product overview and guides for NetScry network diagnostics and public lookups.
 ---
 
 # NetScry
 
-NetScry helps developers inspect their current network context and look up public Internet registration and DNS data.
+NetScry is a network diagnostics workspace for developers. It shows metadata Cloudflare exposes for the current request and looks up public Internet records for an address, network, autonomous system, domain, or DNS name.
 
-These guides distinguish request metadata observed by the edge from records retrieved about an arbitrary address or domain. Each value is described with its source, scope, and units so the evidence behind a result is clear.
+## What you can inspect
+
+- **Current request:** Cloudflare-observed address, network, location, edge, connection, and supported security metadata. Each field includes a source and an availability state. Fields that the runtime does not provide stay unavailable.
+- **IP and network:** syntax, local address-purpose classification, registration data, and observed routing for an IP address or CIDR.
+- **ASN and BGP:** registry information, announced prefixes, RouteViews origin and peer observations, and the collector coverage behind each route result.
+- **Domain and DNS:** registry records and recursive DNS answers. See [DNS lookup behavior](/data-sources/dns) for supported records, caching, resolver attribution, and query privacy.
+- **Connection diagnostics:** optional browser-side diagnostics and five sequential HTTP timings to NetScry's health endpoint. The timings measure an HTTP response path; they are not ICMP latency or packet-level jitter.
+
+## How results are presented
+
+Request metadata, browser values, local classifications, and external registry or routing data are separate evidence sources. NetScry labels the source and sensitivity of available request fields and explains unavailable values rather than filling them with guesses. Registry and routing results remain independent, so a provider failure does not hide unrelated results.
+
+Some visualizations are approximate. The visitor IP map uses coordinates only when Cloudflare supplies them. The connected-colo map marks a nearby airport reference associated with the Cloudflare colo code; it does not show a data-center location, and anycast routing can serve a different colo from the geographically nearest one.
+
+## Architecture
+
+The web application is a TanStack Start application built for Cloudflare Workers. Its server handles the versioned JSON API and makes bounded, schema-validated requests to public data providers. The shared core package contains portable network parsing and calculations; the schemas package defines the API contracts; the SDK wraps those contracts in an Effect-based fetch client.
+
+The documentation site is a separate static Blume application. The repository uses Alchemy to define the Cloudflare Worker stack. Local development uses an isolated Alchemy dev stage; deployment commands target a separate live stage and are not part of normal development.
+
+## Guides
+
+- [DNS lookup behavior](/data-sources/dns)
