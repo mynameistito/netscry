@@ -232,7 +232,8 @@
   - Commit: `e64dd9c`
   - Implementation: bind Cloudflare's approximate 60-requests-per-minute limit through Alchemy; key by the canonical trusted `cf-connecting-ip` header with a fixed fallback; fail closed with a safe 503 if the binding errors and return 429 with `Retry-After` when the limit is exceeded. Keep rate-limit integration in the server-route boundary and use Effect for the typed binding adapter.
   - Verification run: five focused rate-limit cases cover canonical/fallback keys, 429 enforcement before lookup work, safe fail-closed behavior, and typed failures. All 365 tests and strict typecheck pass; targeted Ultracite passes; the web production build passes. Full `bun run check` reports only unchanged baseline formatting in `PROMPT.md` and `README.md`. Local Alchemy dev creates the binding and `/api/v1/ip/198.51.100.4` returns 200 with the expected public cache policy.
-- [ ] Add shared public lookup query classification for IPv4/IPv6, CIDR, ASN, and domain inputs.
+- [x] Add shared public lookup query classification for IPv4/IPv6, CIDR, ASN, and domain inputs.
+  - Commit: `58b4dd6`
   - Implementation: classify query text using the core's existing IP, CIDR, ASN, and IDNA domain parsers; return canonical tagged targets and structured validation errors without coupling the portable core to Effect or a UI framework.
   - Verification run: 17 focused cases cover IPv4/IPv6, canonical IPv4/IPv6 CIDRs, prefixed and numeric ASNs, IDNA domains, URL-like values, and malformed input. All 382 tests, strict typecheck, and targeted Ultracite pass. Full `bun run check` reports only the documented baseline formatting failures in unchanged `PROMPT.md` and `README.md`.
 - [ ] Build public IP detail views with local range facts, RDAP registration, source availability, and links to BGP observations.
