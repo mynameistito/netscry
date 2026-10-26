@@ -18,6 +18,7 @@
   },
   "devDependencies": {
     "@alchemy.run/cloudflare": "2.0.0-beta.84",
+    "@effect/platform-node": "4.0.6",
     "@shadcn/lint": "^0.2.3",
     "@testing-library/react": "^16.3.3",
     "@types/bun": "^1.4.4",

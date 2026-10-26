@@ -35,6 +35,7 @@
 - Domain normalization uses the WHATWG URL Standard's domain-to-ASCII processing for IDNA lookup and RFC 5891's A-label requirements (<https://url.spec.whatwg.org/>, <https://www.rfc-editor.org/rfc/rfc5891.html>).
 - DNS resource data follows RFC 1035 and its type-specific presentation formats, with CAA from RFC 8659 (<https://www.rfc-editor.org/rfc/rfc1035.html>, <https://www.rfc-editor.org/rfc/rfc8659.html>).
 - Approximate geographic distance uses the haversine great-circle calculation with NASA's 6,371 km volumetric mean Earth radius (<https://nssdc.gsfc.nasa.gov/planetary/factsheet/earthfact.html>); latency variation terminology follows the IETF's RFC 3393 (<https://datatracker.ietf.org/doc/rfc3393/>), while the UI calculation is explicitly a browser RTT sample statistic rather than IP packet delay variation.
+- Alchemy-managed Cloudflare deployment and local Vite development follow the official <https://alchemy.run/cloudflare/frontend/tanstack-start/>, <https://alchemy.run/cloudflare/frontend/vite/>, and <https://alchemy.run/environments/local-development/> guides. Alchemy 2.0.0-beta.84 splits provider packages and documents the Vite injection guard in <https://alchemy.run/blog/2026-10-22-beta-84/>.
 - Blume workspace configuration and its static build follow the official <https://useblume.dev/docs/quickstart>, <https://useblume.dev/docs/configuration/theming>, and <https://useblume.dev/docs/cli> references.
 - Bun workspace filters target each app; `concurrently` manages both processes and kills their process trees on interruption. Blume accepts explicit host/port options, while Vite also supports strict port binding (<https://bun.sh/docs/pm/filter>, <https://github.com/open-cli-tools/concurrently>, <https://useblume.dev/docs/cli>).
 - The map setup follows mapcn's current <https://www.mapcn.dev/docs/installation> and <https://www.mapcn.dev/docs/basic-map> guidance. OpenFreeMap's <https://openfreemap.org/quick_start/> and <https://openfreemap.org/tos/> document its public MapLibre styles, required attribution, and terms.
@@ -123,7 +124,10 @@
 - [x] Add network data formatting, geographic distance, and RTT/jitter calculations to the portable core package, with unit tests.
   - Commit: `46fe126`
   - Verified: targeted Ultracite, strict typecheck, all 192 tests, and web Cloudflare production build pass. Full `bun run check` still reports only the documented baseline formatting errors in `PROMPT.md` and `README.md`.
-- [ ] Add the current Alchemy CLI and Cloudflare provider packages as pinned workspace development dependencies.
+- [x] Add the current Alchemy CLI and Cloudflare provider packages as pinned workspace development dependencies.
+  - Commit: `2482b3b`
+  - Verified: exact beta.84 package metadata checked; frozen-lockfile install, strict typecheck, and targeted Ultracite pass.
+- [ ] Add Alchemy's required Effect Node platform peer for Worker bundling and local development.
 - [ ] Define Alchemy-managed Worker infrastructure and typed native bindings, stage separation, and local development behavior.
 - [ ] Implement metadata availability/source/units/sensitivity modeling and safe raw metadata output with redaction tests.
 
