@@ -63,10 +63,12 @@
   - Commit: `5ec1583`
   - Implementation: keep the strict shared root TypeScript config and make root typecheck also run the web app's own TypeScript config. Add a root build for the web and Blume docs workspaces; aggregate scoped Ultracite code checks and Blume check/doctor/link validation while excluding the known baseline root `PROMPT.md` and `README.md` formatting failures. Existing root test and combined dev commands remain the workspace entrypoints.
   - Verification run: `bun run check`, `bun run typecheck`, `bun run test` (402 tests), and `bun run build` all pass. Web build retains its existing MapLibre chunk-size and CSS sourcemap advisories. The docs build emits static pages and agent files.
-- [ ] Add CI checks for formatting/lint, typechecking, tests, and builds without deployment credentials.
+- [x] Add CI checks for formatting/lint, typechecking, tests, and builds without deployment credentials.
+  - Commit: `d4a71a8`
   - Implementation: add a least-privilege GitHub Actions workflow for pull requests and pushes to `main`. Pin checkout and Bun setup actions to immutable commit SHAs, disable persisted checkout credentials, install with the frozen lockfile, and run the root check, typecheck, test, and production build commands. The workflow has no deployment steps or secret references.
   - Verification run: `actionlint .github/workflows/ci.yml`, `bun install --frozen-lockfile`, `bun run check`, `bun run typecheck`, `bun run test` (402 tests), and `bun run build` all pass. The web build retains its known MapLibre chunk-size and CSS sourcemap advisories.
-- [ ] Add `packages/config` only when shared configuration is justified; `packages/core` and `packages/schemas` are implemented in their own foundation tasks.
+- [x] Assess whether a shared `packages/config` workspace is justified; `packages/core` and `packages/schemas` are implemented in their own foundation tasks.
+  - Decision: no `packages/config` workspace is warranted. The root strict TypeScript and validation configuration is already shared, while app build and UI configuration appropriately differs; another package would only wrap existing files without a real consumer boundary.
 
 ## Phase 2 — Web, docs, and UI foundation
 
@@ -265,8 +267,13 @@
 
 ## Phase 6 — Diagnostics and mapping
 
-- [ ] Implement verified Cloudflare colo, protocol, TLS, RTT, and available connection/security field display with units and availability.
+- [x] Implement verified Cloudflare colo, protocol, TLS, RTT, and available connection/security field display with units and availability.
+  - Commit: `5d6e2ec`
+  - Implementation: the visitor dashboard shows edge colo, HTTP protocol, TLS version/cipher, Cloudflare TCP RTT with its `ms` unit, accepted encoding, and supported security signals. Missing or unsupported Cloudflare fields use explicit availability/provenance states; only request metadata exposed by the runtime is displayed.
+  - Verified: dashboard tests cover available values, source attribution, and missing fields; the original task commit also passed all then-current repository tests, strict typecheck, and web production build.
 - [ ] Implement real browser HTTP latency sampling and median/min/max/jitter calculations; label it as HTTP measurement rather than ICMP.
+  - Implementation: add a user-started Effect workflow that measures five sequential same-origin `/api/v1/health` response timings with no-store requests, summarizes min/median/max and adjacent-sample variation using the core helper, and cancels active work when the panel unmounts. The UI labels the values as browser HTTP measurements, explains that they are not ICMP or packet-level jitter, and keeps samples in page state only.
+  - Verification run: five measurement/UI tests plus existing dashboard tests (11 focused cases), all 407 repository tests, strict typecheck, root check (formatting, lint, Blume check/doctor/links), and production web/docs build pass. Direct Oxlint and Oxfmt pass. The web build retains its known MapLibre chunk-size and CSS sourcemap advisories.
 - [ ] Implement privacy-preserving browser diagnostics, kept distinct from edge-observed metadata.
 - [ ] Add approximate IP and connected-colo maps using mapcn with trustworthy data, theme behavior, accessibility, and non-blocking lazy loading.
 - [ ] Add tests for timing calculations, missing fields, map inputs, and browser diagnostic boundaries.

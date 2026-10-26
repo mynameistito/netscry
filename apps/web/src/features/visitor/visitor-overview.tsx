@@ -13,6 +13,8 @@ import { ArrowRight } from "@netscry/ui/lib/icons";
 import { Schema } from "effect";
 import { useState } from "react";
 
+import { HttpLatencyPanel } from "../diagnostics/http-latency-panel";
+
 type MetadataField =
   | typeof BooleanDataFieldSchema.Type
   | typeof IntegerDataFieldSchema.Type
@@ -443,6 +445,7 @@ export const VisitorOverview = ({ state }: { state: VisitorState }) => {
       {state.status === "ready" ? (
         <div className="space-y-4">
           <RequestPath data={state.data} />
+          <HttpLatencyPanel />
           <RawJsonViewer state={state.raw} />
           <div className="space-y-4 xl:grid xl:grid-cols-3 xl:items-start xl:gap-4 xl:space-y-0">
             <div className="space-y-4">
