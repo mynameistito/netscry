@@ -341,10 +341,13 @@
   - Commit: `66edbcf`
   - Implementation: add `apps/docs/content/api/v1/index.mdx` with the current route inventory, inputs, examples, availability envelope, content negotiation, error codes, rate limit, cache behavior, and links to provenance/runtime guidance. Link it from the docs landing page.
   - Validation: docs production build, Blume doctor, link validation, and Oxfmt pass. Blume `check` stalled at page type-checking without diagnostics and was stopped; retry during phase validation.
-- [ ] Document SDK installation constraints, Effect usage, supported methods, and consumer examples.
+- [x] Document SDK installation constraints, Effect usage, supported methods, and consumer examples.
+  - Commit: `242f1ec`
   - Implementation: add `apps/docs/content/sdk/index.mdx` describing the private workspace-only package boundary, Node/ESM build requirements, client setup, Effect results, availability fields, supported methods, injectable Fetch, and tagged errors. Link it from the docs landing page.
   - Validation: docs production build, Blume doctor, link validation, and Oxfmt pass. Blume `check` stalled at page type-checking without diagnostics and was stopped; retry during phase validation.
 - [ ] Document development, validation, build, and Alchemy deployment workflows without enabling deployment.
+  - Implementation: add `apps/docs/content/development/index.mdx` covering Bun setup, actual workspace commands, CI-equivalent checks, generated package builds, Alchemy local development, and the current validation-only deployment state. Do not execute deployment or enable a deploy workflow.
+  - Validation: docs production build, Blume doctor, link validation, and Oxfmt pass.
 - [ ] Generate or validate API documentation from canonical schemas/contracts and ensure docs builds detect stale required artifacts.
 - [ ] Add consumer-facing READMEs, license/repository metadata, package contents checks, and runtime support declarations for publishable packages.
 

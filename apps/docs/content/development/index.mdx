@@ -1,0 +1,90 @@
+---
+title: Development and validation
+description: Install, run, check, test, and build the NetScry workspace safely.
+---
+
+# Development and validation
+
+NetScry is a Bun workspace containing the Cloudflare web application, a static Blume documentation site, and shared packages. Run commands from the repository root unless a command explicitly filters a workspace.
+
+## Requirements and setup
+
+Use the Bun version declared in the root `package.json` (`bun@1.4.4`) and Node.js 20 or newer. Install the locked workspace dependencies with:
+
+```sh
+bun install --frozen-lockfile
+```
+
+This installs dependencies only. Normal local development uses the Alchemy development stage and does not require production credentials or deploy the live stack.
+
+## Run the applications
+
+```sh
+# Start the web application and docs site together
+bun run dev
+
+# Start only the web application through Alchemy's dev stage
+bun run dev:web
+
+# Start only the docs site
+bun --filter @netscry/docs dev
+```
+
+The web dev server binds to `127.0.0.1:5173`; the docs server binds to `127.0.0.1:4321`. The combined command starts both and stops the sibling process if either exits. The web command builds the shared packages before starting Alchemy. See [runtime data modes](/development/data-modes) for the differences between local request metadata and live Cloudflare metadata.
+
+## Validate changes
+
+```sh
+# Full formatting, code, and docs checks
+bun run check
+
+# Workspace TypeScript checks
+bun run typecheck
+
+# SDK built-package smoke check and all Vitest tests
+bun run test
+
+# Web and docs production builds, including the package consumer smoke check
+bun run build
+```
+
+The root check runs package builds and Ultracite formatting/lint checks, followed by the docs checker, doctor, and link validator. To run parts separately:
+
+```sh
+bun run check:code
+bun run check:docs
+bun run build:packages
+bun run verify:packages
+```
+
+`bun run typecheck` builds the shared package artifacts, runs the root TypeScript project check, and typechecks the web workspace. `bun run test` first builds packages and runs the Node consumer smoke test, then runs Vitest. `bun run build` builds and checks the packages, produces the web production build, and builds the static docs site.
+
+For a focused Vitest run, pass the test file path to Vitest, for example:
+
+```sh
+bunx vitest run apps/web/src/server/api/me.test.ts
+```
+
+CI currently runs `bun run check`, `bun run typecheck`, `bun run test`, and `bun run build` on pull requests and pushes to `main`. It uses the Bun version from the root manifest and installs with `--frozen-lockfile`.
+
+## Package artifacts
+
+The shared `@netscry/core`, `@netscry/schemas`, and `@netscry/sdk` packages emit ESM JavaScript and TypeScript declarations into their `dist` directories. `bun run build:packages` creates those artifacts; they are generated outputs and should not be edited by hand. `bun run verify:packages` also executes a Node consumer smoke test to check that the built exports work outside Bun's source aliases.
+
+The package names remain private and are not available for registry installation. See the [SDK guide](/sdk) for the current workspace-only consumer boundary.
+
+## Alchemy and deployment boundary
+
+`alchemy.run.ts` declares the Cloudflare Worker stack and its rate-limit binding. `bun run dev:web` invokes Alchemy's `dev` command through `scripts/alchemy-dev.ts`, which starts the isolated development stage and forwards shutdown signals to its child process tree. The ordinary development commands do not deploy the live stack.
+
+The repository's current GitHub Actions workflow performs validation only. A deployment workflow using the project's designated `mynameistito/alchemy-deploy` action has not yet been integrated, so there is no supported preview or production deployment command documented here. Do not run a direct Alchemy deploy or Wrangler publish command. Deployment setup is tracked as a separate project task; production deployment and live DNS changes require explicit approval.
+
+## Release metadata
+
+Changesets are configured for future package release planning, but the packages remain private and no publishing workflow is enabled. Inspect pending changes with:
+
+```sh
+bun run changeset:status
+```
+
+`bun run changeset:version` updates package versions and changelogs based on pending changesets. It does not publish packages.
