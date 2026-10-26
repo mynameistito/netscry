@@ -48,9 +48,24 @@ export {
 export {
   RdapBootstrapRegistrySchema,
   RdapBootstrapServiceSchema,
+  RdapAttributionSchema,
+  RdapEntityContactSchema,
+  RdapEventSchema,
+  RdapNormalizedRecordSchema,
+  RdapRawRecordSchema,
+  RdapRecordDataSchema,
 } from "./rdap.ts";
 
-export type { RdapBootstrapRegistry, RdapBootstrapService } from "./rdap.ts";
+export type {
+  RdapAttribution,
+  RdapBootstrapRegistry,
+  RdapBootstrapService,
+  RdapEntityContact,
+  RdapEvent,
+  RdapNormalizedRecord,
+  RdapRawRecord,
+  RdapRecordData,
+} from "./rdap.ts";
 
 export type {
   DataSource,
