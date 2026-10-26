@@ -1,0 +1,26 @@
+---
+title: DNS lookups
+description: Resolver, response format, caching, and query privacy for DNS records.
+---
+
+# DNS lookups
+
+NetScry resolves DNS records through Cloudflare's public `1.1.1.1` DNS-over-HTTPS JSON endpoint at `https://cloudflare-dns.com/dns-query`. Queries use HTTPS `GET` with `name` and `type` parameters and the `Accept: application/dns-json` header. Cloudflare documents this endpoint and its JSON response fields in its [DNS-over-HTTPS JSON guide](https://developers.cloudflare.com/1.1.1.1/encryption/dns-over-https/make-api-requests/dns-json/).
+
+The endpoint returns resolver answers. They are a recursive resolver's view of DNS at lookup time and do not establish that a record is authoritative. The JSON format follows Google's de facto schema and is not standardized by an IETF RFC; the standard DoH transport is specified by [RFC 8484](https://www.rfc-editor.org/rfc/rfc8484.html).
+
+## Supported records
+
+NetScry normalizes A, AAAA, CAA, CNAME, MX, NS, PTR, SOA, SRV, and TXT records. PTR lookups accept either a reverse-DNS name or an IPv4/IPv6 address, which NetScry converts to its reverse-DNS owner name.
+
+Resolver RDATA is validated and normalized before it is returned. The response retains DNS status, any DNSSEC authenticated-data flag supplied by the resolver, record TTLs, and resolver attribution. Resolver error statuses such as NXDOMAIN are represented as DNS results; an HTTP-successful DNS response is not automatically a successful DNS answer.
+
+## Cache behavior
+
+Successful answers are cached for the smallest TTL in the returned answer set. A zero TTL disables caching. For NXDOMAIN and NODATA results, NetScry uses the minimum of the SOA record TTL and its SOA minimum field, as specified by [RFC 2308](https://www.rfc-editor.org/rfc/rfc2308.html). CNAME answers attached to a negative result are additionally bounded by their own smallest TTL. Resolver failures and negative results without a usable SOA TTL are not cached.
+
+The cache is bounded and held in the Worker instance. It does not extend an answer beyond the TTL received from the resolver.
+
+## Query privacy
+
+The requested domain name or reverse-DNS name is sent to Cloudflare's public resolver over HTTPS. DNS query names can reveal sites or services being investigated. NetScry does not need the visitor's IP address to perform an arbitrary DNS lookup, and lookup results are public DNS data. The broader privacy documentation will describe the application's other data handling.

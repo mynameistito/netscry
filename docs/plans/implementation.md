@@ -201,7 +201,11 @@
 - [x] Accept the Cloudflare DNS JSON media type in bounded provider responses.
   - Implementation: recognize the resolver's documented `application/dns-json` content type as JSON while preserving schema validation and response limits.
   - Verified: focused provider-client tests pass (13 cases), full unit suite passes (282 tests), strict typecheck and targeted Ultracite pass.
-- [ ] Implement schema-validated DNS-over-HTTPS lookups for all requested record types, with documented resolver behavior and TTL-aware caching.
+- [x] Implement schema-validated DNS-over-HTTPS lookups for all requested record types, with documented resolver behavior and TTL-aware caching.
+  - Implementation: use Cloudflare's fixed HTTPS JSON resolver through the bounded provider client; normalize all ten requested RR types and IPv4/IPv6 PTR input; expose resolver, DNSSEC, status, record TTL, and cache TTL; share an isolate-local Effect cache across per-request Layers, cache positive answers through their smallest TTL, apply RFC 2308 SOA TTL/minimum bounds to NXDOMAIN/NODATA, and skip zero-TTL or failed results.
+  - Documentation: add the resolver's JSON format caveat, source attribution, cache rules, and queried-name privacy disclosure to the Blume data-source guide.
+  - Verified: 19 focused service cases cover all required record types, IPv4/IPv6 PTR reversal, invalid input, cross-Layer cache reuse, positive and negative TTL expiry, zero TTL, and provider failures. All 301 unit tests, strict typecheck, targeted Ultracite, the web production build, and the Blume docs build pass. Full `bun run check` continues to report only baseline formatting failures in unchanged `PROMPT.md` and `README.md`.
+  - Standards and resolver docs checked: [Cloudflare DNS JSON](https://developers.cloudflare.com/1.1.1.1/encryption/dns-over-https/make-api-requests/dns-json/), [RFC 8484](https://www.rfc-editor.org/rfc/rfc8484.html), and [RFC 2308](https://www.rfc-editor.org/rfc/rfc2308.html).
 - [ ] Expose DNS lookup through a schema-validated REST API route.
 - [ ] Add DNS lookup search and detail views as part of the public lookup interface.
 - [ ] Implement replaceable public ASN/BGP enrichment for announced prefixes and origin information, with attribution and graceful partial results.

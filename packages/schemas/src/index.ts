@@ -30,6 +30,22 @@ export {
   ExternalProviderErrorSchema,
 } from "./errors.ts";
 
+export {
+  DnsAttributionSchema,
+  DnsLookupResponseSchema,
+  DnsRecordDataSchema,
+  DnsRecordTypeSchema,
+  DnsResourceRecordSchema,
+} from "./dns.ts";
+
+export type {
+  DnsAttribution,
+  DnsLookupResponse,
+  DnsRecordData,
+  DnsRecordType,
+  DnsResourceRecord,
+} from "./dns.ts";
+
 export type { ExternalProviderErrorFields } from "./errors.ts";
 
 export {
