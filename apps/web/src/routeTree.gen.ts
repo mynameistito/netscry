@@ -12,6 +12,7 @@ import { Route as rootRouteImport } from './routes/__root'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as ApiV1HealthRouteImport } from './routes/api/v1/health'
 import { Route as ApiV1MeRouteImport } from './routes/api/v1/me'
+import { Route as ApiV1DnsQueryRouteImport } from './routes/api/v1/dns.$query'
 import { Route as ApiV1IpAddressRouteImport } from './routes/api/v1/ip.$address'
 import { Route as ApiV1MeEndpointRouteImport } from './routes/api/v1/me.$endpoint'
 import { Route as ApiV1RdapDomainDomainRouteImport } from './routes/api/v1/rdap/domain.$domain'
@@ -30,6 +31,11 @@ const ApiV1HealthRoute = ApiV1HealthRouteImport.update({
 const ApiV1MeRoute = ApiV1MeRouteImport.update({
   id: '/api/v1/me',
   path: '/api/v1/me',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ApiV1DnsQueryRoute = ApiV1DnsQueryRouteImport.update({
+  id: '/api/v1/dns/$query',
+  path: '/api/v1/dns/$query',
   getParentRoute: () => rootRouteImport,
 } as any)
 const ApiV1IpAddressRoute = ApiV1IpAddressRouteImport.update({
@@ -57,6 +63,7 @@ export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/api/v1/health': typeof ApiV1HealthRoute
   '/api/v1/me': typeof ApiV1MeRouteWithChildren
+  '/api/v1/dns/$query': typeof ApiV1DnsQueryRoute
   '/api/v1/ip/$address': typeof ApiV1IpAddressRoute
   '/api/v1/me/$endpoint': typeof ApiV1MeEndpointRoute
   '/api/v1/rdap/domain/$domain': typeof ApiV1RdapDomainDomainRoute
@@ -66,6 +73,7 @@ export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/api/v1/health': typeof ApiV1HealthRoute
   '/api/v1/me': typeof ApiV1MeRouteWithChildren
+  '/api/v1/dns/$query': typeof ApiV1DnsQueryRoute
   '/api/v1/ip/$address': typeof ApiV1IpAddressRoute
   '/api/v1/me/$endpoint': typeof ApiV1MeEndpointRoute
   '/api/v1/rdap/domain/$domain': typeof ApiV1RdapDomainDomainRoute
@@ -76,6 +84,7 @@ export interface FileRoutesById {
   '/': typeof IndexRoute
   '/api/v1/health': typeof ApiV1HealthRoute
   '/api/v1/me': typeof ApiV1MeRouteWithChildren
+  '/api/v1/dns/$query': typeof ApiV1DnsQueryRoute
   '/api/v1/ip/$address': typeof ApiV1IpAddressRoute
   '/api/v1/me/$endpoint': typeof ApiV1MeEndpointRoute
   '/api/v1/rdap/domain/$domain': typeof ApiV1RdapDomainDomainRoute
@@ -87,6 +96,7 @@ export interface FileRouteTypes {
     | '/'
     | '/api/v1/health'
     | '/api/v1/me'
+    | '/api/v1/dns/$query'
     | '/api/v1/ip/$address'
     | '/api/v1/me/$endpoint'
     | '/api/v1/rdap/domain/$domain'
@@ -96,6 +106,7 @@ export interface FileRouteTypes {
     | '/'
     | '/api/v1/health'
     | '/api/v1/me'
+    | '/api/v1/dns/$query'
     | '/api/v1/ip/$address'
     | '/api/v1/me/$endpoint'
     | '/api/v1/rdap/domain/$domain'
@@ -105,6 +116,7 @@ export interface FileRouteTypes {
     | '/'
     | '/api/v1/health'
     | '/api/v1/me'
+    | '/api/v1/dns/$query'
     | '/api/v1/ip/$address'
     | '/api/v1/me/$endpoint'
     | '/api/v1/rdap/domain/$domain'
@@ -115,6 +127,7 @@ export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   ApiV1HealthRoute: typeof ApiV1HealthRoute
   ApiV1MeRoute: typeof ApiV1MeRouteWithChildren
+  ApiV1DnsQueryRoute: typeof ApiV1DnsQueryRoute
   ApiV1IpAddressRoute: typeof ApiV1IpAddressRoute
   ApiV1RdapDomainDomainRoute: typeof ApiV1RdapDomainDomainRoute
   ApiV1RdapIpAddressRoute: typeof ApiV1RdapIpAddressRoute
@@ -141,6 +154,13 @@ declare module '@tanstack/react-router' {
       path: '/api/v1/me'
       fullPath: '/api/v1/me'
       preLoaderRoute: typeof ApiV1MeRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/v1/dns/$query': {
+      id: '/api/v1/dns/$query'
+      path: '/api/v1/dns/$query'
+      fullPath: '/api/v1/dns/$query'
+      preLoaderRoute: typeof ApiV1DnsQueryRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/api/v1/ip/$address': {
@@ -189,6 +209,7 @@ const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   ApiV1HealthRoute: ApiV1HealthRoute,
   ApiV1MeRoute: ApiV1MeRouteWithChildren,
+  ApiV1DnsQueryRoute: ApiV1DnsQueryRoute,
   ApiV1IpAddressRoute: ApiV1IpAddressRoute,
   ApiV1RdapDomainDomainRoute: ApiV1RdapDomainDomainRoute,
   ApiV1RdapIpAddressRoute: ApiV1RdapIpAddressRoute,

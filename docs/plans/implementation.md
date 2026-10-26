@@ -206,7 +206,9 @@
   - Documentation: add the resolver's JSON format caveat, source attribution, cache rules, and queried-name privacy disclosure to the Blume data-source guide.
   - Verified: 19 focused service cases cover all required record types, IPv4/IPv6 PTR reversal, invalid input, cross-Layer cache reuse, positive and negative TTL expiry, zero TTL, and provider failures. All 301 unit tests, strict typecheck, targeted Ultracite, the web production build, and the Blume docs build pass. Full `bun run check` continues to report only baseline formatting failures in unchanged `PROMPT.md` and `README.md`.
   - Standards and resolver docs checked: [Cloudflare DNS JSON](https://developers.cloudflare.com/1.1.1.1/encryption/dns-over-https/make-api-requests/dns-json/), [RFC 8484](https://www.rfc-editor.org/rfc/rfc8484.html), and [RFC 2308](https://www.rfc-editor.org/rfc/rfc2308.html).
-- [ ] Expose DNS lookup through a schema-validated REST API route.
+- [x] Expose DNS lookup through a schema-validated REST API route.
+  - Implementation: expose `GET /api/v1/dns/:query?type=TYPE` (default `A`), validate supported record types and DNS/PTR input before resolver work, and use the shared JSON negotiation, response schema, security headers, and safe error mapping. Register the TanStack file route.
+  - Verified: 19 API cases cover all supported record types, default type selection, PTR inputs, invalid/repeated parameters without resolver work, schema-valid output, unsupported `Accept`, safe provider failures, and `no-store`. All 320 unit tests, strict typecheck, targeted Ultracite, web production build, and Blume docs build pass. Full `bun run check` reports only baseline formatting failures in unchanged `PROMPT.md` and `README.md`.
 - [ ] Add DNS lookup search and detail views as part of the public lookup interface.
 - [ ] Implement replaceable public ASN/BGP enrichment for announced prefixes and origin information, with attribution and graceful partial results.
 - [ ] Add public lookup cache policies, timeout/size/redirect protections, rate limiting, and provider failure tests.
