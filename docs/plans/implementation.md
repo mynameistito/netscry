@@ -139,11 +139,12 @@
   - Commit: `302f475`
 - [x] Implement a safe raw Cloudflare metadata schema and Effect sanitizer with availability/provenance labels and redaction coverage.
   - Verified: 7 sanitizer tests cover preserved names/provenance/units, unavailable fields, local header handling, sensitive TLS/bot/custom metadata redaction, malformed values, unknown future fields, and cookie/authorization exclusion; all 199 unit tests pass, strict typecheck and web production build pass, and targeted Ultracite passes. Full repository check reports only the documented baseline formatting issues in `PROMPT.md` and `README.md`.
-  - Commit: recorded in the next implementation task's plan update.
+  - Commit: `3c18392`
 
 ## Phase 4 — `/me` API and visitor dashboard
 
-- [ ] Implement the versioned API shell, shared Effect services, schema-validated responses, typed errors, content negotiation, security headers, and health endpoint.
+- [x] Implement the versioned API shell, shared Effect execution boundary, schema-validated responses, typed errors, content negotiation, security/CORS headers, and health endpoint.
+  - Verified: 12 focused API tests and all 211 unit tests pass; strict repository typecheck, web Cloudflare production build, targeted Ultracite, and a local Alchemy Worker HTTP smoke test pass. The smoke test returned `200` JSON with `no-store`; shutdown removed all task-owned processes and port 5173. Full `bun run check` still reports only the documented baseline formatting issues in `PROMPT.md` and `README.md`.
 - [ ] Implement all required granular `/api/v1/me/*` endpoints from one request-scoped metadata snapshot, including fast scalar paths and plain-text IP/ASN responses.
 - [ ] Add API integration tests for all `/me` endpoints, IPv4/IPv6, unavailable fields, `Accept` variants, no-store behavior, and errors.
 - [ ] Build the visitor overview with IP, ASN/network, location, edge, connection, and security panels that distinguish missing data honestly.
