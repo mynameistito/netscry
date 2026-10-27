@@ -1,5 +1,7 @@
-import { Effect } from "effect";
+import { Effect, Schema } from "effect";
 import { createNetScryClient } from "netscry";
+import { parseIpAddress } from "netscry/core";
+import { ApiHealthResponseSchema } from "netscry/schemas";
 
 const healthResponse = {
   status: "ok",
@@ -13,6 +15,20 @@ const client = createNetScryClient({
 });
 
 const response = await Effect.runPromise(client.health());
+
+const ipAddress = parseIpAddress("192.0.2.1");
+
+if (ipAddress._tag !== "Ok" || ipAddress.value.canonical !== "192.0.2.1") {
+  throw new Error(
+    "The netscry package did not expose @netscry/core correctly."
+  );
+}
+
+if (!Schema.is(ApiHealthResponseSchema)(response)) {
+  throw new Error(
+    "The netscry package did not expose @netscry/schemas correctly."
+  );
+}
 
 if (
   response.status !== healthResponse.status ||

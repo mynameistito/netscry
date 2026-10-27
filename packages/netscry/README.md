@@ -1,6 +1,6 @@
 # `netscry`
 
-The top-level NetScry npm package. It re-exports the typed Fetch client from `@netscry/sdk`, giving consumers a short unscoped import while retaining the separately installable scoped packages.
+The top-level NetScry npm package. It brings together `@netscry/core`, `@netscry/schemas`, and `@netscry/sdk` under the unscoped `netscry` package. The scoped packages remain independently installable.
 
 ## Usage
 
@@ -13,6 +13,16 @@ const client = createNetScryClient({
 });
 
 const health = await Effect.runPromise(client.health());
+```
+
+The core utilities and schemas are available from package subpaths:
+
+```ts
+import { parseIpAddress } from "netscry/core";
+import { ApiHealthResponseSchema } from "netscry/schemas";
+
+const address = parseIpAddress("1.1.1.1");
+const healthSchema = ApiHealthResponseSchema;
 ```
 
 The client uses standard Fetch APIs, validates responses against the shared contracts, and returns Effects with typed SDK failures. `me()` reports the IP address of the request reaching NetScry; when called from a server, this is generally the server's egress IP, not its original visitor's IP.
