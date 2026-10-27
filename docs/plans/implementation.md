@@ -312,7 +312,7 @@
   - `bun pm pack --dry-run` independently confirms each workspace package contains only its manifest and built `dist` artifacts.
   - Verification: all three package builds and the SDK Node consumer smoke pass; Oxfmt and both npm/Bun pack dry-runs pass.
 - [ ] Verify npm package name availability/ownership and resolve the project's licensing choice before enabling public SDK/shared package manifests.
-  - Discovery: `npm view @netscry/sdk`, `@netscry/core`, `@netscry/schemas`, and the suggested `@mynameistito/netscry` returned 404 responses that npm documents as either unclaimed names or insufficient access; registry ownership remains unverified. There is no repository LICENSE file or user-provided license choice, so keep packages private and do not assign a license.
+  - Discovery: `npm view @netscry/sdk`, `@netscry/core`, `@netscry/schemas`, and the suggested `@mynameistito/netscry` returned 404 responses that npm documents as either unclaimed names or insufficient access. `npm whoami --registry=https://registry.npmjs.org` returned 401 Unauthorized, so this environment has no npm identity with which to inspect namespace ownership. All three package manifests remain `private: true`. There is no repository LICENSE file or user-provided license choice, so keep packages private and do not assign a license.
 - [x] Add `@changesets/cli` as a root development dependency.
   - Commit: `6478db7`
   - Added `@changesets/cli@3.0.3` with Bun and updated the lockfile.
@@ -403,13 +403,13 @@
 - [x] Validate web/docs builds, Alchemy configuration, CI-equivalent checks, package consistency, changesets, and generated artifacts.
   - Verification: final `bun run check`, `bun run typecheck`, `bun run test` (45 files, 430 tests), `bun run test:e2e` (9 Chromium tests), `bun run build`, and `bun run changeset:status` passed. `actionlint` 1.7.12 passed for both workflows; generated OpenAPI was current; package consumer verification ran through `bun run test`; the changeset status reports no packages to bump. Alchemy's local Worker was exercised earlier; the pinned deploy workflow and artifacts were validated, but no production credentials/URL are configured and no production plan or deployment was run. The build retains existing CSS sourcemap and large-chunk advisories.
 - [x] Re-read `PROMPT.md`, audit every requirement against code and command evidence, review all commits, and inspect final Git status.
-  - The full specification was reread and reconciled against the phase tasks and checks. The only unresolved product requirement is package namespace ownership/licensing; packages remain private pending that choice. Production-only Cloudflare metadata and zone-level HSTS were not verified because that requires authorized production access. Reviewed the task-scoped history and final Git status; only the three pre-existing unrelated untracked directories `.taste-skill/`, `.vscode/`, and `.zed/` remain, preserved untouched.
+  - The full specification was reread and reconciled against the phase tasks and checks. The only unresolved product requirement is package namespace ownership/licensing; npm authentication is unavailable, packages remain private, and no license was selected. Production-only Cloudflare metadata and zone-level HSTS were not verified because that requires authorized production access. Reviewed the task-scoped history and final Git status; only the three pre-existing unrelated untracked directories `.taste-skill/`, `.vscode/`, and `.zed/` remain, preserved untouched.
 
 ## Final completion
 
 - [x] Every requirement in `PROMPT.md` audited
 - [ ] Every implementation task completed
-  - Remaining: verify npm namespace ownership and select a license before public package manifests can be enabled. npm 404 results do not establish ownership, and the repository contains no LICENSE or user-selected license.
+  - Remaining: verify npm namespace ownership and select a license before public package manifests can be enabled. npm returned 404 for the names and 401 for `npm whoami`, and the repository contains no LICENSE or user-selected license.
 - [x] Every completed implementation task committed
 - [x] Commits are atomic and logically scoped
 - [x] Ultracite passes
