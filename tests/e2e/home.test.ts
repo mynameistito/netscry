@@ -54,7 +54,48 @@ const domainRecord = {
 test("renders the visitor overview and unavailable local map states", async ({
   page,
 }) => {
-  await page.goto("/");
+  const response = await page.goto("/");
+
+  const contentSecurityPolicy = response?.headers()["content-security-policy"];
+
+  const nonce = contentSecurityPolicy?.match(/nonce-(?<nonce>[\w-]+)/u)?.groups
+    ?.nonce;
+
+  expect(contentSecurityPolicy).toContain("default-src 'self'");
+  expect(nonce).toBeTruthy();
+  expect(response?.headers()["cache-control"]).toBe("no-store");
+  expect(response?.headers()["x-frame-options"]).toBe("DENY");
+  expect(response?.headers()["x-netscry-csp-nonce"]).toBeUndefined();
+  await expect
+    .poll(
+      async () =>
+        await page.evaluate((expectedNonce) => {
+          const metaNonce = document
+            .querySelector('meta[property="csp-nonce"]')
+            ?.getAttribute("content");
+
+          const inlineScripts = [...document.scripts].filter(
+            (script) => !script.src
+          );
+
+          return (
+            metaNonce === expectedNonce &&
+            inlineScripts.length > 0 &&
+            inlineScripts.every((script) => script.nonce === expectedNonce)
+          );
+        }, nonce)
+    )
+    .toBe(true);
+
+  const publicApiResponse = await page.request.get("/api/v1/ip/1.1.1.1");
+
+  expect(publicApiResponse.status()).toBe(200);
+  expect(publicApiResponse.headers()["cache-control"]).toBe(
+    "public, max-age=60, s-maxage=300, stale-while-revalidate=600"
+  );
+  expect(publicApiResponse.headers()["content-security-policy"]).toBe(
+    "default-src 'none'; frame-ancestors 'none'"
+  );
 
   await expect(
     page.getByRole("heading", {

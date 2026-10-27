@@ -5,6 +5,7 @@ import {
   Scripts,
   createRootRoute,
   Outlet,
+  useRouter,
 } from "@tanstack/react-router";
 import { useMemo } from "react";
 
@@ -12,6 +13,7 @@ import appCss from "~/styles/app.css?url";
 
 const RootDocument = () => {
   const queryClient = useMemo(() => new QueryClient(), []);
+  const router = useRouter();
 
   return (
     <html lang="en" suppressHydrationWarning>
@@ -19,7 +21,7 @@ const RootDocument = () => {
         <HeadContent />
       </head>
       <body className="bg-background text-foreground font-sans antialiased">
-        <ThemeProvider>
+        <ThemeProvider nonce={router.options.ssr?.nonce}>
           <QueryClientProvider client={queryClient}>
             <Outlet />
           </QueryClientProvider>
