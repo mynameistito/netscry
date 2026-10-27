@@ -79,9 +79,9 @@ The scoped `@netscry/core`, `@netscry/schemas`, and `@netscry/sdk` packages are 
 
 The GitHub Actions deployment workflow uses the immutable `mynameistito/alchemy-deploy` v3.1.8 release. It waits for the matching successful `CI` workflow run, then lets the action gate the exact commit before a production deploy or same-repository pull request Preview. CI builds the Worker without Cloudflare credentials and uploads its server modules and static assets as the `netscry-worker` artifact; the Preview job downloads that artifact from the exact CI run and does not check out or execute pull request code with deployment credentials. Fork previews stay disabled. A nightly action run reconciles previews whose pull requests have closed.
 
-The production URL is `https://netscry.mynameistito.com`. The GitHub deployment workflow requires `CLOUDFLARE_ACCOUNT_ID` and `CLOUDFLARE_API_TOKEN` in its `production` environment. Production Alchemy config attaches the custom domain only to stage `prod`; preview stages remain isolated. The deployment workflow uses Alchemy commands only; it has no direct Wrangler publish path.
+The production URL is `https://netscry.mynameistito.com`. The GitHub deployment workflow requires `CLOUDFLARE_ACCOUNT_ID` and `CLOUDFLARE_API_TOKEN` in its `production` environment. It sets `ALCHEMY_STAGE=prod` only for production deploys; the custom domain is omitted from preview stages. For a manual production deploy, set `ALCHEMY_STAGE=prod` as well as passing `--stage prod`. The deployment workflow uses Alchemy commands only; it has no direct Wrangler publish path.
 
-The production environment and Cloudflare credentials must be configured before the deploy workflow can run. The Alchemy custom-domain resource will manage DNS and certificate attachment for the requested host as part of the production deployment.
+The production GitHub environment and Cloudflare credentials are configured. The Alchemy custom-domain resource manages DNS and certificate attachment for the requested host as part of the production deployment.
 
 ## Release metadata
 

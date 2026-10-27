@@ -47,7 +47,8 @@
   "dependencies": {
     "@netscry/core": "^0.1.1",
     "@netscry/schemas": "^0.1.1",
-    "@netscry/sdk": "^0.1.1"
+    "@netscry/sdk": "^0.1.1",
+    "effect": "4.0.6"
   },
   "engines": {
     "node": ">=20"

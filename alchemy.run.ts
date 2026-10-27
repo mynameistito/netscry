@@ -5,42 +5,35 @@ import {
   Workers as CloudflareWorkers,
 } from "@alchemy.run/cloudflare";
 import type { InferEnv } from "@alchemy.run/cloudflare";
-import { Stack, Stage } from "alchemy";
+import { Stack } from "alchemy";
 import { gen } from "effect/Effect";
 
 /** Cloudflare Worker generated from the TanStack Start Vite application. */
-export const Website = CloudflareWebsite.Vite(
-  "Web",
-  gen(function* configureWebsite() {
-    const stage = yield* Stage;
-
-    return {
-      rootDir: "./apps/web",
-      dev: { port: 5173 },
-      domain:
-        stage === "prod"
-          ? {
-              name: "netscry.mynameistito.com",
-              zoneName: "mynameistito.com",
-            }
-          : undefined,
-      observability: {
-        enabled: false,
-        logs: { enabled: false, invocationLogs: false },
-        traces: { enabled: false },
-      },
-      env: {
-        PUBLIC_LOOKUP_RATE_LIMIT: CloudflareWorkers.RateLimit(
-          "PUBLIC_LOOKUP_RATE_LIMIT",
-          {
-            namespaceId: 27_102_726,
-            simple: { limit: 60, period: 60 },
-          }
-        ),
-      },
-    };
-  })
-);
+export const Website = CloudflareWebsite.Vite("Web", {
+  rootDir: "./apps/web",
+  dev: { port: 5173 },
+  domain:
+    process.env.ALCHEMY_STAGE === "prod"
+      ? {
+          name: "netscry.mynameistito.com",
+          zoneName: "mynameistito.com",
+        }
+      : undefined,
+  observability: {
+    enabled: false,
+    logs: { enabled: false, invocationLogs: false },
+    traces: { enabled: false },
+  },
+  env: {
+    PUBLIC_LOOKUP_RATE_LIMIT: CloudflareWorkers.RateLimit(
+      "PUBLIC_LOOKUP_RATE_LIMIT",
+      {
+        namespaceId: 27_102_726,
+        simple: { limit: 60, period: 60 },
+      }
+    ),
+  },
+});
 
 /** Native Cloudflare Worker environment inferred from declared Alchemy bindings. */
 export type WebsiteEnv = InferEnv<typeof Website>;
