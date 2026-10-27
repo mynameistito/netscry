@@ -69,21 +69,21 @@
     },
     "packages/core": {
       "name": "@netscry/core",
-      "version": "0.1.0",
+      "version": "0.1.1",
     },
     "packages/schemas": {
       "name": "@netscry/schemas",
-      "version": "0.1.0",
+      "version": "0.1.1",
       "dependencies": {
-        "@netscry/core": "workspace:*",
+        "@netscry/core": "^0.1.1",
         "effect": "4.0.6",
       },
     },
     "packages/sdk": {
       "name": "@netscry/sdk",
-      "version": "0.1.0",
+      "version": "0.1.1",
       "dependencies": {
-        "@netscry/schemas": "workspace:*",
+        "@netscry/schemas": "^0.1.1",
         "effect": "4.0.6",
       },
     },
