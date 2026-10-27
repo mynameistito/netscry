@@ -312,7 +312,7 @@
   - `bun pm pack --dry-run` independently confirms each workspace package contains only its manifest and built `dist` artifacts.
   - Verification: all three package builds and the SDK Node consumer smoke pass; Oxfmt and both npm/Bun pack dry-runs pass.
 - [ ] Verify npm package name availability/ownership and resolve the project's licensing choice before enabling public SDK/shared package manifests.
-  - Discovery: `npm view @netscry/sdk`, `@netscry/core`, and `@netscry/schemas` returned 404 responses that npm documents as either unclaimed names or insufficient access; registry ownership remains unverified. There is no repository LICENSE file or user-provided license choice, so keep packages private and do not assign a license.
+  - Discovery: `npm view @netscry/sdk`, `@netscry/core`, `@netscry/schemas`, and the suggested `@mynameistito/netscry` returned 404 responses that npm documents as either unclaimed names or insufficient access; registry ownership remains unverified. There is no repository LICENSE file or user-provided license choice, so keep packages private and do not assign a license.
 - [x] Add `@changesets/cli` as a root development dependency.
   - Commit: `6478db7`
   - Added `@changesets/cli@3.0.3` with Bun and updated the lockfile.
@@ -402,27 +402,32 @@
   - Verification: action/release contract and consumer template inspected at the immutable release; CI checkout/artifact paths matched to `apps/web/dist/server/index.js` and `apps/web/dist/client`; actionlint 1.7.12, `bun run check:code`, `bun run check:docs`, `bun run typecheck`, `bun run test` (45 files, 430 tests), `bun run test:e2e` (7 Chromium tests), and `bun run build` pass. The web build retains its pre-existing CSS sourcemap advisory. No Cloudflare credentials or production URL are configured, so deployment was not run.
 - [x] Validate web/docs builds, Alchemy configuration, CI-equivalent checks, package consistency, changesets, and generated artifacts.
   - Verification: final `bun run check`, `bun run typecheck`, `bun run test` (45 files, 430 tests), `bun run test:e2e` (9 Chromium tests), `bun run build`, and `bun run changeset:status` passed. `actionlint` 1.7.12 passed for both workflows; generated OpenAPI was current; package consumer verification ran through `bun run test`; the changeset status reports no packages to bump. Alchemy's local Worker was exercised earlier; the pinned deploy workflow and artifacts were validated, but no production credentials/URL are configured and no production plan or deployment was run. The build retains existing CSS sourcemap and large-chunk advisories.
-- [ ] Re-read `PROMPT.md`, audit every requirement against code and command evidence, review all commits, and inspect final Git status.
+- [x] Re-read `PROMPT.md`, audit every requirement against code and command evidence, review all commits, and inspect final Git status.
+  - The full specification was reread and reconciled against the phase tasks and checks. The only unresolved product requirement is package namespace ownership/licensing; packages remain private pending that choice. Production-only Cloudflare metadata and zone-level HSTS were not verified because that requires authorized production access. Reviewed the task-scoped history and final Git status; only the three pre-existing unrelated untracked directories `.taste-skill/`, `.vscode/`, and `.zed/` remain, preserved untouched.
 
 ## Final completion
 
-- [ ] Every requirement in `PROMPT.md` audited
+- [x] Every requirement in `PROMPT.md` audited
 - [ ] Every implementation task completed
-- [ ] Every completed implementation task committed
-- [ ] Commits are atomic and logically scoped
-- [ ] Ultracite passes
-- [ ] Formatting passes
-- [ ] Lint/static analysis passes
-- [ ] Typechecking passes
-- [ ] Unit tests pass
-- [ ] Integration tests pass where applicable
-- [ ] End-to-end tests pass where applicable
-- [ ] Production build passes
-- [ ] Relevant package builds pass
-- [ ] Documentation is current
-- [ ] Relevant ADRs exist
-- [ ] Required changesets exist
-- [ ] Deployment configuration verified
-- [ ] Final Git diff/status reviewed
-- [ ] No unintended working-tree changes remain
-- [ ] Final `PROMPT.md` audit completed
+  - Remaining: verify npm namespace ownership and select a license before public package manifests can be enabled. npm 404 results do not establish ownership, and the repository contains no LICENSE or user-selected license.
+- [x] Every completed implementation task committed
+- [x] Commits are atomic and logically scoped
+- [x] Ultracite passes
+- [x] Formatting passes
+- [x] Lint/static analysis passes
+  - `bun run check` passes. React Doctor reports 12 existing findings in the unchanged `packages/ui/src/components/map.tsx`; none are in changed React files.
+- [x] Typechecking passes
+- [x] Unit tests pass
+- [x] Integration tests pass where applicable
+- [x] End-to-end tests pass where applicable
+- [x] Production build passes
+- [x] Relevant package builds pass
+- [x] Documentation is current
+- [x] Relevant ADRs exist
+- [x] Required changesets exist
+- [x] Deployment configuration verified
+  - Production credentials and URL are not configured; no production plan/deployment or zone-level HSTS inspection was performed.
+- [x] Final Git diff/status reviewed
+- [x] No unintended working-tree changes remain
+  - The pre-existing unrelated untracked directories `.taste-skill/`, `.vscode/`, and `.zed/` remain untouched.
+- [x] Final `PROMPT.md` audit completed
