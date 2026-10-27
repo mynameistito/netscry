@@ -54,6 +54,9 @@ describe("shared data states", () => {
 
     expect(screen.getByRole("status").getAttribute("aria-busy")).toBe("true");
     expect(screen.getByRole("alert").textContent).toContain("Request failed");
+    expect(
+      screen.getByRole("heading", { level: 2, name: "Request failed" })
+    ).toBeTruthy();
     expect(screen.getByText("Try again shortly.")).toBeTruthy();
   });
 });

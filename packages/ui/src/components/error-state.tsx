@@ -20,9 +20,9 @@ export const ErrorState = ({ title, description, action }: ErrorStateProps) => {
       className="border-destructive/30 bg-destructive/5 rounded-lg border p-5"
       role="alert"
     >
-      <h3 className="text-sm font-medium" id={titleId}>
+      <h2 className="text-sm font-medium" id={titleId}>
         {title}
-      </h3>
+      </h2>
       <p className="text-muted-foreground mt-1 text-sm leading-6">
         {description}
       </p>
