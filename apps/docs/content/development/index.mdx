@@ -77,7 +77,11 @@ The package names remain private and are not available for registry installation
 
 `alchemy.run.ts` declares the Cloudflare Worker stack and its rate-limit binding. `bun run dev:web` invokes Alchemy's `dev` command through `scripts/alchemy-dev.ts`, which starts the isolated development stage and forwards shutdown signals to its child process tree. The ordinary development commands do not deploy the live stack.
 
-The repository's current GitHub Actions workflow performs validation only. A deployment workflow using the project's designated `mynameistito/alchemy-deploy` action has not yet been integrated, so there is no supported preview or production deployment command documented here. Do not run a direct Alchemy deploy or Wrangler publish command. Deployment setup is tracked as a separate project task; production deployment and live DNS changes require explicit approval.
+The GitHub Actions deployment workflow uses the immutable `mynameistito/alchemy-deploy` v3.1.8 release. It waits for the matching successful `CI` workflow run, then lets the action gate the exact commit before a production deploy or same-repository pull request Preview. CI builds the Worker without Cloudflare credentials and uploads its server modules and static assets as the `netscry-worker` artifact; the Preview job downloads that artifact from the exact CI run and does not check out or execute pull request code with deployment credentials. Fork previews stay disabled. A nightly action run reconciles previews whose pull requests have closed.
+
+Before enabling deployment credentials, set the `NETSCRY_PRODUCTION_URL` repository variable to the canonical HTTPS URL for the deployed Worker. Add narrowly scoped `CLOUDFLARE_ACCOUNT_ID` and `CLOUDFLARE_API_TOKEN` secrets to both the `preview` and `production` GitHub environments. Configure required reviewers and a `main` branch deployment rule on the `production` environment; the production job waits for that environment approval. Preview deployments use the `preview` environment and remain isolated in action-managed PR stages. The deployment workflow uses Alchemy commands only; it has no direct Wrangler publish path.
+
+This repository has no configured Cloudflare deployment credentials or production URL at the time of implementation. No deploy or DNS change was run. Keep production deployment and live DNS changes subject to explicit approval.
 
 ## Release metadata
 

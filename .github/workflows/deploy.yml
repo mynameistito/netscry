@@ -1,0 +1,74 @@
+name: Deploy
+
+on:
+  workflow_run:
+    workflows: [CI]
+    types: [completed]
+  pull_request:
+    types: [closed]
+  schedule:
+    - cron: "23 4 * * *"
+
+permissions: {}
+
+jobs:
+  deploy:
+    if: >-
+      (github.event_name == 'workflow_run' && github.event.workflow_run.conclusion == 'success') || (github.event_name == 'pull_request' && github.event.action == 'closed')
+    runs-on: ubuntu-24.04
+    timeout-minutes: 30
+    environment:
+      name: ${{ github.event_name == 'workflow_run' && github.event.workflow_run.event == 'push' && github.event.workflow_run.head_branch == 'main' && 'production' || 'preview' }}
+    concurrency:
+      group: alchemy-deploy-${{ github.event_name == 'pull_request' && format('pr-{0}', github.event.pull_request.number) || github.event.workflow_run.event == 'pull_request' && format('pr-{0}', github.event.workflow_run.pull_requests[0].number) || github.event.workflow_run.event == 'push' && 'prod' || 'invalid' }}
+      cancel-in-progress: false
+    permissions:
+      actions: read
+      contents: read
+      deployments: write
+      pull-requests: write
+    steps:
+      - name: Deploy or clean up Alchemy Worker
+        uses: mynameistito/alchemy-deploy@d20c33c9a06b6a2f15816a3a4ebc39eda4b9d9ea # v3.1.8
+        env:
+          CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+          CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          GITHUB_TOKEN: ${{ github.token }}
+        with:
+          worker-name: netscry-web
+          deploy-command: bunx --no-install alchemy deploy --stage "$STAGE" --yes
+          destroy-command: bunx --no-install alchemy destroy --stage "$STAGE" --yes
+          production-stage: prod
+          production-url: ${{ vars.NETSCRY_PRODUCTION_URL }}
+          preview-artifact: netscry-worker
+          preview-entrypoint: server/index.js
+          preview-assets-directory: client
+          preview-compatibility-date: "2026-10-19"
+          preview-compatibility-flags: '["nodejs_compat"]'
+          use-adopt: false
+
+  reconcile:
+    if: github.event_name == 'schedule'
+    runs-on: ubuntu-24.04
+    timeout-minutes: 30
+    environment:
+      name: preview
+    permissions:
+      actions: read
+      contents: read
+      deployments: write
+      pull-requests: read
+    steps:
+      - name: Reconcile closed pull request Previews
+        uses: mynameistito/alchemy-deploy@d20c33c9a06b6a2f15816a3a4ebc39eda4b9d9ea # v3.1.8
+        env:
+          CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+          CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          GITHUB_TOKEN: ${{ github.token }}
+        with:
+          worker-name: netscry-web
+          deploy-command: bunx --no-install alchemy deploy --stage "$STAGE" --yes
+          destroy-command: bunx --no-install alchemy destroy --stage "$STAGE" --yes
+          production-stage: prod
+          production-url: ${{ vars.NETSCRY_PRODUCTION_URL }}
+          reconcile: true
