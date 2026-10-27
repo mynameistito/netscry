@@ -20,9 +20,22 @@ export const Website = CloudflareWebsite.Vite("Web", {
         }
       : undefined,
   observability: {
-    enabled: false,
-    logs: { enabled: false, invocationLogs: false },
-    traces: { enabled: false },
+    enabled: true,
+    redactQueryString: true,
+    logs: {
+      enabled: true,
+      headSamplingRate: 1,
+      // Lookup targets are path segments, so avoid recording full invocations.
+      invocationLogs: false,
+      persist: true,
+    },
+    traces: {
+      enabled: true,
+      // Trace spans may include request paths; keep capture to a small sample.
+      headSamplingRate: 0.05,
+      persist: true,
+    },
+    issues: { enabled: true },
   },
   env: {
     PUBLIC_LOOKUP_RATE_LIMIT: CloudflareWorkers.RateLimit(
