@@ -6,9 +6,9 @@ export default defineUnlighthouseConfig({
     "/",
     "/dns?query=example.com&type=A",
     "/bgp?prefix=192.0.2.0%2F24",
-    "/ip/192.0.2.1/",
+    "/ip/192.0.2.1?lighthouse=1",
     "/asn/AS64496",
-    "/domain/example.com/",
+    "/domain/example.com?lighthouse=1",
   ],
   scanner: {
     dynamicSampling: false,
