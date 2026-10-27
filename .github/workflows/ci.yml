@@ -46,6 +46,10 @@ jobs:
         run: bunx playwright install --with-deps chromium
 
       - name: Run browser tests
+        if: github.event_name == 'push'
+        env:
+          CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+          CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
         run: bun run test:e2e
 
       - name: Build web and docs
