@@ -4,7 +4,7 @@ Canonical Effect Schema contracts and inferred TypeScript types shared by the Ne
 
 ## Workspace use
 
-This package is private and is not currently available from npm. From the repository root:
+This package has public-ready npm metadata but has not been published. From the repository root:
 
 ```sh
 bun install

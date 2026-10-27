@@ -71,7 +71,7 @@ CI currently runs `bun run check`, `bun run typecheck`, `bun run test`, and `bun
 
 The shared `@netscry/core`, `@netscry/schemas`, and `@netscry/sdk` packages emit ESM JavaScript and TypeScript declarations into their `dist` directories. `bun run build:packages` creates those artifacts; they are generated outputs and should not be edited by hand. `bun run verify:packages` also executes a Node consumer smoke test to check that the built exports work outside Bun's source aliases.
 
-The package names remain private and are not available for registry installation. See the [SDK guide](/sdk) for the current workspace-only consumer boundary.
+The packages have public-ready manifests but are not published and are not available for registry installation. See the [SDK guide](/sdk) for the current workspace consumer boundary.
 
 ## Alchemy and deployment boundary
 
@@ -85,7 +85,7 @@ This repository has no configured Cloudflare deployment credentials or productio
 
 ## Release metadata
 
-Changesets are configured for future package release planning, but the packages remain private and no publishing workflow is enabled. Inspect pending changes with:
+Changesets are configured for future package release planning. The packages have public-ready manifests, but no release has been prepared or published and no publishing workflow is enabled. Inspect pending changes with:
 
 ```sh
 bun run changeset:status

@@ -4,7 +4,7 @@ Typed Fetch client for the versioned NetScry HTTP API. Requests use standard `fe
 
 ## Availability
 
-The SDK and its shared dependencies are private workspace packages. They are not currently published to npm. Inside this repository, build the packages before importing the generated ESM from a Node consumer:
+The SDK and its shared dependencies have public-ready npm metadata but are not currently published. Inside this repository, build the packages before importing the generated ESM from a Node consumer:
 
 ```sh
 bun install

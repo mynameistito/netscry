@@ -311,8 +311,10 @@
   - Prepared manifests with repository links, `files: ["dist"]`, `sideEffects: false`, and Node `>=20` support. `npm pack --dry-run --json` includes only each package manifest and built `dist` artifacts; no archive was published.
   - `bun pm pack --dry-run` independently confirms each workspace package contains only its manifest and built `dist` artifacts.
   - Verification: all three package builds and the SDK Node consumer smoke pass; Oxfmt and both npm/Bun pack dry-runs pass.
-- [ ] Verify npm package name availability/ownership and resolve the project's licensing choice before enabling public SDK/shared package manifests.
-  - Discovery: `npm view @netscry/sdk`, `@netscry/core`, `@netscry/schemas`, and the suggested `@mynameistito/netscry` returned 404 responses that npm documents as either unclaimed names or insufficient access. `npm whoami --registry=https://registry.npmjs.org` returned 401 Unauthorized, so this environment has no npm identity with which to inspect namespace ownership. All three package manifests remain `private: true`. There is no repository LICENSE file or user-provided license choice, so keep packages private and do not assign a license.
+- [x] Verify npm package namespace ownership and resolve the project's licensing choice before enabling public SDK/shared package manifests.
+  - The owner confirmed control of the `@netscry` npm organization and selected MIT. The current shell's `npm whoami --registry=https://registry.npmjs.org` still returns 401, so registry authentication itself could not be independently verified. The three intended package names are within the owner-confirmed scope: `@netscry/core`, `@netscry/schemas`, and `@netscry/sdk`.
+  - Added the MIT license and SPDX metadata to the publishable packages, and removed their `private` manifest flags. The UI and root workspace remain private. Publishing is still disabled and no package was published.
+  - Verification: frozen-lockfile install, `bun run check`, `bun run typecheck`, `bun run test` (430 tests), `bun run test:e2e` (9 tests), `bun run build`, Changesets status, SDK consumer smoke test, and npm/Bun pack dry-runs passed. Pack contents contain only package metadata, README, license, and built `dist` files. An empty changeset records this metadata-only readiness task without creating a version bump. No package was published; registry CLI authentication remains unavailable (`npm whoami` returns 401).
 - [x] Add `@changesets/cli` as a root development dependency.
   - Commit: `6478db7`
   - Added `@changesets/cli@3.0.3` with Bun and updated the lockfile.
@@ -403,13 +405,12 @@
 - [x] Validate web/docs builds, Alchemy configuration, CI-equivalent checks, package consistency, changesets, and generated artifacts.
   - Verification: final `bun run check`, `bun run typecheck`, `bun run test` (45 files, 430 tests), `bun run test:e2e` (9 Chromium tests), `bun run build`, and `bun run changeset:status` passed. `actionlint` 1.7.12 passed for both workflows; generated OpenAPI was current; package consumer verification ran through `bun run test`; the changeset status reports no packages to bump. Alchemy's local Worker was exercised earlier; the pinned deploy workflow and artifacts were validated, but no production credentials/URL are configured and no production plan or deployment was run. The build retains existing CSS sourcemap and large-chunk advisories.
 - [x] Re-read `PROMPT.md`, audit every requirement against code and command evidence, review all commits, and inspect final Git status.
-  - The full specification was reread and reconciled against the phase tasks and checks. The only unresolved product requirement is package namespace ownership/licensing; npm authentication is unavailable, packages remain private, and no license was selected. Production-only Cloudflare metadata and zone-level HSTS were not verified because that requires authorized production access. Reviewed the task-scoped history and final Git status; only the three pre-existing unrelated untracked directories `.taste-skill/`, `.vscode/`, and `.zed/` remain, preserved untouched.
+  - The full specification was reread and reconciled against the phase tasks and checks. The owner confirmed `@netscry` namespace ownership and selected MIT; npm CLI authentication remains unavailable, but publishing is not part of this task. Production-only Cloudflare metadata and zone-level HSTS were not verified because that requires authorized production access. Reviewed the task-scoped history and final Git status; only the three pre-existing unrelated untracked directories `.taste-skill/`, `.vscode/`, and `.zed/` remain, preserved untouched.
 
 ## Final completion
 
 - [x] Every requirement in `PROMPT.md` audited
-- [ ] Every implementation task completed
-  - Remaining: verify npm namespace ownership and select a license before public package manifests can be enabled. npm returned 404 for the names and 401 for `npm whoami`, and the repository contains no LICENSE or user-selected license.
+- [x] Every implementation task completed
 - [x] Every completed implementation task committed
 - [x] Commits are atomic and logically scoped
 - [x] Ultracite passes
@@ -429,5 +430,5 @@
   - Production credentials and URL are not configured; no production plan/deployment or zone-level HSTS inspection was performed.
 - [x] Final Git diff/status reviewed
 - [x] No unintended working-tree changes remain
-  - The pre-existing unrelated untracked directories `.taste-skill/`, `.vscode/`, and `.zed/` remain untouched.
+  - The implementation changes are limited to this final package-readiness task; the pre-existing unrelated untracked directories `.taste-skill/`, `.vscode/`, and `.zed/` remain untouched.
 - [x] Final `PROMPT.md` audit completed

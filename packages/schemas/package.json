@@ -1,18 +1,19 @@
 {
   "name": "@netscry/schemas",
   "version": "0.1.0",
-  "private": true,
   "homepage": "https://github.com/mynameistito/netscry#readme",
   "bugs": {
     "url": "https://github.com/mynameistito/netscry/issues"
   },
+  "license": "MIT",
   "repository": {
     "type": "git",
     "url": "https://github.com/mynameistito/netscry.git",
     "directory": "packages/schemas"
   },
   "files": [
-    "dist"
+    "dist",
+    "LICENSE"
   ],
   "type": "module",
   "sideEffects": false,
