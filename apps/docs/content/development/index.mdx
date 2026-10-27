@@ -85,7 +85,11 @@ The production GitHub environment and Cloudflare credentials are configured. The
 
 ## Release metadata
 
-Changesets manages versions and changelogs for the published scoped packages and the unscoped `netscry` package. There is no automated npm publishing workflow. Inspect pending changes with:
+Changesets manages versions and changelogs for the published scoped packages and the unscoped `netscry` package. GitHub Actions opens or updates a version pull request when changesets are present. After merging a version pull request and configuring npm trusted publishing, manually dispatch the `Release` workflow from `main` to stage the packed releases. The workflow stages packages only; a maintainer reviews and approves each staged version on npm with 2FA before it becomes public.
+
+Configure a GitHub Actions trusted publisher separately for each npm package: `@netscry/core`, `@netscry/schemas`, `@netscry/sdk`, and `netscry`. Use owner `mynameistito`, repository `netscry`, workflow filename `release.yml`, no environment name, allow `npm stage publish`, and disable direct `npm publish`. The workflow uses GitHub OIDC and does not need an npm token. npm requires the first successful stage within 48 hours of creating each trusted-publisher configuration; otherwise recreate that configuration before retrying. The workflow installs npm CLI 11.15 or newer, which is required for staged publishing.
+
+Inspect pending changes with:
 
 ```sh
 bun run changeset:status
