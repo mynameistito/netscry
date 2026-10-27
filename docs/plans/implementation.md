@@ -376,8 +376,13 @@
 - [x] Add `@playwright/test` as a root development dependency and lockfile entry.
   - Commit: `5f57a9c`
   - Verification: `bun install --frozen-lockfile` and `bunx playwright --version` (1.64.1) pass.
-- [ ] Configure a Chromium Playwright harness, `bun run test:e2e`, CI browser installation, and initial local landing/search/theme/mobile-navigation coverage.
-- [ ] Extend browser coverage to public lookup details, raw JSON and copy actions, map rendering, error states, accessible navigation, mobile layouts, and docs links.
+- [x] Configure a Chromium Playwright harness, `bun run test:e2e`, CI browser installation, and initial local landing/search/theme/mobile-navigation coverage.
+  - Commit: `3d3762d`
+  - Verification: `bun run typecheck`, `bun run check:code`, and the initial Chromium suite (3 tests) passed; CI installs Chromium and runs `bun run test:e2e`.
+- [x] Extend browser coverage to public lookup details, raw JSON and copy actions, map rendering, error states, accessible navigation, mobile layouts, and docs links.
+  - Commit: `ae4fbb5`
+  - Added mocked IP/domain lookup states, sanitized JSON clipboard confirmation, mobile navigation/theme behavior, local unavailable-map rendering, and the docs guide to generated OpenAPI link flow. The mapped positive-coordinate path remains covered by visitor-location and colo-location unit tests because local Worker mode intentionally withholds Cloudflare location metadata.
+  - Verification: `bun run test:e2e` (7 Chromium tests), `bun run check:code`, `bun run typecheck`, and `bun run test` (44 files, 428 tests) passed. E2E builds the docs output first; Vitest excludes the Playwright directory.
 - [ ] Audit input validation, SSRF boundaries, redirects, response sizes, rate limits, CORS/CSP, caching, logging, privacy, and metadata exposure.
 - [ ] Validate local live/local/fixture modes, Windows workflows, HMR, SSR, bindings, and clean shutdown.
 - [ ] Integrate the current `mynameistito/alchemy-deploy` action and artifact flow using immutable release pins and least-privilege CI; add no direct Wrangler deployment path.
