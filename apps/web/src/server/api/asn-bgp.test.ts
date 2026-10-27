@@ -36,7 +36,7 @@ const asnResponse: PublicAsnLookupResponse = Schema.decodeUnknownSync(
     rdapQueryUrl: "https://rdap.example.test/autnum/13335",
     routeViews: {
       provider: "RouteViews",
-      queryUrl: "https://api.routeviews.org/asn/13335",
+      queryUrl: "https://api.routeviews.org/guest/asn/13335",
       coverage:
         "Observed by a subset of RouteViews collectors; this is not a complete global routing view.",
     },
@@ -58,7 +58,7 @@ const bgpResponse: PublicBgpPrefixLookupResponse = Schema.decodeUnknownSync(
   ],
   attribution: {
     provider: "RouteViews",
-    queryUrl: "https://api.routeviews.org/prefix/192.0.2.1/32",
+    queryUrl: "https://api.routeviews.org/guest/prefix/192.0.2.1/32",
     coverage:
       "Observed by a subset of RouteViews collectors; this is not a complete global routing view.",
   },
@@ -198,7 +198,7 @@ describe("public ASN and BGP lookup API", () => {
       query: { prefix: "2001:db8::/32", version: 6 },
       attribution: {
         ...bgpResponse.attribution,
-        queryUrl: "https://api.routeviews.org/prefix/2001:db8::/32",
+        queryUrl: "https://api.routeviews.org/guest/prefix/2001:db8::/32",
       },
     };
 

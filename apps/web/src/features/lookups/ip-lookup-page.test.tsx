@@ -84,7 +84,7 @@ const bgpResult = Schema.decodeUnknownSync(PublicBgpPrefixLookupResponseSchema)(
     ],
     attribution: {
       provider: "RouteViews",
-      queryUrl: "https://api.routeviews.org/prefix/192.0.2.0/24",
+      queryUrl: "https://api.routeviews.org/guest/prefix/192.0.2.0/24",
       coverage: "Partial collector view",
     },
   }

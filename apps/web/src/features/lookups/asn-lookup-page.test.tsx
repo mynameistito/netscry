@@ -33,7 +33,7 @@ const asnResult: PublicAsnLookupResponse = Schema.decodeUnknownSync(
     rdapQueryUrl: "https://rdap.example/autnum/64500",
     routeViews: {
       provider: "RouteViews",
-      queryUrl: "https://api.routeviews.org/asn/64500",
+      queryUrl: "https://api.routeviews.org/guest/asn/64500",
       coverage: "Subset of RouteViews collectors; not a complete global view.",
     },
   },
