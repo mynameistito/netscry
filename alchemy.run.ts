@@ -6,7 +6,7 @@ import {
 } from "@alchemy.run/cloudflare";
 import type { InferEnv } from "@alchemy.run/cloudflare";
 import { Stack } from "alchemy";
-import { gen } from "effect/Effect";
+import { map } from "effect/Effect";
 
 /** Cloudflare Worker generated from the TanStack Start Vite application. */
 export const Website = CloudflareWebsite.Vite("Web", {
@@ -48,9 +48,5 @@ export default Stack(
     providers: providers(),
     state: state(),
   },
-  gen(function* defineStack() {
-    const website = yield* Website;
-
-    return { url: website.url.as<string>() };
-  })
+  map(Website, (website) => ({ url: website.url.as<string>() }))
 );
