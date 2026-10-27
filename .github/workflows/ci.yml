@@ -33,16 +33,30 @@ jobs:
       - name: Install workspace dependencies
         run: bun install --frozen-lockfile
 
-      - name: Check formatting and docs
-        run: bun run check
+      - name: Restore Bun and Turbo caches
+        uses: actions/cache@0c45773b623bea8c8e75f6c82b208c3cf94ea4f # v4.2.4
+        with:
+          path: |
+            ~/.bun/install/cache
+            .turbo/cache
+          key: turbo-${{ runner.os }}-${{ hashFiles('bun.lock', 'turbo.json', '**/package.json') }}-${{ github.sha }}
+          restore-keys: |
+            turbo-${{ runner.os }}-${{ hashFiles('bun.lock', 'turbo.json', '**/package.json') }}-
 
-      - name: Typecheck workspaces
-        run: bun run typecheck
+      - name: Build workspace packages
+        run: bun run build:packages
 
-      - name: Run tests
-        run: bun run test
+      - name: Run independent checks and application builds in parallel
+        run: >-
+          bunx concurrently --kill-others-on-fail --names code,docs,typecheck,tests,build
+          "bun run check:code"
+          "bun run check:docs"
+          "bun run typecheck:workspace"
+          "bun run test:packages && bun run test:unit"
+          "bun run build"
 
       - name: Install Playwright Chromium
+        if: github.event_name == 'push'
         run: bunx playwright install --with-deps chromium
 
       - name: Run browser tests
@@ -51,9 +65,6 @@ jobs:
           CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
           CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
         run: bun run test:e2e
-
-      - name: Build web and docs
-        run: bun run build
 
       - name: Upload Worker Preview bundle
         uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
