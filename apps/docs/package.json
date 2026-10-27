@@ -4,12 +4,17 @@
   "type": "module",
   "scripts": {
     "dev": "blume dev --host 127.0.0.1 --port 4321",
-    "build": "blume build",
-    "check": "blume check",
+    "api:generate": "bun scripts/generate-api-openapi.ts --write",
+    "api:check": "bun scripts/generate-api-openapi.ts --check",
+    "build": "bun run api:check && blume build --isolated",
+    "check": "bun run api:check && blume check",
     "doctor": "blume doctor",
     "validate": "blume validate"
   },
   "dependencies": {
-    "blume": "^2.2.6"
+    "@netscry/schemas": "workspace:*",
+    "blume": "^2.2.6",
+    "effect": "4.0.6",
+    "oxfmt": "^0.74.0"
   }
 }

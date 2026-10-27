@@ -35,7 +35,10 @@
     "apps/docs": {
       "name": "@netscry/docs",
       "dependencies": {
+        "@netscry/schemas": "workspace:*",
         "blume": "^2.2.6",
+        "effect": "4.0.6",
+        "oxfmt": "^0.74.0",
       },
     },
     "apps/web": {
