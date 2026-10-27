@@ -25,6 +25,7 @@
     "changeset:version": "changeset version",
     "test:e2e": "bun --filter @netscry/docs build && playwright test",
     "test:e2e:install": "playwright install chromium",
+    "audit:site": "unlighthouse-ci",
     "test:unit": "vitest run --exclude 'tests/e2e/**'",
     "test": "bun run build:packages && bun run test:packages && bun run test:unit",
     "build": "turbo run build",
@@ -59,6 +60,7 @@
     "turbo": "^2.5.0",
     "typescript": "npm:@typescript/typescript6@^6.0.2",
     "ultracite": "8.1.0",
+    "unlighthouse": "0.19.1",
     "vitest": "5.0.5"
   },
   "packageManager": "bun@1.4.4"
