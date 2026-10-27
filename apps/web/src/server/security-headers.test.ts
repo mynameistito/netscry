@@ -24,6 +24,9 @@ describe(getSecurityHeaders, () => {
     expect(responseHeaders["content-security-policy"]).toContain(
       "script-src 'self' 'nonce-request-nonce'"
     );
+    expect(responseHeaders["content-security-policy"]).toContain(
+      "connect-src 'self' https://tiles.openfreemap.org https://stats.g.doubleclick.net https://www.google.com"
+    );
   });
 
   it("keeps API policy restrictive without replacing route cache headers", () => {
