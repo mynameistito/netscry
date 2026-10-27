@@ -132,10 +132,18 @@ const LoadedNetworkMap = ({
             longitude={location.longitude}
           >
             <MarkerContent>
-              <span
-                aria-hidden="true"
-                className="bg-primary outline-primary/30 block size-3 rounded-full border-2 border-white outline outline-2"
-              />
+              <details className="group relative">
+                <summary
+                  aria-label={`Show location details for ${location.label}`}
+                  className="focus-visible:outline-ring bg-primary outline-primary/30 block size-5 cursor-pointer list-none rounded-full border-2 border-white outline outline-2 focus-visible:outline-4 [&::-webkit-details-marker]:hidden"
+                />
+                <div className="bg-background text-foreground absolute bottom-full left-1/2 z-20 mb-2 hidden w-64 -translate-x-1/2 space-y-1 rounded-md border p-3 text-left shadow-md group-open:block">
+                  <p className="text-sm font-medium">{location.label}</p>
+                  <p className="text-muted-foreground text-xs leading-5">
+                    {screenReaderDescription}
+                  </p>
+                </div>
+              </details>
             </MarkerContent>
             <MarkerLabel>{location.label}</MarkerLabel>
           </MapMarker>

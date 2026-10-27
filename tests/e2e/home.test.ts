@@ -51,6 +51,34 @@ const domainRecord = {
   raw: { objectClassName: "domain", ldhName: "example.com" },
 };
 
+const asnRecord = {
+  kind: "asn",
+  asn: 64_500,
+  holder: {
+    _tag: "Available",
+    source: "third-party",
+    value: "Example Network",
+    sensitivity: "public",
+  },
+  announcedPrefixes: {
+    _tag: "Available",
+    source: "third-party",
+    value: [
+      { prefix: "192.0.2.0/24", version: 4 },
+      { prefix: "2001:db8::/32", version: 6 },
+    ],
+    sensitivity: "public",
+  },
+  attribution: {
+    rdapQueryUrl: "https://rdap.example/autnum/64500",
+    routeViews: {
+      provider: "RouteViews",
+      queryUrl: "https://api.routeviews.org/asn/64500",
+      coverage: "Subset of RouteViews collectors; not a complete global view.",
+    },
+  },
+};
+
 test("renders the visitor overview and unavailable local map states", async ({
   page,
 }) => {
@@ -196,6 +224,102 @@ test("renders local IP facts while keeping independent source errors visible", a
   ).toBeVisible();
 });
 
+test("renders ASN registration and independently attributed prefixes", async ({
+  page,
+}) => {
+  await page.route("**/api/v1/asn/AS64500", async (route) => {
+    await route.fulfill({ json: asnRecord });
+  });
+
+  await page.goto("/asn/AS64500");
+
+  await expect(
+    page.getByRole("heading", { name: "Autonomous system lookup" })
+  ).toBeVisible();
+  await expect(page.getByText("Example Network")).toBeVisible();
+  await expect(page.getByText("192.0.2.0/24")).toBeVisible();
+  await expect(page.getByText("2001:db8::/32")).toBeVisible();
+  await expect(
+    page.getByRole("link", { name: "RDAP registration source" })
+  ).toHaveAttribute("href", "https://rdap.example/autnum/64500");
+  await expect(
+    page.getByRole("link", { name: "Observe routes" }).first()
+  ).toHaveAttribute("href", "/bgp?prefix=192.0.2.0%2F24");
+});
+
+test("opens and closes accessible location marker details", async ({
+  page,
+}) => {
+  await page.route("**/styles/positron", async (route) => {
+    await route.fulfill({
+      json: {
+        version: 8,
+        sources: {},
+        layers: [
+          {
+            id: "background",
+            type: "background",
+            paint: { "background-color": "#f8fafc" },
+          },
+        ],
+      },
+    });
+  });
+
+  await page.goto("/");
+  await page.evaluate(async () => {
+    const harnessUrl = new URL(
+      "/src/features/maps/network-map-e2e-harness.tsx",
+      window.location.origin
+    ).href;
+
+    const harness: unknown = await import(harnessUrl);
+
+    // oxlint-disable-next-line unicorn/consistent-function-scoping -- Playwright serializes this callback, so the guard must exist in the browser realm.
+    const isMapHarnessModule = (
+      value: unknown
+    ): value is {
+      mountNetworkMapE2eHarness: () => void;
+    } =>
+      // oxlint-disable-next-line anti-slop/no-runtime-typeof -- Validate the browser module boundary before calling its export.
+      typeof value === "object" &&
+      value !== null &&
+      "mountNetworkMapE2eHarness" in value &&
+      // oxlint-disable-next-line anti-slop/no-runtime-typeof -- Ensure the required export has a callable runtime representation.
+      typeof value.mountNetworkMapE2eHarness === "function";
+
+    if (!isMapHarnessModule(harness)) {
+      throw new Error("The map browser harness could not be loaded.");
+    }
+
+    harness.mountNetworkMapE2eHarness();
+  });
+
+  const map = page.getByRole("region", { name: "Browser test location map" });
+  await expect(map).toBeVisible();
+
+  await page
+    .locator(
+      'summary[aria-label="Show location details for AKL · Auckland International Airport (airport reference)"]'
+    )
+    .click();
+
+  const locationDetails = map
+    .getByText(
+      "This marker is the approximate airport reference, not a Cloudflare data center."
+    )
+    .first();
+
+  await expect(locationDetails).toBeVisible();
+
+  await page
+    .locator(
+      'summary[aria-label="Show location details for AKL · Auckland International Airport (airport reference)"]'
+    )
+    .click();
+  await expect(locationDetails).toBeHidden();
+});
+
 test("renders domain registration details and links to DNS", async ({
   page,
 }) => {
@@ -222,6 +346,7 @@ test("copies the sanitized raw metadata with an accessible confirmation", async 
   await page.addInitScript(() => {
     localStorage.setItem("theme", "dark");
   });
+
   await page.goto("/");
 
   await expect(

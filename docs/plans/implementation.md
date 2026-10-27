@@ -372,7 +372,9 @@
 
 ## Phase 8 — Hardening, deployment, and completion audit
 
-- [ ] Audit existing unit, service integration, and API integration coverage against `PROMPT.md`; add tests for uncovered user-visible and security-sensitive behavior.
+- [x] Audit existing unit, service integration, and API integration coverage against `PROMPT.md`; add tests for uncovered user-visible and security-sensitive behavior, including interactive map marker details and ASN browser journeys.
+  - Added browser coverage for ASN registration, independently attributed announced prefixes and their BGP links, plus opening and closing interactive map marker provenance details. The marker now exposes its approximate location explanation in an accessible native disclosure.
+  - Verification: targeted Chromium coverage (2 tests), full `bun run test:e2e` (9 tests), `bun run check:code`, `bun run check:docs`, `bun run typecheck`, `bun run test` (45 files, 430 tests), `bun run build`, and `bun run changeset:status` passed. The production build retains the previously observed CSS sourcemap advisory and large-chunk notices. React Doctor reports the same 12 existing issues in `packages/ui/src/components/map.tsx`; no findings were reported in changed React files.
 - [x] Add `@playwright/test` as a root development dependency and lockfile entry.
   - Commit: `5f57a9c`
   - Verification: `bun install --frozen-lockfile` and `bunx playwright --version` (1.64.1) pass.
