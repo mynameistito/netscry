@@ -8,6 +8,9 @@ dist
 
 # code coverage
 coverage
+test-results/
+playwright-report/
+playwright/.cache/
 *.lcov
 
 # logs

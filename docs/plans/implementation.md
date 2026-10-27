@@ -373,9 +373,11 @@
 ## Phase 8 — Hardening, deployment, and completion audit
 
 - [ ] Audit existing unit, service integration, and API integration coverage against `PROMPT.md`; add tests for uncovered user-visible and security-sensitive behavior.
-- [ ] Add `@playwright/test` as a root development dependency and lockfile entry.
-- [ ] Configure a Chromium Playwright harness and `bun run test:e2e` against local Alchemy development without live provider dependencies.
-- [ ] Cover key browser journeys including landing/search, visitor metadata, lookup flows, accessibility, responsive navigation, map behavior, errors, and documentation links.
+- [x] Add `@playwright/test` as a root development dependency and lockfile entry.
+  - Commit: `5f57a9c`
+  - Verification: `bun install --frozen-lockfile` and `bunx playwright --version` (1.64.1) pass.
+- [ ] Configure a Chromium Playwright harness, `bun run test:e2e`, CI browser installation, and initial local landing/search/theme/mobile-navigation coverage.
+- [ ] Extend browser coverage to public lookup details, raw JSON and copy actions, map rendering, error states, accessible navigation, mobile layouts, and docs links.
 - [ ] Audit input validation, SSRF boundaries, redirects, response sizes, rate limits, CORS/CSP, caching, logging, privacy, and metadata exposure.
 - [ ] Validate local live/local/fixture modes, Windows workflows, HMR, SSR, bindings, and clean shutdown.
 - [ ] Integrate the current `mynameistito/alchemy-deploy` action and artifact flow using immutable release pins and least-privilege CI; add no direct Wrangler deployment path.

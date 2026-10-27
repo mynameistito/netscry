@@ -33,7 +33,9 @@
     "packages/**/*.tsx",
     "apps/**/*.ts",
     "apps/**/*.tsx",
-    "scripts/**/*.ts"
+    "scripts/**/*.ts",
+    "tests/e2e/**/*.ts",
+    "playwright.config.ts"
   ],
   "exclude": ["node_modules", "dist"]
 }
