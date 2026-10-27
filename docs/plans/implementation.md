@@ -365,13 +365,17 @@
   - Commit: `ee19309`
   - Replaced untyped Node assertion calls with explicit schema and fixture checks, and removed an unnecessary async fetch stub.
   - Verification: focused Ultracite/Oxlint, `bun run verify:packages`, full `bun run check:code`, and all 428 tests pass.
-- [ ] Add concise package-local READMEs for the core, schemas, and SDK workspace packages.
-  - Current implementation: explain each package's purpose and imports, the private workspace-only install/build workflow, and the SDK's current-request privacy semantics.
-  - Validation: root formatting and code checks pass; npm and Bun pack dry-runs for all three packages include the README, package manifest, and generated `dist` files only.
+- [x] Add concise package-local READMEs for the core, schemas, and SDK workspace packages.
+  - Commit: `ca7726b`
+  - Document package purpose and imports, the private workspace-only build workflow, supported runtime declarations, and the SDK's current-request privacy semantics.
+  - Validation: full repository formatting/code checks pass; npm and Bun pack dry-runs for all three packages include the README, package manifest, and generated `dist` files only.
 
 ## Phase 8 — Hardening, deployment, and completion audit
 
-- [ ] Complete unit, service integration, API integration, and Playwright coverage for implemented requirements.
+- [ ] Audit existing unit, service integration, and API integration coverage against `PROMPT.md`; add tests for uncovered user-visible and security-sensitive behavior.
+- [ ] Add `@playwright/test` as a root development dependency and lockfile entry.
+- [ ] Configure a Chromium Playwright harness and `bun run test:e2e` against local Alchemy development without live provider dependencies.
+- [ ] Cover key browser journeys including landing/search, visitor metadata, lookup flows, accessibility, responsive navigation, map behavior, errors, and documentation links.
 - [ ] Audit input validation, SSRF boundaries, redirects, response sizes, rate limits, CORS/CSP, caching, logging, privacy, and metadata exposure.
 - [ ] Validate local live/local/fixture modes, Windows workflows, HMR, SSR, bindings, and clean shutdown.
 - [ ] Integrate the current `mynameistito/alchemy-deploy` action and artifact flow using immutable release pins and least-privilege CI; add no direct Wrangler deployment path.
