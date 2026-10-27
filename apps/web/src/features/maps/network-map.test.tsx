@@ -40,14 +40,27 @@ describe(NetworkMap, () => {
       class {
         readonly root = null;
         readonly rootMargin = "";
-        readonly thresholds: ReadonlyArray<number> = [];
+        readonly thresholds: readonly number[] = [];
+        private observedTarget: Element | null = null;
+        private readonly records: IntersectionObserverEntry[] = [];
 
-        disconnect() {}
-        observe() {}
-        takeRecords() {
-          return [];
+        disconnect() {
+          this.observedTarget = null;
         }
-        unobserve() {}
+
+        observe(target: Element) {
+          this.observedTarget = target;
+        }
+
+        takeRecords() {
+          return this.records;
+        }
+
+        unobserve(target: Element) {
+          if (this.observedTarget === target) {
+            this.observedTarget = null;
+          }
+        }
       }
     );
 

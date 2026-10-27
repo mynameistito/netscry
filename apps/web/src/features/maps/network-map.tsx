@@ -66,63 +66,52 @@ const LoadedNetworkMap = ({
 }) => {
   const [components, setComponents] = useState<MapComponents>();
   const [loadFailed, setLoadFailed] = useState(false);
-  const [isNearViewport, setIsNearViewport] = useState(false);
   const mapContainerRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     const container = mapContainerRef.current;
 
-    if (!container) {
-      return;
-    }
-
-    if (!("IntersectionObserver" in window)) {
-      setIsNearViewport(true);
-      return;
-    }
-
-    const observer = new IntersectionObserver(
-      ([entry]) => {
-        if (entry?.isIntersecting) {
-          setIsNearViewport(true);
-          observer.disconnect();
-        }
-      },
-      { rootMargin: "200px 0px" }
-    );
-
-    observer.observe(container);
-
-    return () => {
-      observer.disconnect();
-    };
-  }, []);
-
-  useEffect(() => {
-    if (!isNearViewport) {
-      return;
-    }
-
     let cancelled = false;
 
-    void import("@netscry/ui/components/map")
-      .then((loadedComponents) => {
-        if (!cancelled) {
-          setComponents(loadedComponents);
-        }
+    const loadMap = () => {
+      void import("@netscry/ui/components/map")
+        .then((loadedComponents) => {
+          if (!cancelled) {
+            setComponents(loadedComponents);
+          }
 
-        return loadedComponents;
-      })
-      .catch(() => {
-        if (!cancelled) {
-          setLoadFailed(true);
-        }
-      });
+          return loadedComponents;
+        })
+        .catch(() => {
+          if (!cancelled) {
+            setLoadFailed(true);
+          }
+        });
+    };
+
+    let observer: IntersectionObserver | undefined;
+
+    if (container && "IntersectionObserver" in window) {
+      observer = new IntersectionObserver(
+        ([entry]) => {
+          if (entry?.isIntersecting === true) {
+            observer?.disconnect();
+            loadMap();
+          }
+        },
+        { rootMargin: "200px 0px" }
+      );
+
+      observer.observe(container);
+    } else if (container) {
+      loadMap();
+    }
 
     return () => {
       cancelled = true;
+      observer?.disconnect();
     };
-  }, [isNearViewport]);
+  }, []);
 
   if (loadFailed) {
     return (
