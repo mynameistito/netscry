@@ -356,9 +356,11 @@
   - Validation: focused API/SDK tests (14) and all 424 tests pass; typecheck, full `bun run build`, Blume doctor/link validation, and formatting pass. `bun run check` passed formatting then stalled in Oxlint without diagnostics; direct scoped Oxlint also stalled without diagnostics. The first combined build encountered a stale Blume lock from dead PID 42664; after confirming port 4321 had no listener and removing only that generated lock, the full build passed.
 - [x] Record the OpenAPI generation decision: derive response schemas from Effect contracts, keep route metadata in a small generator, and distinguish NetScry API docs from Blume's own service OpenAPI.
   - Commit: `46e6c60`
-- [ ] Generate or validate API documentation from canonical schemas/contracts and ensure docs builds detect stale required artifacts.
+- [x] Generate or validate API documentation from canonical schemas/contracts and ensure docs builds detect stale required artifacts.
+  - Commit: `cbb8bae`
   - Dependency: implement the prompt-required `/api/v1/domain/{domain}` route and record the OpenAPI generation decision.
-  - Current validation: generator-specific Oxlint and four focused tests, strict typecheck, all 428 tests, `bun run build`, and `bun run check:docs` pass. The web build retains the existing CSS sourcemap advisory. `bun run check:code` reports only the pre-existing `packages/sdk/test/consumer.mjs` lint errors listed in the next task.
+  - Implementation: generate OpenAPI 3.1 response schemas from the canonical Effect schemas; keep HTTP metadata and source route coverage in a tested generator; publish a separate `/api/v1/openapi.json` and fail docs checks/builds when route coverage or generated output is stale. Blume's own `/openapi.json` remains separate.
+  - Verification: generator-specific Oxlint and four focused tests, strict typecheck, all 428 tests, `bun run build`, and `bun run check:docs` pass. The web build retains the existing CSS sourcemap advisory.
 - [ ] Fix lint errors in the built SDK consumer smoke script so repository-wide code checks pass.
   - Discovery: `packages/sdk/test/consumer.mjs` passes as a Node consumer smoke test but currently fails Oxlint for assert style, an unnecessary async function, spacing, and missing Node assertion types. This file is outside the OpenAPI task diff and must be addressed separately.
 - [ ] Add consumer-facing READMEs, license/repository metadata, package contents checks, and runtime support declarations for publishable packages.
