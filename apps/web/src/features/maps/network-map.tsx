@@ -11,7 +11,9 @@ import type {
 } from "@netscry/ui/components/map";
 import { MapPin } from "@netscry/ui/lib/icons";
 import type { ComponentType, ReactNode } from "react";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
+
+import { observeMapNearViewport } from "./observe-map-near-viewport";
 
 interface MapComponents {
   Map: ComponentType<MapProps>;
@@ -45,6 +47,9 @@ const mapStyles = {
   dark: "https://tiles.openfreemap.org/styles/dark",
 };
 
+const mapFrameClassName =
+  "border-border relative h-64 min-h-60 w-full overflow-hidden rounded-lg border sm:h-80";
+
 const isValidLongitude = (longitude: number) =>
   Number.isFinite(longitude) && longitude >= -180 && longitude <= 180;
 
@@ -66,41 +71,72 @@ const LoadedNetworkMap = ({
 }) => {
   const [components, setComponents] = useState<MapComponents>();
   const [loadFailed, setLoadFailed] = useState(false);
+  const mapContainerRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
+    const container = mapContainerRef.current;
+
     let cancelled = false;
 
-    void import("@netscry/ui/components/map")
-      .then((loadedComponents) => {
-        if (!cancelled) {
-          setComponents(loadedComponents);
-        }
+    const loadMap = () => {
+      void import("@netscry/ui/components/map")
+        .then((loadedComponents) => {
+          if (!cancelled) {
+            setComponents(loadedComponents);
+          }
 
-        return loadedComponents;
-      })
-      .catch(() => {
-        if (!cancelled) {
-          setLoadFailed(true);
-        }
-      });
+          return loadedComponents;
+        })
+        .catch(() => {
+          if (!cancelled) {
+            setLoadFailed(true);
+          }
+        });
+    };
+
+    let stopObserving: (() => void) | undefined;
+
+    if (container && "IntersectionObserver" in window) {
+      stopObserving = observeMapNearViewport(container, loadMap);
+    } else if (container) {
+      loadMap();
+    }
 
     return () => {
       cancelled = true;
+      stopObserving?.();
     };
   }, []);
 
   if (loadFailed) {
     return (
-      <ErrorState
-        description="The map could not load. Check the connection and reload this page to try again."
-        title="Map unavailable"
-      />
+      <div className="space-y-2" ref={mapContainerRef}>
+        <section aria-label={mapLabel} className={mapFrameClassName}>
+          <ErrorState
+            description="The map could not load. Check the connection and reload this page to try again."
+            title="Map unavailable"
+          />
+        </section>
+        <p className="text-muted-foreground text-xs">{caption}</p>
+      </div>
     );
   }
 
   if (components === undefined) {
     return (
-      <LoadingState label="Loading approximate network location map" rows={2} />
+      <div className="space-y-2" ref={mapContainerRef}>
+        <section
+          aria-busy="true"
+          aria-label={mapLabel}
+          className={mapFrameClassName}
+        >
+          <LoadingState
+            label="Loading approximate network location map"
+            rows={2}
+          />
+        </section>
+        <p className="text-muted-foreground text-xs">{caption}</p>
+      </div>
     );
   }
 
@@ -113,11 +149,8 @@ const LoadedNetworkMap = ({
   } = components;
 
   return (
-    <div className="space-y-2">
-      <section
-        aria-label={mapLabel}
-        className="border-border relative h-64 min-h-60 w-full overflow-hidden rounded-lg border sm:h-80"
-      >
+    <div className="space-y-2" ref={mapContainerRef}>
+      <section aria-label={mapLabel} className={mapFrameClassName}>
         <MapView
           attributionControl={false}
           center={[location.longitude, location.latitude]}
