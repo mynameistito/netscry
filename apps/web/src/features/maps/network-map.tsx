@@ -13,6 +13,8 @@ import { MapPin } from "@netscry/ui/lib/icons";
 import type { ComponentType, ReactNode } from "react";
 import { useEffect, useRef, useState } from "react";
 
+import { observeMapNearViewport } from "./observe-map-near-viewport";
+
 interface MapComponents {
   Map: ComponentType<MapProps>;
   MapControls: ComponentType<MapControlsProps>;
@@ -44,6 +46,9 @@ const mapStyles = {
   light: "https://tiles.openfreemap.org/styles/positron",
   dark: "https://tiles.openfreemap.org/styles/dark",
 };
+
+const mapFrameClassName =
+  "border-border relative h-64 min-h-60 w-full overflow-hidden rounded-lg border sm:h-80";
 
 const isValidLongitude = (longitude: number) =>
   Number.isFinite(longitude) && longitude >= -180 && longitude <= 180;
@@ -89,46 +94,48 @@ const LoadedNetworkMap = ({
         });
     };
 
-    let observer: IntersectionObserver | undefined;
+    let stopObserving: (() => void) | undefined;
 
     if (container && "IntersectionObserver" in window) {
-      observer = new IntersectionObserver(
-        ([entry]) => {
-          if (entry?.isIntersecting === true) {
-            observer?.disconnect();
-            loadMap();
-          }
-        },
-        { rootMargin: "200px 0px" }
-      );
-
-      observer.observe(container);
+      stopObserving = observeMapNearViewport(container, loadMap);
     } else if (container) {
       loadMap();
     }
 
     return () => {
       cancelled = true;
-      observer?.disconnect();
+      stopObserving?.();
     };
   }, []);
 
   if (loadFailed) {
     return (
-      <ErrorState
-        description="The map could not load. Check the connection and reload this page to try again."
-        title="Map unavailable"
-      />
+      <div className="space-y-2" ref={mapContainerRef}>
+        <section aria-label={mapLabel} className={mapFrameClassName}>
+          <ErrorState
+            description="The map could not load. Check the connection and reload this page to try again."
+            title="Map unavailable"
+          />
+        </section>
+        <p className="text-muted-foreground text-xs">{caption}</p>
+      </div>
     );
   }
 
   if (components === undefined) {
     return (
       <div className="space-y-2" ref={mapContainerRef}>
-        <LoadingState
-          label="Loading approximate network location map"
-          rows={2}
-        />
+        <section
+          aria-busy="true"
+          aria-label={mapLabel}
+          className={mapFrameClassName}
+        >
+          <LoadingState
+            label="Loading approximate network location map"
+            rows={2}
+          />
+        </section>
+        <p className="text-muted-foreground text-xs">{caption}</p>
       </div>
     );
   }
@@ -143,10 +150,7 @@ const LoadedNetworkMap = ({
 
   return (
     <div className="space-y-2" ref={mapContainerRef}>
-      <section
-        aria-label={mapLabel}
-        className="border-border relative h-64 min-h-60 w-full overflow-hidden rounded-lg border sm:h-80"
-      >
+      <section aria-label={mapLabel} className={mapFrameClassName}>
         <MapView
           attributionControl={false}
           center={[location.longitude, location.latitude]}
