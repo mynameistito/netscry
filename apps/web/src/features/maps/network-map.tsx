@@ -11,7 +11,7 @@ import type {
 } from "@netscry/ui/components/map";
 import { MapPin } from "@netscry/ui/lib/icons";
 import type { ComponentType, ReactNode } from "react";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 
 interface MapComponents {
   Map: ComponentType<MapProps>;
@@ -66,8 +66,43 @@ const LoadedNetworkMap = ({
 }) => {
   const [components, setComponents] = useState<MapComponents>();
   const [loadFailed, setLoadFailed] = useState(false);
+  const [isNearViewport, setIsNearViewport] = useState(false);
+  const mapContainerRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
+    const container = mapContainerRef.current;
+
+    if (!container) {
+      return;
+    }
+
+    if (!("IntersectionObserver" in window)) {
+      setIsNearViewport(true);
+      return;
+    }
+
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        if (entry?.isIntersecting) {
+          setIsNearViewport(true);
+          observer.disconnect();
+        }
+      },
+      { rootMargin: "200px 0px" }
+    );
+
+    observer.observe(container);
+
+    return () => {
+      observer.disconnect();
+    };
+  }, []);
+
+  useEffect(() => {
+    if (!isNearViewport) {
+      return;
+    }
+
     let cancelled = false;
 
     void import("@netscry/ui/components/map")
@@ -87,7 +122,7 @@ const LoadedNetworkMap = ({
     return () => {
       cancelled = true;
     };
-  }, []);
+  }, [isNearViewport]);
 
   if (loadFailed) {
     return (
@@ -100,7 +135,12 @@ const LoadedNetworkMap = ({
 
   if (components === undefined) {
     return (
-      <LoadingState label="Loading approximate network location map" rows={2} />
+      <div className="space-y-2" ref={mapContainerRef}>
+        <LoadingState
+          label="Loading approximate network location map"
+          rows={2}
+        />
+      </div>
     );
   }
 
@@ -113,7 +153,7 @@ const LoadedNetworkMap = ({
   } = components;
 
   return (
-    <div className="space-y-2">
+    <div className="space-y-2" ref={mapContainerRef}>
       <section
         aria-label={mapLabel}
         className="border-border relative h-64 min-h-60 w-full overflow-hidden rounded-lg border sm:h-80"
