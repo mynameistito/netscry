@@ -18,12 +18,24 @@ export default defineConfig({
       use: { ...devices["Desktop Chrome"] },
     },
   ],
-  webServer: {
-    command: "bun scripts/alchemy-dev.ts dev",
-    url: "http://127.0.0.1:5173",
-    reuseExistingServer: false,
-    timeout: 120_000,
-    stdout: "pipe",
-    stderr: "pipe",
-  },
+  webServer: [
+    {
+      name: "NetScry web",
+      command: "bun scripts/alchemy-dev.ts dev",
+      url: "http://127.0.0.1:5173",
+      reuseExistingServer: false,
+      timeout: 120_000,
+      stdout: "pipe",
+      stderr: "pipe",
+    },
+    {
+      name: "NetScry docs",
+      command: "bun tests/e2e/serve-docs.ts",
+      url: "http://127.0.0.1:4321/api/v1/",
+      reuseExistingServer: false,
+      timeout: 10_000,
+      stdout: "pipe",
+      stderr: "pipe",
+    },
+  ],
 });
