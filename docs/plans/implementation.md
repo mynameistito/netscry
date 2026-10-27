@@ -306,7 +306,7 @@
   - Discovery: Node's TypeScript runtime cannot execute `.ts` files from `node_modules`, so the current source-only workspace exports are unsuitable for an npm tarball. Generate `.js` and `.d.ts` artifacts and test the resolved package entrypoints in a Node consumer.
   - Reference: <https://nodejs.org/api/typescript.html>.
   - Verification: all 424 tests pass; SDK Node consumer smoke test, package builds, strict typecheck, web production build, and docs production build pass. Oxfmt reports all files formatted. `bun run check` completed formatting but its Oxlint stage stalled without diagnostics; direct scoped Oxlint and `bun run check:docs` also stalled without diagnostics. Retry those checks during phase validation.
-- [ ] Add repository, package contents, tree-shaking, and runtime support metadata to the SDK and shared package manifests; verify package contents without publishing.
+- [x] Add repository, package contents, tree-shaking, and runtime support metadata to the SDK and shared package manifests; verify package contents without publishing.
   - Commit: `a909e55`
   - Prepared manifests with repository links, `files: ["dist"]`, `sideEffects: false`, and Node `>=20` support. `npm pack --dry-run --json` includes only each package manifest and built `dist` artifacts; no archive was published.
   - `bun pm pack --dry-run` independently confirms each workspace package contains only its manifest and built `dist` artifacts.
@@ -361,9 +361,13 @@
   - Dependency: implement the prompt-required `/api/v1/domain/{domain}` route and record the OpenAPI generation decision.
   - Implementation: generate OpenAPI 3.1 response schemas from the canonical Effect schemas; keep HTTP metadata and source route coverage in a tested generator; publish a separate `/api/v1/openapi.json` and fail docs checks/builds when route coverage or generated output is stale. Blume's own `/openapi.json` remains separate.
   - Verification: generator-specific Oxlint and four focused tests, strict typecheck, all 428 tests, `bun run build`, and `bun run check:docs` pass. The web build retains the existing CSS sourcemap advisory.
-- [ ] Fix lint errors in the built SDK consumer smoke script so repository-wide code checks pass.
-  - Discovery: `packages/sdk/test/consumer.mjs` passes as a Node consumer smoke test but currently fails Oxlint for assert style, an unnecessary async function, spacing, and missing Node assertion types. This file is outside the OpenAPI task diff and must be addressed separately.
-- [ ] Add consumer-facing READMEs, license/repository metadata, package contents checks, and runtime support declarations for publishable packages.
+- [x] Fix lint errors in the built SDK consumer smoke script so repository-wide code checks pass.
+  - Commit: `ee19309`
+  - Replaced untyped Node assertion calls with explicit schema and fixture checks, and removed an unnecessary async fetch stub.
+  - Verification: focused Ultracite/Oxlint, `bun run verify:packages`, full `bun run check:code`, and all 428 tests pass.
+- [ ] Add concise package-local READMEs for the core, schemas, and SDK workspace packages.
+  - Current implementation: explain each package's purpose and imports, the private workspace-only install/build workflow, and the SDK's current-request privacy semantics.
+  - Validation: root formatting and code checks pass; npm and Bun pack dry-runs for all three packages include the README, package manifest, and generated `dist` files only.
 
 ## Phase 8 — Hardening, deployment, and completion audit
 
