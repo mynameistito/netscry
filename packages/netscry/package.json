@@ -1,0 +1,39 @@
+{
+  "name": "netscry",
+  "version": "0.1.0",
+  "homepage": "https://github.com/mynameistito/netscry#readme",
+  "bugs": {
+    "url": "https://github.com/mynameistito/netscry/issues"
+  },
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/mynameistito/netscry.git",
+    "directory": "packages/netscry"
+  },
+  "files": [
+    "dist",
+    "LICENSE"
+  ],
+  "type": "module",
+  "sideEffects": false,
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "bun": "./src/index.ts",
+      "development": "./src/index.ts",
+      "import": "./dist/index.js",
+      "default": "./dist/index.js"
+    }
+  },
+  "scripts": {
+    "build": "tsc -p tsconfig.build.json",
+    "test:consumer": "node test/consumer.mjs"
+  },
+  "dependencies": {
+    "@netscry/sdk": "^0.1.1"
+  },
+  "engines": {
+    "node": ">=20"
+  }
+}

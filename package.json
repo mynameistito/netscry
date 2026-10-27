@@ -1,6 +1,6 @@
 {
   "$schema": "https://www.schemastore.org/package.json",
-  "name": "netscry",
+  "name": "netscry-workspace",
   "private": true,
   "workspaces": [
     "apps/*",
@@ -9,8 +9,8 @@
   "type": "module",
   "module": "index.ts",
   "scripts": {
-    "build:packages": "bun --filter @netscry/core build && bun --filter @netscry/schemas build && bun --filter @netscry/sdk build",
-    "verify:packages": "bun run build:packages && bun --filter @netscry/sdk test:consumer",
+    "build:packages": "bun --filter @netscry/core build && bun --filter @netscry/schemas build && bun --filter @netscry/sdk build && bun --filter netscry build",
+    "verify:packages": "bun run build:packages && bun --filter @netscry/sdk test:consumer && bun --filter netscry test:consumer",
     "typecheck": "bun run build:packages && tsc --noEmit && bun --filter @netscry/web typecheck",
     "dev": "bun run build:packages && concurrently --kill-others --names web,docs \"bun scripts/alchemy-dev.ts dev\" \"bun --filter @netscry/docs dev\"",
     "dev:web": "bun run build:packages && bun scripts/alchemy-dev.ts dev",

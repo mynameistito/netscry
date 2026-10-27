@@ -4,7 +4,7 @@ Shared, runtime-neutral networking helpers used by NetScry's API and SDK. The pa
 
 ## Workspace use
 
-This package has public-ready npm metadata but has not been published. From the repository root:
+Version `0.1.1` is published on npm as `@netscry/core`. From the repository root, build the workspace artifacts with:
 
 ```sh
 bun install

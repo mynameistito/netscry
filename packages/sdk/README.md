@@ -4,7 +4,7 @@ Typed Fetch client for the versioned NetScry HTTP API. Requests use standard `fe
 
 ## Availability
 
-The SDK and its shared dependencies have public-ready npm metadata but are not currently published. Inside this repository, build the packages before importing the generated ESM from a Node consumer:
+Version `0.1.1` is published on npm as `@netscry/sdk`, with its `@netscry/core` and `@netscry/schemas` dependencies. Inside this repository, build the packages before importing the generated ESM from a Node consumer:
 
 ```sh
 bun install

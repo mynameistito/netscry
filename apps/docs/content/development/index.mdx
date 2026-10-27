@@ -71,7 +71,7 @@ CI currently runs `bun run check`, `bun run typecheck`, `bun run test`, and `bun
 
 The shared `@netscry/core`, `@netscry/schemas`, and `@netscry/sdk` packages emit ESM JavaScript and TypeScript declarations into their `dist` directories. `bun run build:packages` creates those artifacts; they are generated outputs and should not be edited by hand. `bun run verify:packages` also executes a Node consumer smoke test to check that the built exports work outside Bun's source aliases.
 
-The packages have public-ready manifests but are not published and are not available for registry installation. See the [SDK guide](/sdk) for the current workspace consumer boundary.
+The scoped `@netscry/core`, `@netscry/schemas`, and `@netscry/sdk` packages are published at `0.1.1`. The unscoped `netscry` convenience package is under preparation at `0.1.0`. See the [SDK guide](/sdk) for installation and consumer guidance.
 
 ## Alchemy and deployment boundary
 
@@ -79,13 +79,13 @@ The packages have public-ready manifests but are not published and are not avail
 
 The GitHub Actions deployment workflow uses the immutable `mynameistito/alchemy-deploy` v3.1.8 release. It waits for the matching successful `CI` workflow run, then lets the action gate the exact commit before a production deploy or same-repository pull request Preview. CI builds the Worker without Cloudflare credentials and uploads its server modules and static assets as the `netscry-worker` artifact; the Preview job downloads that artifact from the exact CI run and does not check out or execute pull request code with deployment credentials. Fork previews stay disabled. A nightly action run reconciles previews whose pull requests have closed.
 
-Before enabling deployment credentials, set the `NETSCRY_PRODUCTION_URL` repository variable to the canonical HTTPS URL for the deployed Worker. Add narrowly scoped `CLOUDFLARE_ACCOUNT_ID` and `CLOUDFLARE_API_TOKEN` secrets to both the `preview` and `production` GitHub environments. Configure required reviewers and a `main` branch deployment rule on the `production` environment; the production job waits for that environment approval. Preview deployments use the `preview` environment and remain isolated in action-managed PR stages. The deployment workflow uses Alchemy commands only; it has no direct Wrangler publish path.
+The production URL is `https://netscry.mynameistito.com`. The GitHub deployment workflow requires `CLOUDFLARE_ACCOUNT_ID` and `CLOUDFLARE_API_TOKEN` in its `production` environment. Production Alchemy config attaches the custom domain only to stage `prod`; preview stages remain isolated. The deployment workflow uses Alchemy commands only; it has no direct Wrangler publish path.
 
-This repository has no configured Cloudflare deployment credentials or production URL at the time of implementation. No deploy or DNS change was run. Keep production deployment and live DNS changes subject to explicit approval.
+The production environment and Cloudflare credentials must be configured before the deploy workflow can run. The Alchemy custom-domain resource will manage DNS and certificate attachment for the requested host as part of the production deployment.
 
 ## Release metadata
 
-Changesets are configured for future package release planning. The packages have public-ready manifests, but no release has been prepared or published and no publishing workflow is enabled. Inspect pending changes with:
+Changesets manages versions and changelogs for the published scoped packages and the unscoped `netscry` package. There is no automated npm publishing workflow. Inspect pending changes with:
 
 ```sh
 bun run changeset:status

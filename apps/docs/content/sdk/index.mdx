@@ -9,7 +9,9 @@ description: Current package status, client setup, Effect usage, methods, and er
 
 ## Availability and installation
 
-The SDK and its `@netscry/schemas` and `@netscry/core` dependencies have public-ready manifests under the owner-confirmed `@netscry` scope and use the repository's MIT license. They have not been published, so they cannot yet be installed from npm. Do not add an npm dependency on `@netscry/sdk` until a release is explicitly prepared and published.
+The scoped SDK packages are published on npm at version `0.1.1`: `@netscry/sdk`, `@netscry/schemas`, and `@netscry/core`. They use the repository's MIT license. The unscoped `netscry` package is being prepared as a convenient top-level import and is not yet published.
+
+After the unscoped package release, install the convenience package with `npm install netscry`. The scoped SDK remains available with `npm install @netscry/sdk`.
 
 Inside a checkout of this repository, use the Bun workspace packages directly. Build the ESM and declaration artifacts before using them from a Node consumer:
 
@@ -18,7 +20,7 @@ bun install
 bun run build:packages
 ```
 
-The packages declare Node.js 20 or newer and emit ESM JavaScript with TypeScript declarations. `bun run verify:packages` also runs the SDK consumer smoke check. These build artifacts make the workspace package boundary testable; they do not publish the packages or make them available from a registry.
+All packages declare Node.js 20 or newer and emit ESM JavaScript with TypeScript declarations. `bun run verify:packages` runs Node consumer smoke checks for both SDK entry points.
 
 ## Create a client
 
