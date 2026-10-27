@@ -38,7 +38,7 @@ jobs:
           GITHUB_TOKEN: ${{ github.token }}
         with:
           worker-name: netscry-web
-          deploy-command: bunx --no-install alchemy deploy --stage "$STAGE" --yes
+          deploy-command: bun run build:packages && bunx --no-install alchemy deploy --stage "$STAGE" --yes
           destroy-command: bunx --no-install alchemy destroy --stage "$STAGE" --yes
           production-stage: prod
           production-url: ${{ vars.NETSCRY_PRODUCTION_URL }}
