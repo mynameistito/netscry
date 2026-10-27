@@ -383,11 +383,15 @@
   - Commit: `ae4fbb5`
   - Added mocked IP/domain lookup states, sanitized JSON clipboard confirmation, mobile navigation/theme behavior, local unavailable-map rendering, and the docs guide to generated OpenAPI link flow. The mapped positive-coordinate path remains covered by visitor-location and colo-location unit tests because local Worker mode intentionally withholds Cloudflare location metadata.
   - Verification: `bun run test:e2e` (7 Chromium tests), `bun run check:code`, `bun run typecheck`, and `bun run test` (44 files, 428 tests) passed. E2E builds the docs output first; Vitest excludes the Playwright directory.
-- [ ] Audit input validation, SSRF boundaries, redirects, response sizes, rate limits, CORS/CSP, caching, logging, privacy, and metadata exposure.
+- [x] Audit input validation, SSRF boundaries, redirects, response sizes, rate limits, CORS/CSP, caching, logging, privacy, and metadata exposure.
+  - Commit: `b378fdc`
   - Review findings: provider requests use compile-time origin allowlists, HTTPS/origin validation, manual redirect handling, 8-second timeouts, 1 MiB response caps, JSON content-type checks, schema decoding, and bounded retries. Public lookups pass through the Cloudflare RateLimit binding before provider work; binding failures fail closed. API responses apply safe errors and security headers; `/me` responses are `no-store`, while public results use bounded cache policies. The raw metadata path is allowlisted, and application code does not log request values.
   - Follow-up gaps: SSR HTML responses do not receive the API security headers; add app-wide response hardening and preserve Start's CSRF middleware. Alchemy does not explicitly configure Worker logs/traces; evaluate sampling and sensitive URL capture before setting observability defaults. Deployment-level HSTS cannot be confirmed without inspecting the production zone, which is outside the authorized no-deploy scope.
-- [ ] Add baseline security headers to SSR and server-function responses, including a tested Content-Security-Policy that supports TanStack Start hydration and the map, while preserving the framework's CSRF protections.
-- [ ] Review Alchemy Worker observability settings for privacy-safe logs/traces and document any deployment-only requirements.
+- [x] Add baseline security headers to SSR and server-function responses, including a tested Content-Security-Policy that supports TanStack Start hydration and the map, while preserving the framework's CSRF protections.
+  - Commit: `71257de`
+  - Verification: `bun run check:code`, `bun run typecheck`, `bun run test` (45 files, 430 tests), `bun run test:e2e` (7 Chromium tests), and `bun run build` pass. The web build emits its pre-existing CSS sourcemap advisory.
+- [x] Review Alchemy Worker observability settings for privacy-safe logs/traces and document any deployment-only requirements.
+  - Verification: explicitly disable Worker logs, invocation logs, and traces because request paths contain user lookup identifiers and the installed Alchemy API does not support path redaction; document the diagnostic tradeoff and separate account-level Cloudflare logs. `bun run check:code`, `bun run typecheck`, `bun run check:docs`, `bun run test:e2e` (7 Chromium tests), and `bun run build` pass. The web build emits its pre-existing CSS sourcemap advisory.
 - [ ] Validate local live/local/fixture modes, Windows workflows, HMR, SSR, bindings, and clean shutdown.
 - [ ] Integrate the current `mynameistito/alchemy-deploy` action and artifact flow using immutable release pins and least-privilege CI; add no direct Wrangler deployment path.
 - [ ] Validate web/docs builds, Alchemy configuration, CI-equivalent checks, package consistency, changesets, and generated artifacts.

@@ -12,6 +12,11 @@ import { gen } from "effect/Effect";
 export const Website = CloudflareWebsite.Vite("Web", {
   rootDir: "./apps/web",
   dev: { port: 5173 },
+  observability: {
+    enabled: false,
+    logs: { enabled: false, invocationLogs: false },
+    traces: { enabled: false },
+  },
   env: {
     PUBLIC_LOOKUP_RATE_LIMIT: CloudflareWorkers.RateLimit(
       "PUBLIC_LOOKUP_RATE_LIMIT",
