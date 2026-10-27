@@ -10,6 +10,7 @@ import { map } from "effect/Effect";
 
 /** Cloudflare Worker generated from the TanStack Start Vite application. */
 export const Website = CloudflareWebsite.Vite("Web", {
+  name: "netscry-web",
   rootDir: "./apps/web",
   dev: { port: 5173 },
   domain:
