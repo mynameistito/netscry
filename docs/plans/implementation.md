@@ -391,8 +391,10 @@
   - Commit: `71257de`
   - Verification: `bun run check:code`, `bun run typecheck`, `bun run test` (45 files, 430 tests), `bun run test:e2e` (7 Chromium tests), and `bun run build` pass. The web build emits its pre-existing CSS sourcemap advisory.
 - [x] Review Alchemy Worker observability settings for privacy-safe logs/traces and document any deployment-only requirements.
+  - Commit: `3c974d5`
   - Verification: explicitly disable Worker logs, invocation logs, and traces because request paths contain user lookup identifiers and the installed Alchemy API does not support path redaction; document the diagnostic tradeoff and separate account-level Cloudflare logs. `bun run check:code`, `bun run typecheck`, `bun run check:docs`, `bun run test:e2e` (7 Chromium tests), and `bun run build` pass. The web build emits its pre-existing CSS sourcemap advisory.
-- [ ] Validate local live/local/fixture modes, Windows workflows, HMR, SSR, bindings, and clean shutdown.
+- [x] Validate local live/local/fixture modes, Windows workflows, HMR, SSR, bindings, and clean shutdown.
+  - Verification: unit tests cover live/local/fixture metadata isolation; on Windows, `bun run dev:web` started the Alchemy Worker, returned SSR HTTP 200 with nonce-bearing CSP and `no-store`, and `/api/v1/me` reported `local-runtime` while ignoring spoofed visitor IP and Ray ID headers. A temporary route comment produced a Vite HMR update and was restored. Earlier Windows validation confirmed SIGINT stopped the launcher and Alchemy child tree and released port 5173. Production Cloudflare metadata remains deployment-only and was not tested against live infrastructure.
 - [ ] Integrate the current `mynameistito/alchemy-deploy` action and artifact flow using immutable release pins and least-privilege CI; add no direct Wrangler deployment path.
 - [ ] Validate web/docs builds, Alchemy configuration, CI-equivalent checks, package consistency, changesets, and generated artifacts.
 - [ ] Re-read `PROMPT.md`, audit every requirement against code and command evidence, review all commits, and inspect final Git status.
