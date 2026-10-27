@@ -159,12 +159,12 @@ describe(AsnBgpService, () => {
         rdapQueryUrl: "https://rdap.example.test/autnum/13335",
         routeViews: {
           provider: "RouteViews",
-          queryUrl: "https://api.routeviews.org/asn/13335",
+          queryUrl: "https://api.routeviews.org/guest/asn/13335",
         },
       },
     });
     expect(requests).toStrictEqual([
-      { url: "https://api.routeviews.org/asn/13335" },
+      { url: "https://api.routeviews.org/guest/asn/13335" },
     ]);
   });
 
@@ -273,11 +273,11 @@ describe(AsnBgpService, () => {
       ],
       attribution: {
         provider: "RouteViews",
-        queryUrl: "https://api.routeviews.org/prefix/192.0.2.1/32",
+        queryUrl: "https://api.routeviews.org/guest/prefix/192.0.2.1/32",
       },
     });
     expect(requests).toStrictEqual([
-      { url: "https://api.routeviews.org/prefix/192.0.2.1/32" },
+      { url: "https://api.routeviews.org/guest/prefix/192.0.2.1/32" },
     ]);
   });
 

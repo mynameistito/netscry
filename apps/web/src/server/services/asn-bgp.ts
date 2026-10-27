@@ -165,10 +165,10 @@ const toAnnouncedPrefix = (
 };
 
 const asnQueryUrl = (asn: number) =>
-  new URL(`asn/${asn}`, ROUTEVIEWS_API_URL).href;
+  new URL(`guest/asn/${asn}`, ROUTEVIEWS_API_URL).href;
 
 const prefixQueryUrl = (prefix: AsnAnnouncedPrefix) =>
-  new URL(`prefix/${prefix.prefix}`, ROUTEVIEWS_API_URL).href;
+  new URL(`guest/prefix/${prefix.prefix}`, ROUTEVIEWS_API_URL).href;
 
 const toRouteViewsRoute = (
   route: RouteViewsPrefix
