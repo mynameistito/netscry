@@ -43,7 +43,10 @@ export const Route = createRootRoute({
         content: "Inspect your connection, IP address, and network path.",
       },
     ],
-    links: [{ rel: "stylesheet", href: appCss }],
+    links: [
+      { rel: "stylesheet", href: appCss },
+      { rel: "icon", type: "image/svg+xml", href: "/favicon.svg" },
+    ],
   }),
   component: RootDocument,
 });

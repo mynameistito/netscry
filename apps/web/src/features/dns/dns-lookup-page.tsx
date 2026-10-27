@@ -290,7 +290,7 @@ const DnsAnswerDetails = ({
                       </span>
                     </p>
                     <button
-                      aria-label={`Copy ${record.type} answer ${index + 1}`}
+                      aria-label={`${copied ? "Copied" : "Copy answer"} ${index + 1} (${record.type})`}
                       className="text-muted-foreground focus-visible:outline-ring min-h-10 rounded-md px-3 text-sm underline underline-offset-4 focus-visible:outline-2"
                       onClick={() => {
                         onCopy(value);

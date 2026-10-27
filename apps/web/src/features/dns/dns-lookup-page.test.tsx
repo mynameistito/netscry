@@ -245,7 +245,7 @@ describe(DnsLookupPage, () => {
         .getAttribute("href")
     ).toBe("https://cloudflare-dns.com/dns-query");
 
-    fireEvent.click(screen.getByRole("button", { name: "Copy A answer 1" }));
+    fireEvent.click(screen.getByRole("button", { name: "Copy answer 1 (A)" }));
     await waitFor(() => {
       expect(writeText).toHaveBeenCalledWith("192.0.2.5");
       expect(screen.getByText("DNS answer copied.")).toBeTruthy();
