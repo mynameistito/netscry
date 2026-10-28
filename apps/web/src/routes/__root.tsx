@@ -9,7 +9,7 @@ import {
 } from "@tanstack/react-router";
 import { useMemo } from "react";
 
-import appCss from "~/styles/app.css?url";
+import appCss from "@netscry/ui/styles.css?url";
 
 const RootDocument = () => {
   const queryClient = useMemo(() => new QueryClient(), []);

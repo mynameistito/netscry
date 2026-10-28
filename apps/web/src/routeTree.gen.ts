@@ -13,6 +13,10 @@ import { Route as IndexRouteImport } from './routes/index'
 import { Route as BgpRouteImport } from './routes/bgp'
 import { Route as DnsRouteImport } from './routes/dns'
 import { Route as LookupRouteImport } from './routes/lookup'
+import { Route as LookupsRouteImport } from './routes/lookups'
+import { Route as PrivacyRouteImport } from './routes/privacy'
+import { Route as SourcesRouteImport } from './routes/sources'
+import { Route as TermsRouteImport } from './routes/terms'
 import { Route as AsnAsnRouteImport } from './routes/asn.$asn'
 import { Route as DomainDomainRouteImport } from './routes/domain.$domain'
 import { Route as IpAddressRouteImport } from './routes/ip.$address'
@@ -45,6 +49,26 @@ const DnsRoute = DnsRouteImport.update({
 const LookupRoute = LookupRouteImport.update({
   id: '/lookup',
   path: '/lookup',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const LookupsRoute = LookupsRouteImport.update({
+  id: '/lookups',
+  path: '/lookups',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const PrivacyRoute = PrivacyRouteImport.update({
+  id: '/privacy',
+  path: '/privacy',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const SourcesRoute = SourcesRouteImport.update({
+  id: '/sources',
+  path: '/sources',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const TermsRoute = TermsRouteImport.update({
+  id: '/terms',
+  path: '/terms',
   getParentRoute: () => rootRouteImport,
 } as any)
 const AsnAsnRoute = AsnAsnRouteImport.update({
@@ -118,6 +142,10 @@ export interface FileRoutesByFullPath {
   '/bgp': typeof BgpRoute
   '/dns': typeof DnsRoute
   '/lookup': typeof LookupRoute
+  '/lookups': typeof LookupsRoute
+  '/privacy': typeof PrivacyRoute
+  '/sources': typeof SourcesRoute
+  '/terms': typeof TermsRoute
   '/asn/$asn': typeof AsnAsnRoute
   '/domain/$domain': typeof DomainDomainRoute
   '/ip/$address': typeof IpAddressRoute
@@ -137,6 +165,10 @@ export interface FileRoutesByTo {
   '/bgp': typeof BgpRoute
   '/dns': typeof DnsRoute
   '/lookup': typeof LookupRoute
+  '/lookups': typeof LookupsRoute
+  '/privacy': typeof PrivacyRoute
+  '/sources': typeof SourcesRoute
+  '/terms': typeof TermsRoute
   '/asn/$asn': typeof AsnAsnRoute
   '/domain/$domain': typeof DomainDomainRoute
   '/ip/$address': typeof IpAddressRoute
@@ -157,6 +189,10 @@ export interface FileRoutesById {
   '/bgp': typeof BgpRoute
   '/dns': typeof DnsRoute
   '/lookup': typeof LookupRoute
+  '/lookups': typeof LookupsRoute
+  '/privacy': typeof PrivacyRoute
+  '/sources': typeof SourcesRoute
+  '/terms': typeof TermsRoute
   '/asn/$asn': typeof AsnAsnRoute
   '/domain/$domain': typeof DomainDomainRoute
   '/ip/$address': typeof IpAddressRoute
@@ -178,6 +214,10 @@ export interface FileRouteTypes {
     | '/bgp'
     | '/dns'
     | '/lookup'
+    | '/lookups'
+    | '/privacy'
+    | '/sources'
+    | '/terms'
     | '/asn/$asn'
     | '/domain/$domain'
     | '/ip/$address'
@@ -197,6 +237,10 @@ export interface FileRouteTypes {
     | '/bgp'
     | '/dns'
     | '/lookup'
+    | '/lookups'
+    | '/privacy'
+    | '/sources'
+    | '/terms'
     | '/asn/$asn'
     | '/domain/$domain'
     | '/ip/$address'
@@ -216,6 +260,10 @@ export interface FileRouteTypes {
     | '/bgp'
     | '/dns'
     | '/lookup'
+    | '/lookups'
+    | '/privacy'
+    | '/sources'
+    | '/terms'
     | '/asn/$asn'
     | '/domain/$domain'
     | '/ip/$address'
@@ -236,6 +284,10 @@ export interface RootRouteChildren {
   BgpRoute: typeof BgpRoute
   DnsRoute: typeof DnsRoute
   LookupRoute: typeof LookupRoute
+  LookupsRoute: typeof LookupsRoute
+  PrivacyRoute: typeof PrivacyRoute
+  SourcesRoute: typeof SourcesRoute
+  TermsRoute: typeof TermsRoute
   AsnAsnRoute: typeof AsnAsnRoute
   DomainDomainRoute: typeof DomainDomainRoute
   IpAddressRoute: typeof IpAddressRoute
@@ -278,6 +330,34 @@ declare module '@tanstack/react-router' {
       path: '/lookup'
       fullPath: '/lookup'
       preLoaderRoute: typeof LookupRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/lookups': {
+      id: '/lookups'
+      path: '/lookups'
+      fullPath: '/lookups'
+      preLoaderRoute: typeof LookupsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/privacy': {
+      id: '/privacy'
+      path: '/privacy'
+      fullPath: '/privacy'
+      preLoaderRoute: typeof PrivacyRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/sources': {
+      id: '/sources'
+      path: '/sources'
+      fullPath: '/sources'
+      preLoaderRoute: typeof SourcesRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/terms': {
+      id: '/terms'
+      path: '/terms'
+      fullPath: '/terms'
+      preLoaderRoute: typeof TermsRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/asn/$asn': {
@@ -390,6 +470,10 @@ const rootRouteChildren: RootRouteChildren = {
   BgpRoute: BgpRoute,
   DnsRoute: DnsRoute,
   LookupRoute: LookupRoute,
+  LookupsRoute: LookupsRoute,
+  PrivacyRoute: PrivacyRoute,
+  SourcesRoute: SourcesRoute,
+  TermsRoute: TermsRoute,
   AsnAsnRoute: AsnAsnRoute,
   DomainDomainRoute: DomainDomainRoute,
   IpAddressRoute: IpAddressRoute,

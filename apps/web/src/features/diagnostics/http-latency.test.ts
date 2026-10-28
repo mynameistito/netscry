@@ -52,6 +52,37 @@ describe(measureHttpLatency, () => {
     });
   });
 
+  it("calls the default browser fetch with its global receiver", async () => {
+    const receivers: unknown[] = [];
+
+    const fetchResponse = vi.fn<
+      (
+        this: typeof globalThis,
+        input: RequestInfo | URL,
+        init?: RequestInit
+      ) => Promise<Response>
+    >(async function fetchResponse(this: typeof globalThis) {
+      await Promise.resolve();
+
+      receivers.push(this);
+
+      return new Response(null, { status: 200 });
+    });
+
+    vi.stubGlobal("fetch", fetchResponse);
+
+    try {
+      await Effect.runPromise(
+        measureHttpLatency({ now: () => 1, pause: () => Effect.void })
+      );
+    } finally {
+      vi.unstubAllGlobals();
+    }
+
+    expect(receivers).toHaveLength(5);
+    expect(receivers.every((receiver) => receiver === globalThis)).toBeTruthy();
+  });
+
   it("fails with a safe error when the health endpoint returns an error", async () => {
     const fetchResponse = vi
       .fn<(input: RequestInfo | URL, init?: RequestInit) => Promise<Response>>()

@@ -1,146 +1,184 @@
-// oxlint-disable jsx-a11y/prefer-tag-over-role -- React 19 does not recognize the HTML search landmark element.
-import { ThemeToggle } from "@netscry/ui/components/theme-toggle";
+import { Button } from "@netscry/ui/components/button";
 import {
-  Activity,
-  CircleHelp,
-  Globe2,
-  House,
-  MapPin,
-  Menu,
-  Search,
-  X,
-  ArrowRight,
-} from "@netscry/ui/lib/icons";
-import type { ReactNode } from "react";
+  InputGroup,
+  InputGroupAddon,
+  InputGroupButton,
+  InputGroupInput,
+} from "@netscry/ui/components/input-group";
+import { ThemeToggle } from "@netscry/ui/components/theme-toggle";
+import { Activity, ArrowRight, Menu, Search, X } from "@netscry/ui/lib/icons";
+import { Link } from "@tanstack/react-router";
+import type { ComponentType, MouseEventHandler, ReactNode } from "react";
 import { useState } from "react";
 
-const navigation = [
-  { href: "#overview", label: "Overview", icon: House },
-  { href: "#lookups", label: "Public lookups", icon: Globe2 },
-  { href: "#location-map", label: "Location map", icon: MapPin },
+type NavigationTarget = "/" | "/lookups" | "/sources" | "/privacy" | "/terms";
+
+/** Properties for the product's route-aware navigation links. */
+export interface AppShellLinkProps {
+  to: NavigationTarget;
+  hash?: string;
+  children: ReactNode;
+  className?: string;
+  onClick?: MouseEventHandler<HTMLAnchorElement>;
+}
+
+/**
+ * Renders a product navigation target through TanStack Router.
+ *
+ * @returns The client-side route link.
+ */
+const RouterLink = ({ to, hash, ...props }: AppShellLinkProps) => (
+  <Link hash={hash} to={to} {...props} />
+);
+
+const navigation: readonly {
+  href: NavigationTarget;
+  hash?: string;
+  label: string;
+}[] = [
+  { href: "/", label: "Overview" },
+  { href: "/lookups", label: "Public lookups" },
+  { href: "/", hash: "location-map", label: "Location" },
+  { href: "/sources", label: "Sources" },
+  { href: "/privacy", label: "Privacy" },
+  { href: "/terms", label: "Terms" },
 ];
 
 interface AppShellProps {
   children: ReactNode;
+  LinkComponent?: ComponentType<AppShellLinkProps>;
 }
 
 /**
- * Provides responsive product navigation and a framed work area.
- * @returns The shared NetScry app frame.
+ * Provides responsive product navigation and a readable lookup workspace.
+ * @returns The shared NetScry frame around a page.
  */
-export const AppShell = ({ children }: AppShellProps) => {
+export const AppShell = ({
+  children,
+  LinkComponent = RouterLink,
+}: AppShellProps) => {
   const [menuOpen, setMenuOpen] = useState(false);
 
   return (
-    <div className="bg-muted/70 text-foreground min-h-screen">
-      <div className="mx-auto flex min-h-screen max-w-[1800px]">
-        <aside
-          aria-label="Product sidebar"
-          className={`${menuOpen ? "flex" : "hidden"} bg-muted/70 fixed inset-y-0 left-0 z-30 w-64 flex-col px-4 py-5 lg:static lg:flex lg:w-[228px] lg:shrink-0 lg:px-4`}
-        >
+    <div className="bg-background text-foreground min-h-screen">
+      <header className="border-t-primary bg-card relative z-10 border-t-4">
+        <div className="mx-auto flex min-h-[76px] w-full max-w-7xl items-center gap-7 px-6 max-[1050px]:gap-4.5 max-[820px]:min-h-0 max-[820px]:max-w-2xl max-[820px]:flex-wrap max-[820px]:gap-3 max-[820px]:px-4 max-[820px]:py-3.25">
           <a
-            className="flex h-10 items-center gap-2 px-2 font-semibold tracking-tight"
-            href="#overview"
+            className="text-foreground inline-flex flex-none items-center gap-2.25 text-xl font-semibold tracking-tighter no-underline max-[820px]:mr-auto"
+            href="/"
+            aria-label="NetScry home"
           >
-            <span className="bg-primary text-primary-foreground flex size-7 items-center justify-center rounded-md">
-              <Activity aria-hidden="true" size={16} />
+            <span className="border-primary text-primary inline-flex size-8 items-center justify-center rounded-full border-2">
+              <Activity aria-hidden="true" size={19} strokeWidth={2.3} />
             </span>
-            NetScry
+            <span>NetScry</span>
           </a>
 
-          <div className="text-muted-foreground mt-8 px-2 font-mono text-xs tracking-wide uppercase">
-            Workspace
+          <search className="w-full max-w-96 flex-[1_1_320px] max-[1050px]:max-w-80 max-[820px]:order-2 max-[820px]:max-w-none max-[820px]:basis-full">
+            <form action="/lookup" method="get">
+              <InputGroup size="lg">
+                <InputGroupAddon align="inline-start">
+                  <Search aria-hidden="true" />
+                </InputGroupAddon>
+                <InputGroupInput
+                  aria-label="Search an IP, ASN, or domain"
+                  name="query"
+                  placeholder="Search IPs, ASNs, or domains"
+                  type="search"
+                />
+                <input name="type" type="hidden" value="A" />
+                <InputGroupButton aria-label="Search" type="submit">
+                  <ArrowRight aria-hidden="true" data-icon="inline-end" />
+                </InputGroupButton>
+              </InputGroup>
+            </form>
+          </search>
+
+          <nav
+            aria-label="Main navigation"
+            className="flex flex-1 items-center justify-end gap-7 max-[1050px]:gap-3.5 max-[820px]:hidden"
+          >
+            {navigation.map(({ href, hash, label }) => (
+              <LinkComponent
+                className="text-foreground hover:text-primary text-sm font-medium no-underline"
+                to={href}
+                hash={hash}
+                key={href}
+              >
+                {label}
+              </LinkComponent>
+            ))}
+          </nav>
+
+          <div className="order-1 inline-flex items-center gap-2">
+            <ThemeToggle />
+            <Button
+              aria-expanded={menuOpen}
+              aria-label={menuOpen ? "Close navigation" : "Open navigation"}
+              className="hidden max-[820px]:inline-flex"
+              onClick={() => {
+                setMenuOpen(!menuOpen);
+              }}
+              size="icon-xl"
+              type="button"
+              variant="outline"
+            >
+              {menuOpen ? (
+                <X aria-hidden="true" data-icon="inline-start" />
+              ) : (
+                <Menu aria-hidden="true" data-icon="inline-start" />
+              )}
+            </Button>
           </div>
-          <nav aria-label="Main navigation" className="mt-2 space-y-1">
-            {navigation.map(({ href, label, icon: Icon }) => (
-              <a
-                className="text-muted-foreground hover:bg-background/70 hover:text-foreground focus-visible:outline-ring flex min-h-10 items-center gap-3 rounded-md px-3 text-sm transition-colors focus-visible:outline-2"
-                href={href}
+        </div>
+
+        {menuOpen ? (
+          <nav
+            aria-label="Mobile navigation"
+            className="border-border mx-auto mb-3.5 grid w-full max-w-xl gap-1 border-t px-4 py-2 min-[821px]:hidden"
+          >
+            {navigation.map(({ href, hash, label }) => (
+              <LinkComponent
+                className="text-foreground hover:text-primary px-1 py-2.25 text-sm font-medium no-underline"
+                to={href}
+                hash={hash}
                 key={href}
                 onClick={() => {
                   setMenuOpen(false);
                 }}
               >
-                <Icon aria-hidden="true" size={16} strokeWidth={1.8} />
                 {label}
-              </a>
+              </LinkComponent>
             ))}
           </nav>
-
-          <div className="border-border/70 mt-auto space-y-1 border-t pt-4">
-            <a
-              className="text-muted-foreground hover:bg-background/70 hover:text-foreground focus-visible:outline-ring flex min-h-10 items-center gap-3 rounded-md px-3 text-sm transition-colors focus-visible:outline-2"
-              href="#about"
-            >
-              <CircleHelp aria-hidden="true" size={16} strokeWidth={1.8} />
-              Privacy & sources
-            </a>
-          </div>
-        </aside>
-
-        {menuOpen ? (
-          <button
-            aria-label="Close navigation"
-            className="bg-foreground/20 fixed inset-0 z-20 cursor-default lg:hidden"
-            onClick={() => {
-              setMenuOpen(false);
-            }}
-            type="button"
-          />
         ) : null}
+      </header>
 
-        <div className="flex min-h-screen min-w-0 flex-1 flex-col md:py-2 md:pr-2">
-          <header className="flex h-12 shrink-0 items-center gap-3 px-4 md:px-5">
-            <button
-              aria-expanded={menuOpen}
-              aria-label={menuOpen ? "Close navigation" : "Open navigation"}
-              className="text-muted-foreground hover:bg-background focus-visible:outline-ring inline-flex size-9 items-center justify-center rounded-md focus-visible:outline-2 lg:hidden"
-              onClick={() => {
-                setMenuOpen(!menuOpen);
-              }}
-              type="button"
-            >
-              {menuOpen ? <X size={18} /> : <Menu size={18} />}
-            </button>
-            <form
-              role="search"
-              className="border-input bg-background focus-within:border-ring focus-within:ring-ring/20 mx-auto flex h-8 w-full max-w-xl items-center gap-2 rounded-md border px-2.5 focus-within:ring-2"
-              action="/lookup"
-              method="get"
-            >
-              <Search
-                aria-hidden="true"
-                className="text-muted-foreground shrink-0"
-                size={15}
-              />
-              <input
-                aria-label="Search an IP, ASN, or domain"
-                className="placeholder:text-muted-foreground min-w-0 flex-1 bg-transparent text-xs outline-none"
-                name="query"
-                placeholder="Search an IP, ASN, or domain…"
-                type="search"
-              />
-              <input name="type" type="hidden" value="A" />
-              <button
-                aria-label="Search"
-                className="text-muted-foreground hover:bg-muted hover:text-foreground focus-visible:outline-ring inline-flex size-6 shrink-0 items-center justify-center rounded focus-visible:outline-2"
-                type="submit"
-              >
-                <ArrowRight aria-hidden="true" size={14} />
-              </button>
-            </form>
-            <div className="shrink-0 items-center gap-2">
-              <ThemeToggle />
-            </div>
-          </header>
-
-          <div className="border-border bg-background flex-1 rounded-t-xl border lg:rounded-xl">
-            <div className="mx-auto w-full max-w-[1440px] px-5 py-7 sm:px-7 lg:px-8 lg:py-9">
-              {children}
-            </div>
-          </div>
+      <div className="border-border bg-card mx-auto mt-2 w-full max-w-screen-2xl rounded-t-xl border max-[820px]:mt-0 max-[820px]:rounded-none max-[820px]:border-x-0 max-[820px]:border-b-0">
+        <div className="[&_.border-b]:border-border [&_section[class*='rounded'][class*='border']]:bg-card [&_.text-xs]:text-caption mx-auto w-full max-w-screen-xl px-9.5 pt-9 pb-7.5 max-[820px]:px-5.5 max-[820px]:pt-6.5 max-[820px]:pb-7 max-[480px]:px-4.25 max-[480px]:pt-6 [&_.text-xs]:leading-5 [&_a.text-primary]:font-medium [&_dd.text-sm]:text-base [&_dd.text-sm]:leading-6 [&_dt.text-sm]:text-sm [&_dt.text-sm]:leading-5 [&_h1]:text-3xl [&_h1]:leading-tight [&_h1]:font-semibold [&_h1]:tracking-tighter sm:[&_h1]:text-4xl [&_h3]:text-base [&_h3]:leading-6 [&_h3]:font-semibold [&_p.text-sm]:text-sm [&_p.text-sm]:leading-5">
+          {children}
         </div>
       </div>
+      <footer className="text-muted-foreground mx-auto flex w-full max-w-screen-xl flex-wrap items-center justify-between gap-x-6 gap-y-3 px-9.5 py-6 text-sm max-[820px]:px-5.5 max-[480px]:px-4.25">
+        <span>NetScry · Network visibility</span>
+        <nav
+          aria-label="Footer navigation"
+          className="flex flex-wrap gap-x-5 gap-y-2"
+        >
+          <LinkComponent className="hover:text-foreground" to="/lookups">
+            Public lookups
+          </LinkComponent>
+          <LinkComponent className="hover:text-foreground" to="/sources">
+            Sources
+          </LinkComponent>
+          <LinkComponent className="hover:text-foreground" to="/privacy">
+            Privacy
+          </LinkComponent>
+          <LinkComponent className="hover:text-foreground" to="/terms">
+            Terms
+          </LinkComponent>
+        </nav>
+      </footer>
     </div>
   );
 };

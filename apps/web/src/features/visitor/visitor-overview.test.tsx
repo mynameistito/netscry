@@ -1,5 +1,6 @@
 // @vitest-environment jsdom
 
+import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import {
   cleanup,
   fireEvent,
@@ -7,9 +8,11 @@ import {
   screen,
   waitFor,
 } from "@testing-library/react";
-import { afterEach, describe, expect, it, vi } from "vitest";
+import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 
 import { VisitorOverview } from "./visitor-overview";
+
+const fetchMock = vi.fn<typeof fetch>();
 
 const available = <Value,>(value: Value, units?: string) => ({
   _tag: "Available" as const,
@@ -90,13 +93,33 @@ const readyState = () => ({
   },
 });
 
+const renderVisitorOverview = (
+  state: Parameters<typeof VisitorOverview>[0]["state"]
+) => {
+  const queryClient = new QueryClient({
+    defaultOptions: { queries: { retry: false } },
+  });
+
+  return render(
+    <QueryClientProvider client={queryClient}>
+      <VisitorOverview state={state} />
+    </QueryClientProvider>
+  );
+};
+
 describe(VisitorOverview, () => {
+  beforeEach(() => {
+    fetchMock.mockReset().mockRejectedValue(new Error("No alternate route"));
+    vi.stubGlobal("fetch", fetchMock);
+  });
+
   afterEach(() => {
     cleanup();
+    vi.unstubAllGlobals();
   });
 
   it("shows a loading state while the route reads request metadata", () => {
-    render(<VisitorOverview state={{ status: "loading" }} />);
+    renderVisitorOverview({ status: "loading" });
 
     expect(screen.getByText("Reading metadata for this request…")).toBeTruthy();
     expect(
@@ -105,7 +128,7 @@ describe(VisitorOverview, () => {
   });
 
   it("renders each requested visitor panel and labels its source and missing fields", () => {
-    render(<VisitorOverview state={readyState()} />);
+    renderVisitorOverview(readyState());
 
     const overview =
       screen.getByRole("region", { name: "Visitor connection" }).textContent ??
@@ -118,6 +141,91 @@ describe(VisitorOverview, () => {
     expect(overview).toContain("Not provided by this request");
   });
 
+  it("checks the IPv4-only endpoint when the visitor request uses IPv6", async () => {
+    fetchMock.mockResolvedValue(Response.json({ ip: "198.51.100.24" }));
+
+    renderVisitorOverview(readyState());
+
+    await screen.findByText("198.51.100.24 · IPv4");
+
+    expect(screen.getByText("Visitor IPv4")).toBeTruthy();
+    expect(screen.getByText(/ipify\.org/u)).toBeTruthy();
+    expect(fetchMock).toHaveBeenCalledWith(
+      "https://api.ipify.org?format=json",
+      expect.objectContaining({
+        cache: "no-store",
+        credentials: "omit",
+        referrerPolicy: "no-referrer",
+      })
+    );
+  });
+
+  it("shows the alternate family when the visitor has no route for it", async () => {
+    renderVisitorOverview(readyState());
+
+    await screen.findByText("Source could not be reached");
+
+    expect(screen.getByText("Visitor IPv4")).toBeTruthy();
+    expect(screen.getByText(/ipify\.org/u)).toBeTruthy();
+  });
+
+  it("marks a stalled alternate address lookup unavailable after its timeout", async () => {
+    const timeoutController = new AbortController();
+
+    const timeoutSpy = vi
+      .spyOn(AbortSignal, "timeout")
+      .mockReturnValue(timeoutController.signal);
+
+    const response = Promise.withResolvers<Response>();
+
+    fetchMock.mockReturnValue(response.promise);
+
+    renderVisitorOverview(readyState());
+
+    await waitFor(() => {
+      expect(fetchMock).toHaveBeenCalledWith(
+        "https://api.ipify.org?format=json",
+        expect.anything()
+      );
+    });
+
+    expect(timeoutSpy).toHaveBeenCalledWith(5000);
+
+    timeoutController.abort(new DOMException("Timed out", "TimeoutError"));
+
+    expect(fetchMock.mock.calls[0]?.[1]?.signal?.aborted).toBeTruthy();
+    response.reject(new DOMException("Timed out", "TimeoutError"));
+
+    await screen.findByText("Source could not be reached");
+  });
+
+  it("checks the IPv6-only endpoint when the visitor request uses IPv4", async () => {
+    fetchMock.mockResolvedValue(Response.json({ ip: "2001:db8::2" }));
+
+    const state = readyState();
+
+    const ipv4State = {
+      ...state,
+      data: {
+        ...state.data,
+        network: {
+          ...state.data.network,
+          ip: available({ address: "198.51.100.25", version: 4 as const }),
+        },
+      },
+    };
+
+    renderVisitorOverview(ipv4State);
+
+    await screen.findByText("2001:db8::2 · IPv6");
+
+    expect(screen.getByText("Visitor IPv6")).toBeTruthy();
+    expect(fetchMock).toHaveBeenCalledWith(
+      "https://api6.ipify.org?format=json",
+      expect.objectContaining({ credentials: "omit" })
+    );
+  });
+
   it("copies available identity values and confirms the result accessibly", async () => {
     const writeText = vi
       .fn<(value: string) => Promise<void>>()
@@ -127,7 +235,7 @@ describe(VisitorOverview, () => {
       configurable: true,
       value: { writeText },
     });
-    render(<VisitorOverview state={readyState()} />);
+    renderVisitorOverview(readyState());
 
     fireEvent.click(screen.getByRole("button", { name: "Copy visitor IP" }));
 
@@ -146,7 +254,7 @@ describe(VisitorOverview, () => {
       configurable: true,
       value: { writeText },
     });
-    render(<VisitorOverview state={readyState()} />);
+    renderVisitorOverview(readyState());
 
     fireEvent.click(
       screen.getByText("Safe raw Cloudflare metadata", { selector: "summary" })
@@ -172,7 +280,7 @@ describe(VisitorOverview, () => {
   it("keeps the visitor panels available when raw metadata is unavailable", () => {
     const state = readyState();
 
-    render(<VisitorOverview state={{ ...state, raw: { status: "error" } }} />);
+    renderVisitorOverview({ ...state, raw: { status: "error" } });
 
     expect(screen.getByText("Example Network")).toBeTruthy();
     fireEvent.click(
@@ -184,7 +292,7 @@ describe(VisitorOverview, () => {
   });
 
   it("shows an unavailable state and retries when the visitor read fails", async () => {
-    render(<VisitorOverview state={{ status: "error" }} />);
+    renderVisitorOverview({ status: "error" });
 
     await expect(screen.findByRole("alert")).resolves.toBeTruthy();
     expect(

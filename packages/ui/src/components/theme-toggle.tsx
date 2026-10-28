@@ -1,4 +1,5 @@
-import { Moon, Sun } from "lucide-react";
+import { Button } from "@netscry/ui/components/button";
+import { Moon, Sun } from "@netscry/ui/lib/icons";
 import { useTheme } from "next-themes";
 import { useSyncExternalStore } from "react";
 
@@ -23,21 +24,22 @@ export const ThemeToggle = () => {
   const isDark = mounted && resolvedTheme === "dark";
 
   return (
-    <button
+    <Button
       aria-label="Toggle dark mode"
       aria-pressed={isDark}
-      className="border-border bg-background text-muted-foreground hover:bg-muted hover:text-foreground focus-visible:outline-ring inline-flex size-9 items-center justify-center rounded-md border transition-colors focus-visible:outline-2 focus-visible:outline-offset-2"
       onClick={() => {
         setTheme(isDark ? "light" : "dark");
       }}
+      size="icon-lg"
       type="button"
+      variant="ghost"
     >
       {isDark ? (
-        <Moon aria-hidden="true" size={16} />
+        <Moon aria-hidden="true" data-icon="inline-start" />
       ) : (
-        <Sun aria-hidden="true" size={16} />
+        <Sun aria-hidden="true" data-icon="inline-start" />
       )}
       <span className="sr-only">{isDark ? "Dark theme" : "Light theme"}</span>
-    </button>
+    </Button>
   );
 };
