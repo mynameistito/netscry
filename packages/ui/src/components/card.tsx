@@ -49,10 +49,11 @@ export const CardHeader = ({
 }: CardHeaderProps) => (
   <div
     className={cn(
-      "grid grid-cols-[minmax(0,1fr)_auto] gap-1",
+      variant === "with-action"
+        ? "grid grid-cols-[minmax(0,1fr)_auto] items-center gap-3"
+        : "flex flex-col gap-1",
       bordered && "border-border border-b",
       compact && "px-5 py-4 sm:px-6",
-      variant === "with-action" && "items-center gap-3",
       className
     )}
     data-slot="card-header"

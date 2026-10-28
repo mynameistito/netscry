@@ -122,7 +122,7 @@ export const AppShell = ({ children }: AppShellProps) => {
       </header>
 
       <div className="border-border bg-card mx-auto mt-2 w-full max-w-screen-2xl rounded-t-xl border max-[820px]:mt-0 max-[820px]:rounded-none max-[820px]:border-x-0 max-[820px]:border-b-0">
-        <div className="[&_.border-b]:border-border [&_section[class*='rounded'][class*='border']]:bg-card [&_.text-xs]:text-caption mx-auto w-full max-w-screen-xl px-9.5 pt-9 pb-7.5 max-[820px]:px-5.5 max-[820px]:pt-6.5 max-[820px]:pb-7 max-[480px]:px-4.25 max-[480px]:pt-6 [&_.text-xs]:leading-5 [&_a.text-primary]:font-medium [&_dd.text-sm]:text-base [&_dd.text-sm]:leading-6 [&_dt.text-sm]:text-sm [&_dt.text-sm]:leading-5 [&_h1]:text-3xl [&_h1]:leading-tight [&_h1]:font-semibold [&_h1]:tracking-tighter sm:[&_h1]:text-4xl [&_h2]:text-xl [&_h2]:leading-snug [&_h2]:font-semibold [&_h2]:tracking-tight [&_h3]:text-base [&_h3]:leading-6 [&_h3]:font-semibold [&_p.text-sm]:text-sm [&_p.text-sm]:leading-5">
+        <div className="[&_.border-b]:border-border [&_section[class*='rounded'][class*='border']]:bg-card [&_.text-xs]:text-caption mx-auto w-full max-w-screen-xl px-9.5 pt-9 pb-7.5 max-[820px]:px-5.5 max-[820px]:pt-6.5 max-[820px]:pb-7 max-[480px]:px-4.25 max-[480px]:pt-6 [&_.text-xs]:leading-5 [&_a.text-primary]:font-medium [&_dd.text-sm]:text-base [&_dd.text-sm]:leading-6 [&_dt.text-sm]:text-sm [&_dt.text-sm]:leading-5 [&_h1]:text-3xl [&_h1]:leading-tight [&_h1]:font-semibold [&_h1]:tracking-tighter sm:[&_h1]:text-4xl [&_h3]:text-base [&_h3]:leading-6 [&_h3]:font-semibold [&_p.text-sm]:text-sm [&_p.text-sm]:leading-5">
           {children}
         </div>
       </div>
