@@ -55,17 +55,6 @@ jobs:
           "bun run test:packages && bun run test:unit"
           "bun run build"
 
-      - name: Install Playwright Chromium
-        if: github.event_name == 'push'
-        run: bunx playwright install --with-deps chromium
-
-      - name: Run browser tests
-        if: github.event_name == 'push'
-        env:
-          CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
-          CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
-        run: bun run test:e2e
-
       - name: Upload Worker Preview bundle
         uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
         with:
@@ -75,3 +64,35 @@ jobs:
             apps/web/dist/client/**
           if-no-files-found: error
           retention-days: 7
+
+  browser-tests:
+    name: Browser tests
+    if: github.event_name == 'push'
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - name: Check out source
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          ref: ${{ github.sha }}
+          persist-credentials: false
+
+      - name: Set up Bun
+        uses: oven-sh/setup-bun@0c5077e51419868618aeaa5fe8019c62421857d6 # v2.2.0
+        with:
+          bun-version-file: package.json
+
+      - name: Install workspace dependencies
+        run: bun install --frozen-lockfile
+
+      - name: Build workspace packages
+        run: bun run build:packages
+
+      - name: Install Playwright Chromium
+        run: bunx playwright install --with-deps chromium
+
+      - name: Run browser tests
+        env:
+          CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+          CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+        run: bun run test:e2e
