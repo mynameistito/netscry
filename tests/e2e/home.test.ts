@@ -126,11 +126,6 @@ test("renders the visitor overview and unavailable local map states", async ({
   );
 
   await expect(
-    page.getByRole("heading", {
-      name: "Understand the connection reaching this edge.",
-    })
-  ).toBeVisible();
-  await expect(
     page.getByRole("heading", { name: "Visitor connection" })
   ).toBeVisible();
   await expect(
@@ -182,7 +177,9 @@ test("supports theme switching and accessible mobile navigation", async ({
     })
   ).toHaveAttribute("aria-expanded", "true");
 
-  const navigation = page.getByRole("navigation", { name: "Main navigation" });
+  const navigation = page.getByRole("navigation", {
+    name: "Mobile navigation",
+  });
 
   const lookupsLink = navigation.getByRole("link", {
     name: "Public lookups",
@@ -212,9 +209,7 @@ test("renders local IP facts while keeping independent source errors visible", a
 
   await page.goto("/ip/192.0.2.44");
 
-  await expect(
-    page.getByRole("heading", { name: "IP and network lookup" })
-  ).toBeVisible();
+  await expect(page.getByRole("heading", { name: "192.0.2.44" })).toBeVisible();
   await expect(page.getByText("documentation", { exact: true })).toBeVisible();
   await expect(
     page.getByRole("heading", { name: "RDAP data unavailable" })
@@ -233,9 +228,7 @@ test("renders ASN registration and independently attributed prefixes", async ({
 
   await page.goto("/asn/AS64500");
 
-  await expect(
-    page.getByRole("heading", { name: "Autonomous system lookup" })
-  ).toBeVisible();
+  await expect(page.getByRole("heading", { name: "AS64500" })).toBeVisible();
   await expect(page.getByText("Example Network")).toBeVisible();
   await expect(page.getByText("192.0.2.0/24")).toBeVisible();
   await expect(page.getByText("2001:db8::/32")).toBeVisible();

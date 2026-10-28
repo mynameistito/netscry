@@ -15,9 +15,24 @@ concurrency:
 
 jobs:
   verify:
-    name: Verify workspace
+    name: Verify / ${{ matrix.name }}
     runs-on: ubuntu-latest
     timeout-minutes: 30
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - name: Code
+            command: bun run check:code
+          - name: Docs
+            command: bun run check:docs
+          - name: Typecheck
+            command: bun run typecheck:workspace
+          - name: Tests
+            command: bun run test:packages && bun run test:unit
+          - name: Build
+            command: bun run build
+            uploadArtifact: true
     steps:
       - name: Check out source
         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
@@ -25,48 +40,14 @@ jobs:
           ref: ${{ github.event.pull_request.head.sha || github.sha }}
           persist-credentials: false
 
-      - name: Set up Bun
-        uses: oven-sh/setup-bun@0c5077e51419868618aeaa5fe8019c62421857d6 # v2.2.0
-        with:
-          bun-version-file: package.json
+      - name: Set up workspace
+        uses: ./.github/actions/setup-workspace
 
-      - name: Install workspace dependencies
-        run: bun install --frozen-lockfile
-
-      - name: Restore Bun and Turbo caches
-        uses: actions/cache@1bd1e32a3bdc45362d1e726936510720a7c30a57 # v4.2.0
-        with:
-          path: |
-            ~/.bun/install/cache
-            .turbo/cache
-          key: turbo-${{ runner.os }}-${{ hashFiles('bun.lock', 'turbo.json', '**/package.json') }}-${{ github.sha }}
-          restore-keys: |
-            turbo-${{ runner.os }}-${{ hashFiles('bun.lock', 'turbo.json', '**/package.json') }}-
-
-      - name: Build workspace packages
-        run: bun run build:packages
-
-      - name: Run independent checks and application builds in parallel
-        run: >-
-          bunx concurrently --kill-others-on-fail --names code,docs,typecheck,tests,build
-          "bun run check:code"
-          "bun run check:docs"
-          "bun run typecheck:workspace"
-          "bun run test:packages && bun run test:unit"
-          "bun run build"
-
-      - name: Install Playwright Chromium
-        if: github.event_name == 'push'
-        run: bunx playwright install --with-deps chromium
-
-      - name: Run browser tests
-        if: github.event_name == 'push'
-        env:
-          CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
-          CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
-        run: bun run test:e2e
+      - name: Run ${{ matrix.name }} checks
+        run: ${{ matrix.command }}
 
       - name: Upload Worker Preview bundle
+        if: matrix.uploadArtifact == true
         uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
         with:
           name: netscry-worker
@@ -75,3 +56,27 @@ jobs:
             apps/web/dist/client/**
           if-no-files-found: error
           retention-days: 7
+
+  browser-tests:
+    name: Browser tests
+    if: github.event_name == 'push'
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - name: Check out source
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          ref: ${{ github.sha }}
+          persist-credentials: false
+
+      - name: Set up workspace
+        uses: ./.github/actions/setup-workspace
+
+      - name: Install Playwright Chromium
+        run: bunx playwright install --with-deps chromium
+
+      - name: Run browser tests
+        env:
+          CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+          CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+        run: bun run test:e2e
