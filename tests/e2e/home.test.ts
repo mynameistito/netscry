@@ -319,6 +319,9 @@ test("renders domain registration details and links to DNS", async ({
   );
 
   await page.route("**/api/v1/rdap/domain/**", async (route) => {
+    expect(new URL(route.request().url()).pathname).toBe(
+      "/api/v1/rdap/domain/example.com"
+    );
     await route.fulfill({ json: domainRecord });
   });
 
