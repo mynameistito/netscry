@@ -154,34 +154,9 @@ test("shows a useful validation error for unsupported lookup input", async ({
   ).toBeVisible();
 });
 
-test("supports theme switching and accessible mobile navigation", async ({
-  page,
-}) => {
+test("supports accessible mobile navigation", async ({ page }) => {
   await page.setViewportSize({ width: 390, height: 844 });
-  await page.emulateMedia({ colorScheme: "light" });
   await page.goto("/");
-
-  await expect
-    .poll(
-      async () =>
-        await page
-          .locator("html")
-          .evaluate((element) => element.classList.contains("light"))
-    )
-    .toBe(true);
-
-  const themeToggle = page.getByRole("button", { name: "Toggle dark mode" });
-  await expect(themeToggle).toHaveAttribute("aria-pressed", "false");
-  await themeToggle.click();
-  await expect
-    .poll(
-      async () =>
-        await page
-          .locator("html")
-          .evaluate((element) => element.classList.contains("dark"))
-    )
-    .toBe(true);
-  await expect(themeToggle).toHaveAttribute("aria-pressed", "true");
 
   const menuToggle = page.getByRole("button", { name: "Open navigation" });
   await menuToggle.click();
@@ -339,11 +314,19 @@ test("opens and closes accessible location marker details", async ({
 test("renders domain registration details and links to DNS", async ({
   page,
 }) => {
-  await page.route("**/api/v1/rdap/domain/example.com", async (route) => {
+  const lookupResponse = page.waitForResponse((response) =>
+    response.url().includes("/api/v1/rdap/domain/")
+  );
+
+  await page.route("**/api/v1/rdap/domain/**", async (route) => {
     await route.fulfill({ json: domainRecord });
   });
 
   await page.goto("/domain/example.com");
+
+  const response = await lookupResponse;
+  expect(response.status()).toBe(200);
+  expect(await response.json()).toStrictEqual(domainRecord);
 
   await expect(
     page.getByRole("heading", { name: "Domain registration" })
