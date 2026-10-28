@@ -11,28 +11,28 @@
 
 :root {
   color-scheme: light;
-  --background: #f9fbfc;
-  --foreground: #131416;
+  --background: #f2f7fa;
+  --foreground: #1b2a3a;
   --card: #fff;
-  --card-foreground: #131416;
+  --card-foreground: #1b2a3a;
   --popover: #fff;
-  --popover-foreground: #131416;
-  --primary: #1b6c80;
+  --popover-foreground: #1b2a3a;
+  --primary: #0879aa;
   --primary-foreground: #fff;
-  --secondary: #f4f6f8;
-  --secondary-foreground: #131416;
-  --muted: #f4f6f8;
-  --muted-foreground: #5d5f60;
-  --accent: #ebedee;
-  --accent-foreground: #131416;
+  --secondary: #eaf2f6;
+  --secondary-foreground: #1b2a3a;
+  --muted: #edf3f6;
+  --muted-foreground: #526475;
+  --accent: #e4f2f8;
+  --accent-foreground: #123c55;
   --destructive: #c4242a;
-  --border: #e8eaec;
-  --input: #cdced1;
-  --ring: #1b6c80;
-  --chart-1: #1b6c80;
-  --chart-2: #2f70bb;
-  --chart-3: #a86f0c;
-  --radius: 0.5rem;
+  --border: #dbe5eb;
+  --input: #bdcbd4;
+  --ring: #0879aa;
+  --chart-1: #0879aa;
+  --chart-2: #3477a8;
+  --chart-3: #9c6816;
+  --radius: 0.625rem;
 }
 
 .dark {
@@ -91,6 +91,45 @@
 }
 
 @layer base {
+  body {
+    min-width: 320px;
+    min-height: 100vh;
+    background: var(--background);
+    color: var(--foreground);
+    font-size: 16px;
+    line-height: 1.55;
+  }
+
+  h1 {
+    font-size: clamp(1.85rem, 3vw, 2.4rem);
+    font-weight: 600;
+    letter-spacing: -0.035em;
+    line-height: 1.12;
+  }
+
+  h2 {
+    font-size: 1.2rem;
+    font-weight: 600;
+    letter-spacing: -0.015em;
+    line-height: 1.3;
+  }
+
+  h3 {
+    font-size: 1rem;
+    font-weight: 600;
+    line-height: 1.4;
+  }
+
+  a {
+    text-underline-offset: 3px;
+  }
+
+  button,
+  input,
+  select {
+    font: inherit;
+  }
+
   .maplibregl-popup-content {
     @apply rounded-none! bg-transparent! p-0! shadow-none!;
   }

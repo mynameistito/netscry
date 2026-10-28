@@ -1,23 +1,19 @@
-// oxlint-disable jsx-a11y/prefer-tag-over-role -- React 19 does not recognize the HTML search landmark element.
 import { ThemeToggle } from "@netscry/ui/components/theme-toggle";
 import {
   Activity,
-  CircleHelp,
-  Globe2,
-  House,
-  MapPin,
+  ArrowRight,
   Menu,
   Search,
   X,
-  ArrowRight,
 } from "@netscry/ui/lib/icons";
 import type { ReactNode } from "react";
 import { useState } from "react";
 
 const navigation = [
-  { href: "#overview", label: "Overview", icon: House },
-  { href: "#lookups", label: "Public lookups", icon: Globe2 },
-  { href: "#location-map", label: "Location map", icon: MapPin },
+  { href: "/", label: "Overview" },
+  { href: "/#lookups", label: "Public lookups" },
+  { href: "/#location-map", label: "Location" },
+  { href: "/#about", label: "Privacy & sources" },
 ];
 
 interface AppShellProps {
@@ -25,121 +21,77 @@ interface AppShellProps {
 }
 
 /**
- * Provides responsive product navigation and a framed work area.
- * @returns The shared NetScry app frame.
+ * Provides responsive product navigation and a readable lookup workspace.
+ * @returns The shared NetScry frame around a page.
  */
 export const AppShell = ({ children }: AppShellProps) => {
   const [menuOpen, setMenuOpen] = useState(false);
 
   return (
-    <div className="bg-muted/70 text-foreground min-h-screen">
-      <div className="mx-auto flex min-h-screen max-w-[1800px]">
-        <aside
-          aria-label="Product sidebar"
-          className={`${menuOpen ? "flex" : "hidden"} bg-muted/70 fixed inset-y-0 left-0 z-30 w-64 flex-col px-4 py-5 lg:static lg:flex lg:w-[228px] lg:shrink-0 lg:px-4`}
-        >
-          <a
-            className="flex h-10 items-center gap-2 px-2 font-semibold tracking-tight"
-            href="#overview"
-          >
-            <span className="bg-primary text-primary-foreground flex size-7 items-center justify-center rounded-md">
-              <Activity aria-hidden="true" size={16} />
+    <div className="app-frame min-h-screen">
+      <header className="site-header">
+        <div className="site-header-inner">
+          <a className="site-brand" href="/" aria-label="NetScry home">
+            <span className="site-brand-mark">
+              <Activity aria-hidden="true" size={19} strokeWidth={2.3} />
             </span>
-            NetScry
+            <span>NetScry</span>
           </a>
 
-          <div className="text-muted-foreground mt-8 px-2 font-mono text-xs tracking-wide uppercase">
-            Workspace
-          </div>
-          <nav aria-label="Main navigation" className="mt-2 space-y-1">
-            {navigation.map(({ href, label, icon: Icon }) => (
-              <a
-                className="text-muted-foreground hover:bg-background/70 hover:text-foreground focus-visible:outline-ring flex min-h-10 items-center gap-3 rounded-md px-3 text-sm transition-colors focus-visible:outline-2"
-                href={href}
-                key={href}
-                onClick={() => {
-                  setMenuOpen(false);
-                }}
-              >
-                <Icon aria-hidden="true" size={16} strokeWidth={1.8} />
+          <form
+            role="search"
+            className="site-search"
+            action="/lookup"
+            method="get"
+          >
+            <Search aria-hidden="true" className="site-search-icon" size={17} />
+            <input
+              aria-label="Search an IP, ASN, or domain"
+              name="query"
+              placeholder="Search IPs, ASNs, or domains"
+              type="search"
+            />
+            <input name="type" type="hidden" value="A" />
+            <button aria-label="Search" type="submit">
+              <ArrowRight aria-hidden="true" size={16} />
+            </button>
+          </form>
+
+          <nav aria-label="Main navigation" className="site-nav">
+            {navigation.map(({ href, label }) => (
+              <a href={href} key={href}>
                 {label}
               </a>
             ))}
           </nav>
 
-          <div className="border-border/70 mt-auto space-y-1 border-t pt-4">
-            <a
-              className="text-muted-foreground hover:bg-background/70 hover:text-foreground focus-visible:outline-ring flex min-h-10 items-center gap-3 rounded-md px-3 text-sm transition-colors focus-visible:outline-2"
-              href="#about"
-            >
-              <CircleHelp aria-hidden="true" size={16} strokeWidth={1.8} />
-              Privacy & sources
-            </a>
-          </div>
-        </aside>
-
-        {menuOpen ? (
-          <button
-            aria-label="Close navigation"
-            className="bg-foreground/20 fixed inset-0 z-20 cursor-default lg:hidden"
-            onClick={() => {
-              setMenuOpen(false);
-            }}
-            type="button"
-          />
-        ) : null}
-
-        <div className="flex min-h-screen min-w-0 flex-1 flex-col md:py-2 md:pr-2">
-          <header className="flex h-12 shrink-0 items-center gap-3 px-4 md:px-5">
+          <div className="site-actions">
+            <ThemeToggle />
             <button
               aria-expanded={menuOpen}
               aria-label={menuOpen ? "Close navigation" : "Open navigation"}
-              className="text-muted-foreground hover:bg-background focus-visible:outline-ring inline-flex size-9 items-center justify-center rounded-md focus-visible:outline-2 lg:hidden"
-              onClick={() => {
-                setMenuOpen(!menuOpen);
-              }}
+              className="site-menu-toggle"
+              onClick={() => setMenuOpen(!menuOpen)}
               type="button"
             >
-              {menuOpen ? <X size={18} /> : <Menu size={18} />}
+              {menuOpen ? <X size={19} /> : <Menu size={19} />}
             </button>
-            <form
-              role="search"
-              className="border-input bg-background focus-within:border-ring focus-within:ring-ring/20 mx-auto flex h-8 w-full max-w-xl items-center gap-2 rounded-md border px-2.5 focus-within:ring-2"
-              action="/lookup"
-              method="get"
-            >
-              <Search
-                aria-hidden="true"
-                className="text-muted-foreground shrink-0"
-                size={15}
-              />
-              <input
-                aria-label="Search an IP, ASN, or domain"
-                className="placeholder:text-muted-foreground min-w-0 flex-1 bg-transparent text-xs outline-none"
-                name="query"
-                placeholder="Search an IP, ASN, or domain…"
-                type="search"
-              />
-              <input name="type" type="hidden" value="A" />
-              <button
-                aria-label="Search"
-                className="text-muted-foreground hover:bg-muted hover:text-foreground focus-visible:outline-ring inline-flex size-6 shrink-0 items-center justify-center rounded focus-visible:outline-2"
-                type="submit"
-              >
-                <ArrowRight aria-hidden="true" size={14} />
-              </button>
-            </form>
-            <div className="shrink-0 items-center gap-2">
-              <ThemeToggle />
-            </div>
-          </header>
-
-          <div className="border-border bg-background flex-1 rounded-t-xl border lg:rounded-xl">
-            <div className="mx-auto w-full max-w-[1440px] px-5 py-7 sm:px-7 lg:px-8 lg:py-9">
-              {children}
-            </div>
           </div>
         </div>
+
+        {menuOpen ? (
+          <nav aria-label="Mobile navigation" className="site-mobile-nav">
+            {navigation.map(({ href, label }) => (
+              <a href={href} key={href} onClick={() => setMenuOpen(false)}>
+                {label}
+              </a>
+            ))}
+          </nav>
+        ) : null}
+      </header>
+
+      <div className="site-sheet">
+        <div className="site-content">{children}</div>
       </div>
     </div>
   );

@@ -298,7 +298,7 @@ export const DomainLookupPage = ({ domain }: { readonly domain: string }) => {
           Public domain registry
         </p>
         <h1 className="text-2xl font-medium tracking-tight sm:text-3xl">
-          Domain registration
+          {canonicalDomain || "Domain registration"}
         </h1>
         <p className="text-muted-foreground text-sm leading-6">
           Inspect the registry record and public registration contacts for{" "}

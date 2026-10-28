@@ -182,10 +182,6 @@ export const BgpLookupPage = ({ prefix }: { readonly prefix: string }) => {
   } else {
     lookupContent = (
       <>
-        <div className="border-border bg-muted/30 rounded-lg border px-4 py-3 sm:px-5">
-          <p className="text-muted-foreground text-xs">Lookup target</p>
-          <p className="mt-1 font-mono text-sm break-all">{query}</p>
-        </div>
         <BgpResults data={lookup.data} />
       </>
     );
@@ -199,7 +195,7 @@ export const BgpLookupPage = ({ prefix }: { readonly prefix: string }) => {
           Public routing intelligence
         </p>
         <h1 className="text-2xl font-medium tracking-tight sm:text-3xl">
-          BGP route lookup
+          {query || "BGP route lookup"}
         </h1>
         <p className="text-muted-foreground text-sm leading-6">
           Inspect observed origin ASNs, RPKI states, peer paths, and observation

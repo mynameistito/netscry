@@ -193,7 +193,7 @@ export const AsnLookupPage = ({ asn }: { readonly asn: string }) => {
           Public network intelligence
         </p>
         <h1 className="text-2xl font-medium tracking-tight sm:text-3xl">
-          Autonomous system lookup
+          {query || "Autonomous system lookup"}
         </h1>
         <p className="text-muted-foreground text-sm leading-6">
           Compare public ASN registration data with prefixes observed by

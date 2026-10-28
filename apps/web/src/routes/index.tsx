@@ -51,6 +51,12 @@ const lookupAreas: readonly LookupArea[] = [
 const HomePage = () => {
   const visitorState = Route.useLoaderData();
 
+  const currentVisitorIp =
+    visitorState.status === "ready" &&
+    visitorState.data.network.ip._tag === "Available"
+      ? visitorState.data.network.ip.value.address
+      : undefined;
+
   const visitorLocation =
     visitorState.status === "ready"
       ? getVisitorMapLocation(visitorState.data.location)
@@ -72,11 +78,12 @@ const HomePage = () => {
           <div className="flex flex-wrap items-end justify-between gap-5">
             <div className="max-w-2xl space-y-2">
               <h1 className="text-2xl font-medium tracking-tight sm:text-3xl">
-                Understand the connection reaching this edge.
+                {currentVisitorIp ?? "Your connection, in full view"}
               </h1>
               <p className="text-muted-foreground max-w-2xl text-sm leading-6">
-                Inspect request metadata and explore public network records,
-                with each value tied to its source and scope.
+                {currentVisitorIp === undefined
+                  ? "See the network details available for this request, then explore public IP, ASN, DNS, and routing records."
+                  : "This is the public IP address of the request reaching NetScry. Explore its network details or look up another address."}
               </p>
             </div>
             <a

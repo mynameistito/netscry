@@ -408,7 +408,7 @@ export const IpLookupPage = ({ query }: { readonly query: string }) => {
           Public network intelligence
         </p>
         <h1 className="text-2xl font-medium tracking-tight sm:text-3xl">
-          IP and network lookup
+          {target || "IP and network lookup"}
         </h1>
         <p className="text-muted-foreground text-sm leading-6">
           Inspect local address facts, registry registration, and observed
@@ -429,10 +429,6 @@ export const IpLookupPage = ({ query }: { readonly query: string }) => {
           />
         ) : (
           <>
-            <div className="border-border bg-muted/30 rounded-lg border px-4 py-3 sm:px-5">
-              <p className="text-muted-foreground text-xs">Lookup target</p>
-              <p className="mt-1 font-mono text-sm break-all">{target}</p>
-            </div>
             <IpFactsSection
               state={toSourceState(
                 local.isPending,

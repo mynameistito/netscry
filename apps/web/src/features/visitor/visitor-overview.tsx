@@ -445,10 +445,6 @@ export const VisitorOverview = ({ state }: { state: VisitorState }) => {
 
       {state.status === "ready" ? (
         <div className="space-y-4">
-          <RequestPath data={state.data} />
-          <HttpLatencyPanel />
-          <BrowserDiagnosticsPanel />
-          <RawJsonViewer state={state.raw} />
           <div className="space-y-4 xl:grid xl:grid-cols-3 xl:items-start xl:gap-4 xl:space-y-0">
             <div className="space-y-4">
               {renderPanel("visitor-network")}
@@ -460,6 +456,10 @@ export const VisitorOverview = ({ state }: { state: VisitorState }) => {
               {renderPanel("visitor-security")}
             </div>
           </div>
+          <RequestPath data={state.data} />
+          <HttpLatencyPanel />
+          <BrowserDiagnosticsPanel />
+          <RawJsonViewer state={state.raw} />
         </div>
       ) : null}
     </section>
