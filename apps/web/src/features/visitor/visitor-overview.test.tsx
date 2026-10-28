@@ -169,6 +169,36 @@ describe(VisitorOverview, () => {
     expect(screen.getByText(/ipify\.org/u)).toBeTruthy();
   });
 
+  it("marks a stalled alternate address lookup unavailable after its timeout", async () => {
+    const timeoutController = new AbortController();
+
+    const timeoutSpy = vi
+      .spyOn(AbortSignal, "timeout")
+      .mockReturnValue(timeoutController.signal);
+
+    const response = Promise.withResolvers<Response>();
+
+    fetchMock.mockReturnValue(response.promise);
+
+    renderVisitorOverview(readyState());
+
+    await waitFor(() => {
+      expect(fetchMock).toHaveBeenCalledWith(
+        "https://api.ipify.org?format=json",
+        expect.anything()
+      );
+    });
+
+    expect(timeoutSpy).toHaveBeenCalledWith(5000);
+
+    timeoutController.abort(new DOMException("Timed out", "TimeoutError"));
+
+    expect(fetchMock.mock.calls[0]?.[1]?.signal?.aborted).toBeTruthy();
+    response.reject(new DOMException("Timed out", "TimeoutError"));
+
+    await screen.findByText("Source could not be reached");
+  });
+
   it("checks the IPv6-only endpoint when the visitor request uses IPv4", async () => {
     fetchMock.mockResolvedValue(Response.json({ ip: "2001:db8::2" }));
 

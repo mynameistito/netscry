@@ -71,6 +71,7 @@ const numberFormatter = new Intl.NumberFormat("en-US", {
 });
 
 const IpifyResponseSchema = Schema.Struct({ ip: Schema.NonEmptyString });
+const alternateAddressTimeoutMs = 5000;
 
 const unavailableAlternateAddress: MetadataField = {
   _tag: "Unavailable",
@@ -88,7 +89,10 @@ const lookupAlternateAddress = async (
     cache: "no-store",
     credentials: "omit",
     referrerPolicy: "no-referrer",
-    signal,
+    signal: AbortSignal.any([
+      signal,
+      AbortSignal.timeout(alternateAddressTimeoutMs),
+    ]),
   });
 
   if (!response.ok) {
