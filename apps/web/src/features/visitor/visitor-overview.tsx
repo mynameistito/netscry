@@ -242,7 +242,7 @@ const MetadataFieldValue = ({
       <div className="space-y-1">
         <span>
           {mono ? (
-            <code className="font-mono tabular-nums">{value}</code>
+            <code className="font-mono break-all tabular-nums">{value}</code>
           ) : (
             value
           )}
