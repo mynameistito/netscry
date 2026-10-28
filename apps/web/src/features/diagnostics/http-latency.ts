@@ -61,7 +61,7 @@ const measureSample = (
 export const measureHttpLatency = Effect.fn("HttpLatency.measure")(
   function* measureHttpLatency(input: HttpLatencyMeasurementOptions = {}) {
     const options: Required<HttpLatencyMeasurementOptions> = {
-      fetchResponse: input.fetchResponse ?? globalThis.fetch,
+      fetchResponse: input.fetchResponse ?? globalThis.fetch.bind(globalThis),
       now: input.now ?? (() => performance.now()),
       pause: input.pause ?? (() => Effect.sleep("250 millis")),
     };
