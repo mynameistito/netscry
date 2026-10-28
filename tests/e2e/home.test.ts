@@ -158,15 +158,30 @@ test("supports theme switching and accessible mobile navigation", async ({
   page,
 }) => {
   await page.setViewportSize({ width: 390, height: 844 });
-  await page.addInitScript(() => {
-    localStorage.setItem("theme", "dark");
-  });
+  await page.emulateMedia({ colorScheme: "light" });
   await page.goto("/");
 
+  await expect
+    .poll(
+      async () =>
+        await page
+          .locator("html")
+          .evaluate((element) => element.classList.contains("light"))
+    )
+    .toBe(true);
+
   const themeToggle = page.getByRole("button", { name: "Toggle dark mode" });
-  await expect(themeToggle).toHaveAttribute("aria-pressed", "true");
-  await themeToggle.click();
   await expect(themeToggle).toHaveAttribute("aria-pressed", "false");
+  await themeToggle.click();
+  await expect
+    .poll(
+      async () =>
+        await page
+          .locator("html")
+          .evaluate((element) => element.classList.contains("dark"))
+    )
+    .toBe(true);
+  await expect(themeToggle).toHaveAttribute("aria-pressed", "true");
 
   const menuToggle = page.getByRole("button", { name: "Open navigation" });
   await menuToggle.click();
@@ -222,12 +237,19 @@ test("renders local IP facts while keeping independent source errors visible", a
 test("renders ASN registration and independently attributed prefixes", async ({
   page,
 }) => {
-  await page.route("**/api/v1/asn/AS64500", async (route) => {
+  const lookupResponse = page.waitForResponse((response) =>
+    response.url().includes("/api/v1/asn/")
+  );
+
+  await page.route("**/api/v1/asn/**", async (route) => {
     await route.fulfill({ json: asnRecord });
   });
 
   await page.goto("/asn/AS64500");
 
+  const response = await lookupResponse;
+  expect(response.status()).toBe(200);
+  expect(await response.json()).toStrictEqual(asnRecord);
   await expect(page.getByRole("heading", { name: "AS64500" })).toBeVisible();
   await expect(page.getByText("Example Network")).toBeVisible();
   await expect(page.getByText("192.0.2.0/24")).toBeVisible();
