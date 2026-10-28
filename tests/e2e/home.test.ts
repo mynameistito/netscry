@@ -156,7 +156,15 @@ test("shows a useful validation error for unsupported lookup input", async ({
 
 test("supports accessible mobile navigation", async ({ page }) => {
   await page.setViewportSize({ width: 390, height: 844 });
+  await page.addInitScript(() => {
+    localStorage.setItem("theme", "dark");
+  });
   await page.goto("/");
+
+  // Wait for the hydrated theme state before clicking the client-side menu.
+  await expect(
+    page.getByRole("button", { name: "Toggle dark mode" })
+  ).toHaveAttribute("aria-pressed", "true");
 
   const menuToggle = page.getByRole("button", { name: "Open navigation" });
   await menuToggle.click();
