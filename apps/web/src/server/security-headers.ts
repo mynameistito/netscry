@@ -24,7 +24,7 @@ export const getSecurityHeaders = (request: Request, nonce: string) => {
         "style-src-attr 'unsafe-inline'",
         "img-src 'self' data: blob: https://tiles.openfreemap.org",
         "font-src 'self' data: https://tiles.openfreemap.org",
-        "connect-src 'self' https://tiles.openfreemap.org https://stats.g.doubleclick.net https://www.google.com",
+        "connect-src 'self' https://tiles.openfreemap.org https://stats.g.doubleclick.net https://www.google.com https://api.ipify.org https://api6.ipify.org",
         "worker-src 'self' blob:",
         "manifest-src 'self'",
         "upgrade-insecure-requests",

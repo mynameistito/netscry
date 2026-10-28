@@ -1,3 +1,4 @@
+import { parseIpAddress } from "@netscry/core";
 import type {
   ApiMeResponse,
   BooleanDataFieldSchema,
@@ -10,7 +11,8 @@ import type {
 } from "@netscry/schemas";
 import { IpAddressSchema } from "@netscry/schemas";
 import { ArrowRight } from "@netscry/ui/lib/icons";
-import { Schema } from "effect";
+import { useQuery } from "@tanstack/react-query";
+import { Result, Schema } from "effect";
 import { useState } from "react";
 
 import { BrowserDiagnosticsPanel } from "../diagnostics/browser-diagnostics-panel";
@@ -21,7 +23,14 @@ type MetadataField =
   | typeof IntegerDataFieldSchema.Type
   | typeof NumberDataFieldSchema.Type
   | typeof StringDataFieldSchema.Type
-  | ApiMeResponse["network"]["ip"];
+  | ApiMeResponse["network"]["ip"]
+  | { _tag: "Checking" };
+
+interface AlternateAddress {
+  readonly family: 4 | 6;
+  readonly field: MetadataField;
+  readonly primaryAddress: string;
+}
 
 type MetadataPrimitive = Extract<MetadataField, { _tag: "Available" }>["value"];
 
@@ -60,6 +69,98 @@ const numberFormatter = new Intl.NumberFormat("en-US", {
   maximumFractionDigits: 3,
   useGrouping: true,
 });
+
+const IpifyResponseSchema = Schema.Struct({ ip: Schema.NonEmptyString });
+
+const unavailableAlternateAddress: MetadataField = {
+  _tag: "Unavailable",
+  source: "third-party",
+  reason: "provider-failure",
+  sensitivity: "personal",
+};
+
+const lookupAlternateAddress = async (
+  endpoint: string,
+  family: 4 | 6,
+  signal: AbortSignal
+): Promise<MetadataField> => {
+  const response = await fetch(endpoint, {
+    cache: "no-store",
+    credentials: "omit",
+    referrerPolicy: "no-referrer",
+    signal,
+  });
+
+  if (!response.ok) {
+    return unavailableAlternateAddress;
+  }
+
+  const decoded = Schema.decodeUnknownResult(IpifyResponseSchema)(
+    await response.json()
+  );
+
+  if (Result.isFailure(decoded)) {
+    return unavailableAlternateAddress;
+  }
+
+  const parsedAddress = parseIpAddress(decoded.success.ip);
+
+  if (parsedAddress._tag === "Err" || parsedAddress.value.version !== family) {
+    return unavailableAlternateAddress;
+  }
+
+  return {
+    _tag: "Available",
+    source: "third-party",
+    value: {
+      address: parsedAddress.value.canonical,
+      version: family,
+    },
+    sensitivity: "personal",
+  };
+};
+
+const useAlternateAddress = (
+  primaryAddress: string | null
+): Omit<AlternateAddress, "primaryAddress"> | null => {
+  const parsedPrimary =
+    primaryAddress === null ? null : parseIpAddress(primaryAddress);
+
+  let family: 4 | 6 | null = null;
+
+  if (parsedPrimary !== null && parsedPrimary._tag === "Ok") {
+    family = parsedPrimary.value.version === 4 ? 6 : 4;
+  }
+
+  const endpoint =
+    family === 4
+      ? "https://api.ipify.org?format=json"
+      : "https://api6.ipify.org?format=json";
+
+  const alternateAddress = useQuery({
+    enabled: primaryAddress !== null && family !== null,
+    gcTime: 0,
+    queryFn: async ({ signal }) =>
+      await lookupAlternateAddress(endpoint, family ?? 6, signal),
+    queryKey: ["visitor-alternate-address", primaryAddress, family],
+    refetchOnReconnect: false,
+    refetchOnWindowFocus: false,
+    retry: false,
+    staleTime: 0,
+  });
+
+  if (primaryAddress === null || family === null) {
+    return null;
+  }
+
+  if (alternateAddress.isError) {
+    return { family, field: unavailableAlternateAddress };
+  }
+
+  return alternateAddress.isSuccess
+    ? { family, field: alternateAddress.data }
+    : { family, field: { _tag: "Checking" } };
+};
 
 const displayValue = (value: MetadataPrimitive) => {
   if (Schema.is(IpAddressSchema)(value)) {
@@ -114,11 +215,22 @@ const MetadataFieldValue = ({
   field,
   mono = false,
   copyLabel,
+  sourceLabel,
 }: {
   field: MetadataField;
   mono?: boolean;
   copyLabel?: string;
+  sourceLabel?: string;
 }) => {
+  if (field._tag === "Checking") {
+    return (
+      <div className="space-y-1">
+        <span className="text-muted-foreground">Checking…</span>
+        <p className="text-muted-foreground text-xs leading-4">ipify.org</p>
+      </div>
+    );
+  }
+
   if (field._tag === "Available") {
     const value = displayValue(field.value);
 
@@ -144,7 +256,7 @@ const MetadataFieldValue = ({
           )}
         </span>
         <p className="text-muted-foreground text-xs leading-4">
-          {sourceLabels[field.source]}
+          {sourceLabel ?? sourceLabels[field.source]}
           {field.sensitivity === "public" ? "" : ` · ${field.sensitivity}`}
         </p>
       </div>
@@ -158,7 +270,7 @@ const MetadataFieldValue = ({
         {unavailableLabels[field.reason]}
       </p>
       <p className="text-muted-foreground text-xs leading-4">
-        {sourceLabels[field.source]}
+        {sourceLabel ?? sourceLabels[field.source]}
       </p>
     </div>
   );
@@ -174,6 +286,7 @@ const MetadataPanel = ({
     field: MetadataField;
     mono?: boolean;
     copyLabel?: string;
+    sourceLabel?: string;
   }[];
   id: string;
   title: string;
@@ -188,7 +301,7 @@ const MetadataPanel = ({
       </h2>
     </div>
     <dl className="px-4">
-      {fields.map(({ copyLabel, field, label, mono }) => (
+      {fields.map(({ copyLabel, field, label, mono, sourceLabel }) => (
         <div
           className="border-border flex min-w-0 items-start justify-between gap-3 border-b py-2 last:border-b-0"
           key={label}
@@ -201,6 +314,7 @@ const MetadataPanel = ({
               copyLabel={copyLabel}
               field={field}
               mono={mono}
+              sourceLabel={sourceLabel}
             />
           </dd>
         </div>
@@ -209,7 +323,10 @@ const MetadataPanel = ({
   </section>
 );
 
-const panelFields = (data: ApiMeResponse) => [
+const panelFields = (
+  data: ApiMeResponse,
+  alternateAddress: Omit<AlternateAddress, "primaryAddress"> | null
+) => [
   {
     id: "visitor-network",
     title: "Network identity",
@@ -220,6 +337,17 @@ const panelFields = (data: ApiMeResponse) => [
         mono: true,
         copyLabel: "visitor IP",
       },
+      ...(alternateAddress === null
+        ? []
+        : [
+            {
+              label: `Visitor IPv${alternateAddress.family}`,
+              field: alternateAddress.field,
+              mono: true,
+              copyLabel: `visitor IPv${alternateAddress.family}`,
+              sourceLabel: "ipify.org",
+            },
+          ]),
       {
         label: "Autonomous system",
         field: data.network.asn,
@@ -385,7 +513,15 @@ const RequestPath = ({ data }: { data: ApiMeResponse }) => (
  * @returns The visitor metadata panels and refresh controls.
  */
 export const VisitorOverview = ({ state }: { state: VisitorState }) => {
-  const panels = state.status === "ready" ? panelFields(state.data) : [];
+  const primaryAddress =
+    state.status === "ready" && state.data.network.ip._tag === "Available"
+      ? state.data.network.ip.value.address
+      : null;
+
+  const alternateAddress = useAlternateAddress(primaryAddress);
+
+  const panels =
+    state.status === "ready" ? panelFields(state.data, alternateAddress) : [];
 
   const renderPanel = (id: string) => {
     const panel = panels.find((item) => item.id === id);

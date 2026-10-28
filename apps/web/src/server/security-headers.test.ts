@@ -25,7 +25,7 @@ describe(getSecurityHeaders, () => {
       "script-src 'self' 'nonce-request-nonce'"
     );
     expect(responseHeaders["content-security-policy"]).toContain(
-      "connect-src 'self' https://tiles.openfreemap.org https://stats.g.doubleclick.net https://www.google.com"
+      "connect-src 'self' https://tiles.openfreemap.org https://stats.g.doubleclick.net https://www.google.com https://api.ipify.org https://api6.ipify.org"
     );
   });
 
