@@ -219,7 +219,11 @@ const HomePage = () => {
         >
           <p>
             Request metadata describes the connection reaching this service.
-            Public lookups describe the address or domain you search for.
+            Public lookups describe the address or domain you search for. When a
+            valid visitor IP is available, NetScry automatically asks ipify.org
+            for the other address family. ipify receives that request and sees
+            your public IP; this lookup is skipped when the visitor IP is
+            missing or invalid.
           </p>
           <span className="shrink-0 text-sm">NetScry · Network visibility</span>
         </footer>
