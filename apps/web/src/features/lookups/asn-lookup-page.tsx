@@ -34,8 +34,6 @@ const AsnResults = ({ data }: { readonly data: PublicAsnLookupResponse }) => {
           </p>
         </header>
         <div className="space-y-3 p-4 sm:px-5">
-          <p className="text-muted-foreground text-xs">AS number</p>
-          <p className="font-mono text-lg">AS{data.asn}</p>
           {data.holder._tag === "Available" ? (
             <p className="text-sm">{data.holder.value}</p>
           ) : (

@@ -60,13 +60,12 @@ describe(AppShell, () => {
     );
 
     const menuButton = screen.getByRole("button", { name: "Open navigation" });
-    expect(menuButton.className).toContain("lg:hidden");
-    expect(screen.getByRole("complementary").className).toContain("lg:static");
+    expect(menuButton.className).toContain("site-menu-toggle");
     fireEvent.click(menuButton);
 
     expect(menuButton.getAttribute("aria-expanded")).toBe("true");
     expect(
-      screen.getByRole("navigation", { name: "Main navigation" })
+      screen.getByRole("navigation", { name: "Mobile navigation" })
     ).toBeTruthy();
   });
 });

@@ -301,8 +301,8 @@ export const DomainLookupPage = ({ domain }: { readonly domain: string }) => {
           {canonicalDomain || "Domain registration"}
         </h1>
         <p className="text-muted-foreground text-sm leading-6">
-          Inspect the registry record and public registration contacts for{" "}
-          <span className="font-mono">{canonicalDomain || domain}</span>.
+          Inspect the registry record and public registration contacts from the
+          matching RDAP source.
         </p>
         {canonicalDomain.length === 0 ? null : (
           <a
