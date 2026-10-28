@@ -9,6 +9,59 @@
 
 @custom-variant dark (&:is(.dark *));
 
+/* Register the app-shell hooks used by its companion component stylesheet. */
+@utility app-frame {
+  --netscry-app-frame: 1;
+}
+
+@utility site-header {
+  --netscry-site-header: 1;
+}
+
+@utility site-header-inner {
+  --netscry-site-header-inner: 1;
+}
+
+@utility site-brand {
+  --netscry-site-brand: 1;
+}
+
+@utility site-brand-mark {
+  --netscry-site-brand-mark: 1;
+}
+
+@utility site-search {
+  --netscry-site-search: 1;
+}
+
+@utility site-search-icon {
+  --netscry-site-search-icon: 1;
+}
+
+@utility site-nav {
+  --netscry-site-nav: 1;
+}
+
+@utility site-actions {
+  --netscry-site-actions: 1;
+}
+
+@utility site-menu-toggle {
+  --netscry-site-menu-toggle: 1;
+}
+
+@utility site-mobile-nav {
+  --netscry-site-mobile-nav: 1;
+}
+
+@utility site-sheet {
+  --netscry-site-sheet: 1;
+}
+
+@utility site-content {
+  --netscry-site-content: 1;
+}
+
 :root {
   color-scheme: light;
   --background: #f2f7fa;

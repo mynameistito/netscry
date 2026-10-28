@@ -180,11 +180,7 @@ export const BgpLookupPage = ({ prefix }: { readonly prefix: string }) => {
       />
     );
   } else {
-    lookupContent = (
-      <>
-        <BgpResults data={lookup.data} />
-      </>
-    );
+    lookupContent = <BgpResults data={lookup.data} />;
   }
 
   return (

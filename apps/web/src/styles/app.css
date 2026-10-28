@@ -64,7 +64,9 @@ body {
   border: 1px solid #cbd9e1;
   border-radius: 7px;
   background: #fff;
-  transition: border-color 140ms ease, box-shadow 140ms ease;
+  transition:
+    border-color 140ms ease,
+    box-shadow 140ms ease;
 }
 
 .site-search:focus-within {

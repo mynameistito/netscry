@@ -1,11 +1,5 @@
 import { ThemeToggle } from "@netscry/ui/components/theme-toggle";
-import {
-  Activity,
-  ArrowRight,
-  Menu,
-  Search,
-  X,
-} from "@netscry/ui/lib/icons";
+import { Activity, ArrowRight, Menu, Search, X } from "@netscry/ui/lib/icons";
 import type { ReactNode } from "react";
 import { useState } from "react";
 
@@ -38,24 +32,25 @@ export const AppShell = ({ children }: AppShellProps) => {
             <span>NetScry</span>
           </a>
 
-          <form
-            role="search"
-            className="site-search"
-            action="/lookup"
-            method="get"
-          >
-            <Search aria-hidden="true" className="site-search-icon" size={17} />
-            <input
-              aria-label="Search an IP, ASN, or domain"
-              name="query"
-              placeholder="Search IPs, ASNs, or domains"
-              type="search"
-            />
-            <input name="type" type="hidden" value="A" />
-            <button aria-label="Search" type="submit">
-              <ArrowRight aria-hidden="true" size={16} />
-            </button>
-          </form>
+          <search>
+            <form className="site-search" action="/lookup" method="get">
+              <Search
+                aria-hidden="true"
+                className="site-search-icon"
+                size={17}
+              />
+              <input
+                aria-label="Search an IP, ASN, or domain"
+                name="query"
+                placeholder="Search IPs, ASNs, or domains"
+                type="search"
+              />
+              <input name="type" type="hidden" value="A" />
+              <button aria-label="Search" type="submit">
+                <ArrowRight aria-hidden="true" size={16} />
+              </button>
+            </form>
+          </search>
 
           <nav aria-label="Main navigation" className="site-nav">
             {navigation.map(({ href, label }) => (
@@ -71,7 +66,9 @@ export const AppShell = ({ children }: AppShellProps) => {
               aria-expanded={menuOpen}
               aria-label={menuOpen ? "Close navigation" : "Open navigation"}
               className="site-menu-toggle"
-              onClick={() => setMenuOpen(!menuOpen)}
+              onClick={() => {
+                setMenuOpen(!menuOpen);
+              }}
               type="button"
             >
               {menuOpen ? <X size={19} /> : <Menu size={19} />}
@@ -82,7 +79,13 @@ export const AppShell = ({ children }: AppShellProps) => {
         {menuOpen ? (
           <nav aria-label="Mobile navigation" className="site-mobile-nav">
             {navigation.map(({ href, label }) => (
-              <a href={href} key={href} onClick={() => setMenuOpen(false)}>
+              <a
+                href={href}
+                key={href}
+                onClick={() => {
+                  setMenuOpen(false);
+                }}
+              >
                 {label}
               </a>
             ))}
