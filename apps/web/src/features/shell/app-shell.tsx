@@ -7,25 +7,56 @@ import {
 } from "@netscry/ui/components/input-group";
 import { ThemeToggle } from "@netscry/ui/components/theme-toggle";
 import { Activity, ArrowRight, Menu, Search, X } from "@netscry/ui/lib/icons";
-import type { ReactNode } from "react";
+import { Link } from "@tanstack/react-router";
+import type { ComponentType, MouseEventHandler, ReactNode } from "react";
 import { useState } from "react";
 
-const navigation = [
+type NavigationTarget = "/" | "/lookups" | "/sources" | "/privacy" | "/terms";
+
+/** Properties for the product's route-aware navigation links. */
+export interface AppShellLinkProps {
+  to: NavigationTarget;
+  hash?: string;
+  children: ReactNode;
+  className?: string;
+  onClick?: MouseEventHandler<HTMLAnchorElement>;
+}
+
+/**
+ * Renders a product navigation target through TanStack Router.
+ *
+ * @returns The client-side route link.
+ */
+const RouterLink = ({ to, hash, ...props }: AppShellLinkProps) => (
+  <Link hash={hash} to={to} {...props} />
+);
+
+const navigation: readonly {
+  href: NavigationTarget;
+  hash?: string;
+  label: string;
+}[] = [
   { href: "/", label: "Overview" },
-  { href: "/#lookups", label: "Public lookups" },
-  { href: "/#location-map", label: "Location" },
-  { href: "/#about", label: "Privacy & sources" },
+  { href: "/lookups", label: "Public lookups" },
+  { href: "/", hash: "location-map", label: "Location" },
+  { href: "/sources", label: "Sources" },
+  { href: "/privacy", label: "Privacy" },
+  { href: "/terms", label: "Terms" },
 ];
 
 interface AppShellProps {
   children: ReactNode;
+  LinkComponent?: ComponentType<AppShellLinkProps>;
 }
 
 /**
  * Provides responsive product navigation and a readable lookup workspace.
  * @returns The shared NetScry frame around a page.
  */
-export const AppShell = ({ children }: AppShellProps) => {
+export const AppShell = ({
+  children,
+  LinkComponent = RouterLink,
+}: AppShellProps) => {
   const [menuOpen, setMenuOpen] = useState(false);
 
   return (
@@ -67,14 +98,15 @@ export const AppShell = ({ children }: AppShellProps) => {
             aria-label="Main navigation"
             className="flex flex-1 items-center justify-end gap-7 max-[1050px]:gap-3.5 max-[820px]:hidden"
           >
-            {navigation.map(({ href, label }) => (
-              <a
+            {navigation.map(({ href, hash, label }) => (
+              <LinkComponent
                 className="text-foreground hover:text-primary text-sm font-medium no-underline"
-                href={href}
+                to={href}
+                hash={hash}
                 key={href}
               >
                 {label}
-              </a>
+              </LinkComponent>
             ))}
           </nav>
 
@@ -105,17 +137,18 @@ export const AppShell = ({ children }: AppShellProps) => {
             aria-label="Mobile navigation"
             className="border-border mx-auto mb-3.5 grid w-full max-w-xl gap-1 border-t px-4 py-2 min-[821px]:hidden"
           >
-            {navigation.map(({ href, label }) => (
-              <a
+            {navigation.map(({ href, hash, label }) => (
+              <LinkComponent
                 className="text-foreground hover:text-primary px-1 py-2.25 text-sm font-medium no-underline"
-                href={href}
+                to={href}
+                hash={hash}
                 key={href}
                 onClick={() => {
                   setMenuOpen(false);
                 }}
               >
                 {label}
-              </a>
+              </LinkComponent>
             ))}
           </nav>
         ) : null}
@@ -126,6 +159,26 @@ export const AppShell = ({ children }: AppShellProps) => {
           {children}
         </div>
       </div>
+      <footer className="text-muted-foreground mx-auto flex w-full max-w-screen-xl flex-wrap items-center justify-between gap-x-6 gap-y-3 px-9.5 py-6 text-sm max-[820px]:px-5.5 max-[480px]:px-4.25">
+        <span>NetScry · Network visibility</span>
+        <nav
+          aria-label="Footer navigation"
+          className="flex flex-wrap gap-x-5 gap-y-2"
+        >
+          <LinkComponent className="hover:text-foreground" to="/lookups">
+            Public lookups
+          </LinkComponent>
+          <LinkComponent className="hover:text-foreground" to="/sources">
+            Sources
+          </LinkComponent>
+          <LinkComponent className="hover:text-foreground" to="/privacy">
+            Privacy
+          </LinkComponent>
+          <LinkComponent className="hover:text-foreground" to="/terms">
+            Terms
+          </LinkComponent>
+        </nav>
+      </footer>
     </div>
   );
 };

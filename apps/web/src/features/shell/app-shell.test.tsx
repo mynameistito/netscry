@@ -4,7 +4,33 @@ import { ThemeProvider } from "@netscry/ui/components/theme-provider";
 import { cleanup, fireEvent, render, screen } from "@testing-library/react";
 import { afterEach, beforeEach, describe, expect, it } from "vitest";
 
+import type { AppShellLinkProps } from "./app-shell";
 import { AppShell } from "./app-shell";
+
+const TestLink = ({
+  to,
+  hash,
+  children,
+  className,
+  onClick,
+}: AppShellLinkProps) => (
+  <a
+    className={className}
+    href={hash === undefined ? to : `${to}#${hash}`}
+    onClick={onClick}
+  >
+    {children}
+  </a>
+);
+
+const renderAppShell = () =>
+  render(
+    <ThemeProvider defaultTheme="light" enableSystem={false}>
+      <AppShell LinkComponent={TestLink}>
+        <main>Dashboard content</main>
+      </AppShell>
+    </ThemeProvider>
+  );
 
 describe(AppShell, () => {
   beforeEach(() => {
@@ -28,13 +54,7 @@ describe(AppShell, () => {
   });
 
   it("routes search submissions to the lookup page", () => {
-    render(
-      <ThemeProvider defaultTheme="light" enableSystem={false}>
-        <AppShell>
-          <main>Dashboard content</main>
-        </AppShell>
-      </ThemeProvider>
-    );
+    renderAppShell();
 
     const search = screen.getByRole("searchbox", {
       name: "Search an IP, ASN, or domain",
@@ -51,13 +71,7 @@ describe(AppShell, () => {
   });
 
   it("orders the search flex item on mobile", () => {
-    render(
-      <ThemeProvider defaultTheme="light" enableSystem={false}>
-        <AppShell>
-          <main>Dashboard content</main>
-        </AppShell>
-      </ThemeProvider>
-    );
+    renderAppShell();
 
     const searchRegion = screen
       .getByRole("searchbox", { name: "Search an IP, ASN, or domain" })
@@ -75,13 +89,7 @@ describe(AppShell, () => {
   });
 
   it("provides a responsive navigation toggle", () => {
-    render(
-      <ThemeProvider defaultTheme="light" enableSystem={false}>
-        <AppShell>
-          <main>Dashboard content</main>
-        </AppShell>
-      </ThemeProvider>
-    );
+    renderAppShell();
 
     const menuButton = screen.getByRole("button", { name: "Open navigation" });
     fireEvent.click(menuButton);
@@ -90,5 +98,35 @@ describe(AppShell, () => {
     expect(
       screen.getByRole("navigation", { name: "Mobile navigation" })
     ).toBeTruthy();
+  });
+
+  it("links navigation and footer items to dedicated pages", () => {
+    renderAppShell();
+
+    const navigation = screen.getByRole("navigation", {
+      name: "Main navigation",
+    });
+
+    const footer = screen.getByRole("navigation", {
+      name: "Footer navigation",
+    });
+
+    expect(
+      [...navigation.querySelectorAll("a")].map((link) => [
+        link.textContent,
+        link.getAttribute("href"),
+      ])
+    ).toStrictEqual([
+      ["Overview", "/"],
+      ["Public lookups", "/lookups"],
+      ["Location", "/#location-map"],
+      ["Sources", "/sources"],
+      ["Privacy", "/privacy"],
+      ["Terms", "/terms"],
+    ]);
+
+    expect(
+      [...footer.querySelectorAll("a")].map((link) => link.getAttribute("href"))
+    ).toStrictEqual(["/lookups", "/sources", "/privacy", "/terms"]);
   });
 });

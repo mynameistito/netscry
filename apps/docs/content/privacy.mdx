@@ -13,7 +13,7 @@ When the web application runs on Cloudflare, the `/api/v1/me` endpoints read Clo
 
 The request's IP address is also used as the key for the configured public-lookup rate limit: 60 public lookup requests per minute. Cloudflare's Rate Limiting binding maintains the counter. The application has no account profile or application database for storing request snapshots. Cloudflare's operational logs and the binding's service behavior are controlled by the deployment and Cloudflare, not by this application code.
 
-The Alchemy Worker configuration disables invocation logs and traces for this Worker. Public lookup paths contain the queried IP address, ASN, or domain; Cloudflare invocation logs include the request URL, and sampled traces capture the full request path ([Workers Logs](https://developers.cloudflare.com/workers/observability/logs/workers-logs/), [Workers Traces](https://developers.cloudflare.com/workers/observability/traces/)). The installed Alchemy configuration API does not expose path redaction, so enabling those telemetry streams would retain lookup identifiers. This limits request-level production diagnostics until path redaction is available. Account-level HTTP, security, or other Cloudflare product logs have separate settings.
+The Alchemy Worker configuration disables invocation logs, but enables persisted traces with 5% head sampling. URL query strings are redacted; lookup targets can still appear in URL path segments and therefore in sampled trace data ([Workers Logs](https://developers.cloudflare.com/workers/observability/logs/workers-logs/), [Workers Traces](https://developers.cloudflare.com/workers/observability/traces/)). Account-level HTTP, security, or other Cloudflare product logs have separate settings and retention.
 
 ## Public lookups and provider requests
 
@@ -35,4 +35,4 @@ When a map is displayed, the browser loads map styles and tiles from [OpenFreeMa
 
 ## Storage and service boundaries
 
-The repository does not configure an analytics service or an application database. Browser diagnostics and latency samples are not stored by the application. This describes NetScry's code and Worker settings, not logs or retention by DNS/RDAP/RouteViews providers, the map service, or other Cloudflare products. Their own policies and account-level logging settings are separate.
+The repository does not configure an analytics service or an application database. Browser diagnostics and latency samples are not stored by the application. Lookup results use short-lived Worker memory caches; API responses are marked `no-store` for browser and shared caches. This describes NetScry's code and Worker settings, not logs or retention by DNS/RDAP/RouteViews providers, the map service, or other Cloudflare products. Their own policies and account-level logging settings are separate.

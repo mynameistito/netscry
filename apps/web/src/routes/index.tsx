@@ -7,54 +7,15 @@ import {
   CardTitle,
 } from "@netscry/ui/components/card";
 import { ArrowRight, Search } from "@netscry/ui/lib/icons";
-import { createFileRoute } from "@tanstack/react-router";
+import { createFileRoute, Link } from "@tanstack/react-router";
 
+import { publicLookupAreas } from "../features/lookups/lookup-catalog";
 import { getColoAirportReference } from "../features/maps/colo-location";
 import { NetworkMap } from "../features/maps/network-map";
 import { getVisitorMapLocation } from "../features/maps/visitor-location";
 import { AppShell } from "../features/shell/app-shell";
 import { VisitorOverview } from "../features/visitor/visitor-overview";
 import { getVisitorDashboard } from "../server/api/visitor-dashboard.ts";
-
-interface LookupArea {
-  readonly title: string;
-  readonly description: string;
-  readonly href: string;
-  readonly action: string;
-}
-
-const lookupAreas: readonly LookupArea[] = [
-  {
-    title: "IP & network",
-    description: "Registration and routing context for an address or CIDR.",
-    href: "/ip/192.0.2.1",
-    action: "Open example IP",
-  },
-  {
-    title: "ASN registration",
-    description: "Holder information and announced IPv4/IPv6 prefixes.",
-    href: "/asn/AS64496",
-    action: "Open example ASN",
-  },
-  {
-    title: "BGP prefix",
-    description: "Observed origins, RPKI status, peers, and AS paths.",
-    href: "/bgp?prefix=192.0.2.0%2F24",
-    action: "Open example prefix",
-  },
-  {
-    title: "Domain & DNS",
-    description: "Public domain registration and recursive DNS answers.",
-    href: "/domain/example.com",
-    action: "Open example domain",
-  },
-  {
-    title: "DNS records",
-    description: "Resolver answers for a domain, record type, or PTR name.",
-    href: "/dns",
-    action: "Open DNS lookup",
-  },
-];
 
 const HomePage = () => {
   const visitorState = Route.useLoaderData();
@@ -90,13 +51,13 @@ const HomePage = () => {
                   : "This is the public IP address of the request reaching NetScry. Explore its network details or look up another address."}
               </p>
             </div>
-            <a
+            <Link
               className="bg-primary text-primary-foreground focus-visible:outline-ring inline-flex h-9 items-center gap-2 rounded-md px-3.5 text-sm font-medium transition-opacity hover:opacity-90 focus-visible:outline-2 focus-visible:outline-offset-2"
-              href="#lookups"
+              to="/lookups"
             >
               Explore lookups
               <ArrowRight aria-hidden="true" size={15} />
-            </a>
+            </Link>
           </div>
         </header>
 
@@ -119,7 +80,7 @@ const HomePage = () => {
               </CardAction>
             </CardHeader>
             <CardContent divided flush>
-              {lookupAreas.map((lookupArea) => (
+              {publicLookupAreas.map((lookupArea) => (
                 <div
                   className="flex items-center gap-3 px-5 py-3.5 sm:px-6"
                   key={lookupArea.title}
@@ -212,21 +173,6 @@ const HomePage = () => {
             </Card>
           </div>
         </div>
-
-        <footer
-          className="border-border text-muted-foreground flex flex-col gap-2 border-t pt-5 text-sm sm:flex-row sm:items-center sm:justify-between"
-          id="about"
-        >
-          <p>
-            Request metadata describes the connection reaching this service.
-            Public lookups describe the address or domain you search for. When a
-            valid visitor IP is available, NetScry automatically asks ipify.org
-            for the other address family. ipify receives that request and sees
-            your public IP; this lookup is skipped when the visitor IP is
-            missing or invalid.
-          </p>
-          <span className="shrink-0 text-sm">NetScry · Network visibility</span>
-        </footer>
       </main>
     </AppShell>
   );
