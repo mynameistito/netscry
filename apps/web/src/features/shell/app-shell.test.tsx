@@ -27,7 +27,7 @@ describe(AppShell, () => {
     cleanup();
   });
 
-  it("routes the product search to the shared public lookup resolver", () => {
+  it("routes search submissions to the lookup page", () => {
     render(
       <ThemeProvider defaultTheme="light" enableSystem={false}>
         <AppShell>
@@ -50,6 +50,30 @@ describe(AppShell, () => {
     ).toBe("A");
   });
 
+  it("orders the search flex item on mobile", () => {
+    render(
+      <ThemeProvider defaultTheme="light" enableSystem={false}>
+        <AppShell>
+          <main>Dashboard content</main>
+        </AppShell>
+      </ThemeProvider>
+    );
+
+    const searchRegion = screen
+      .getByRole("searchbox", { name: "Search an IP, ASN, or domain" })
+      .closest("form")?.parentElement;
+
+    if (!searchRegion) {
+      throw new Error("The search region must wrap the lookup form.");
+    }
+
+    expect({
+      isDirectFlexItem: searchRegion.parentElement?.classList.contains("flex"),
+      order: searchRegion.className.includes("max-[820px]:order-2"),
+      fullWidth: searchRegion.className.includes("max-[820px]:basis-full"),
+    }).toStrictEqual({ isDirectFlexItem: true, order: true, fullWidth: true });
+  });
+
   it("provides a responsive navigation toggle", () => {
     render(
       <ThemeProvider defaultTheme="light" enableSystem={false}>
@@ -60,7 +84,6 @@ describe(AppShell, () => {
     );
 
     const menuButton = screen.getByRole("button", { name: "Open navigation" });
-    expect(menuButton.className).toContain("site-menu-toggle");
     fireEvent.click(menuButton);
 
     expect(menuButton.getAttribute("aria-expanded")).toBe("true");

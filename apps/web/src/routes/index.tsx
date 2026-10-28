@@ -1,3 +1,11 @@
+import {
+  Card,
+  CardAction,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@netscry/ui/components/card";
 import { ArrowRight, Search } from "@netscry/ui/lib/icons";
 import { createFileRoute } from "@tanstack/react-router";
 
@@ -69,7 +77,7 @@ const HomePage = () => {
 
   return (
     <AppShell>
-      <main className="space-y-8" id="overview">
+      <main className="flex flex-col gap-8" id="overview">
         <header className="space-y-3">
           <div className="text-muted-foreground flex items-center gap-2 text-sm">
             <span className="bg-primary size-1.5 rounded-full" />
@@ -99,28 +107,22 @@ const HomePage = () => {
         <VisitorOverview state={visitorState} />
 
         <div className="grid gap-6 lg:grid-cols-[minmax(0,1.5fr)_minmax(260px,0.8fr)]">
-          <section
-            aria-labelledby="lookups-title"
-            className="border-border rounded-xl border"
-            id="lookups"
-          >
-            <div className="border-border flex items-center justify-between gap-3 border-b px-5 py-4 sm:px-6">
-              <div>
-                <h2 className="text-sm font-medium" id="lookups-title">
+          <Card aria-labelledby="lookups-title" id="lookups" variant="flush">
+            <CardHeader bordered compact variant="with-action">
+              <div className="grid gap-1">
+                <CardTitle id="lookups-title" size="sm">
                   Public network lookups
-                </h2>
-                <p className="text-muted-foreground mt-1 text-sm">
+                </CardTitle>
+                <CardDescription>
                   Search public records independently of your current
                   connection.
-                </p>
+                </CardDescription>
               </div>
-              <Search
-                aria-hidden="true"
-                className="text-muted-foreground"
-                size={17}
-              />
-            </div>
-            <div className="divide-border divide-y">
+              <CardAction>
+                <Search aria-hidden="true" className="text-muted-foreground" />
+              </CardAction>
+            </CardHeader>
+            <CardContent divided flush>
               {lookupAreas.map((lookupArea) => (
                 <div
                   className="flex items-center gap-3 px-5 py-3.5 sm:px-6"
@@ -141,79 +143,77 @@ const HomePage = () => {
                   </a>
                 </div>
               ))}
-            </div>
-          </section>
+            </CardContent>
+          </Card>
 
-          <div className="space-y-4" id="location-map">
-            <section
-              aria-labelledby="location-map-title"
-              className="border-border rounded-xl border"
-            >
-              <div className="border-border border-b px-5 py-4 sm:px-6">
-                <h2 className="text-sm font-medium" id="location-map-title">
+          <div className="flex flex-col gap-4" id="location-map">
+            <Card aria-labelledby="location-map-title" variant="flush">
+              <CardHeader bordered compact>
+                <CardTitle id="location-map-title" size="sm">
                   Approximate visitor IP location
-                </h2>
-                <p className="text-muted-foreground mt-1 text-sm">
+                </CardTitle>
+                <CardDescription>
                   Network-level estimates do not identify a device&apos;s
                   precise location.
-                </p>
-              </div>
-              <NetworkMap location={visitorLocation} />
-            </section>
+                </CardDescription>
+              </CardHeader>
+              <CardContent flush>
+                <NetworkMap location={visitorLocation} />
+              </CardContent>
+            </Card>
 
-            <section
-              aria-labelledby="colo-map-title"
-              className="border-border rounded-xl border"
-            >
-              <div className="border-border border-b px-5 py-4 sm:px-6">
-                <h2 className="text-sm font-medium" id="colo-map-title">
+            <Card aria-labelledby="colo-map-title" variant="flush">
+              <CardHeader bordered compact>
+                <CardTitle id="colo-map-title" size="sm">
                   Cloudflare connected colo · airport reference
-                </h2>
-                <p className="text-muted-foreground mt-1 text-sm">
+                </CardTitle>
+                <CardDescription>
                   The point marks the airport associated with the colo code, not
                   a Cloudflare data center. Anycast routing can serve a
                   different location from the geographically closest one.
-                </p>
-              </div>
-              <NetworkMap
-                caption={
-                  <>
-                    Cloudflare documents colo codes as nearby airport IATA
-                    codes. Coordinates are an airport reference, not the
-                    data-center location. Sources:{" "}
-                    <a
-                      href="https://developers.cloudflare.com/support/troubleshooting/general-troubleshooting/gathering-information-for-troubleshooting-sites/"
-                      rel="noreferrer"
-                      target="_blank"
-                    >
-                      Cloudflare&apos;s location guide
-                    </a>
-                    ,{" "}
-                    <a
-                      href="https://www.cloudflarestatus.com/locations"
-                      rel="noreferrer"
-                      target="_blank"
-                    >
-                      status locations
-                    </a>
-                    , and{" "}
-                    <a
-                      href="https://ourairports.com/data/"
-                      rel="noreferrer"
-                      target="_blank"
-                    >
-                      OurAirports
-                    </a>{" "}
-                    (public-domain data; no accuracy guarantee). Your browser
-                    requests map tiles directly from OpenFreeMap.
-                  </>
-                }
-                emptyDescription="A reference point is shown only when the Cloudflare colo code has a verified airport match. No data-center coordinates are inferred."
-                location={coloAirportReference}
-                mapLabel="Cloudflare colo airport reference map"
-                screenReaderDescription="This marker is the approximate airport reference associated with the Cloudflare colo code, not a Cloudflare data center."
-              />
-            </section>
+                </CardDescription>
+              </CardHeader>
+              <CardContent flush>
+                <NetworkMap
+                  caption={
+                    <>
+                      Cloudflare documents colo codes as nearby airport IATA
+                      codes. Coordinates are an airport reference, not the
+                      data-center location. Sources:{" "}
+                      <a
+                        href="https://developers.cloudflare.com/support/troubleshooting/general-troubleshooting/gathering-information-for-troubleshooting-sites/"
+                        rel="noreferrer"
+                        target="_blank"
+                      >
+                        Cloudflare&apos;s location guide
+                      </a>
+                      ,{" "}
+                      <a
+                        href="https://www.cloudflarestatus.com/locations"
+                        rel="noreferrer"
+                        target="_blank"
+                      >
+                        status locations
+                      </a>
+                      , and{" "}
+                      <a
+                        href="https://ourairports.com/data/"
+                        rel="noreferrer"
+                        target="_blank"
+                      >
+                        OurAirports
+                      </a>{" "}
+                      (public-domain data; no accuracy guarantee). Your browser
+                      requests map tiles directly from OpenFreeMap.
+                    </>
+                  }
+                  emptyDescription="A reference point is shown only when the Cloudflare colo code has a verified airport match. No data-center coordinates are inferred."
+                  location={coloAirportReference}
+                  mapLabel="Cloudflare colo airport reference map"
+                  screenReaderDescription="This marker is the approximate airport reference associated with the Cloudflare colo code, not a Cloudflare data center."
+                />
+              </CardContent>
+            </Card>
           </div>
         </div>
 
