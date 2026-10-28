@@ -84,6 +84,8 @@
   --color-chart-3: var(--chart-3);
   --font-sans: "IBM Plex Sans Variable", sans-serif;
   --font-mono: "IBM Plex Mono", monospace;
+  --text-caption: 0.8125rem;
+  --text-caption--line-height: 1.25rem;
   --radius-sm: calc(var(--radius) - 4px);
   --radius-md: calc(var(--radius) - 2px);
   --radius-lg: var(--radius);

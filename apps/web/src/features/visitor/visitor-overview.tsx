@@ -226,7 +226,7 @@ const MetadataFieldValue = ({
     return (
       <div className="space-y-1">
         <span className="text-muted-foreground">Checking…</span>
-        <p className="text-muted-foreground text-xs leading-4">ipify.org</p>
+        <p className="text-muted-foreground text-caption">ipify.org</p>
       </div>
     );
   }
@@ -250,12 +250,12 @@ const MetadataFieldValue = ({
             <CopyValue label={copyLabel} value={valueToCopy} />
           )}
           {field.units === undefined ? null : (
-            <span className="text-muted-foreground ml-1.5 text-xs">
+            <span className="text-muted-foreground text-caption ml-1.5">
               {field.units}
             </span>
           )}
         </span>
-        <p className="text-muted-foreground text-xs leading-4">
+        <p className="text-muted-foreground text-caption">
           {sourceLabel ?? sourceLabels[field.source]}
           {field.sensitivity === "public" ? "" : ` · ${field.sensitivity}`}
         </p>
@@ -266,10 +266,10 @@ const MetadataFieldValue = ({
   return (
     <div className="space-y-1">
       <span className="text-muted-foreground">—</span>
-      <p className="text-muted-foreground text-xs leading-4">
+      <p className="text-muted-foreground text-caption">
         {unavailableLabels[field.reason]}
       </p>
-      <p className="text-muted-foreground text-xs leading-4">
+      <p className="text-muted-foreground text-caption">
         {sourceLabel ?? sourceLabels[field.source]}
       </p>
     </div>

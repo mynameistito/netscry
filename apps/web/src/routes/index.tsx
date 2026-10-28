@@ -79,13 +79,9 @@ const HomePage = () => {
     <AppShell>
       <main className="flex flex-col gap-8" id="overview">
         <header className="space-y-3">
-          <div className="text-muted-foreground flex items-center gap-2 text-sm">
-            <span className="bg-primary size-1.5 rounded-full" />
-            Network workspace
-          </div>
           <div className="flex flex-wrap items-end justify-between gap-5">
             <div className="max-w-2xl space-y-2">
-              <h1 className="text-2xl font-medium tracking-tight sm:text-3xl">
+              <h1 className="text-2xl leading-tight font-medium tracking-tight [overflow-wrap:anywhere] sm:text-3xl">
                 {currentVisitorIp ?? "Your connection, in full view"}
               </h1>
               <p className="text-muted-foreground max-w-2xl text-sm leading-6">
