@@ -297,6 +297,7 @@ test("opens and closes accessible location marker details", async ({
 
   const map = page.getByRole("region", { name: "Browser test location map" });
   await expect(map).toBeVisible();
+  await map.scrollIntoViewIfNeeded();
 
   await page
     .locator(
