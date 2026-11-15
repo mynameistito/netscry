@@ -1,6 +1,6 @@
 {
   "name": "@netscry/sdk",
-  "version": "0.1.1",
+  "version": "0.1.2",
   "homepage": "https://github.com/mynameistito/netscry#readme",
   "bugs": {
     "url": "https://github.com/mynameistito/netscry/issues"
@@ -31,7 +31,7 @@
     "test:consumer": "node test/consumer.mjs"
   },
   "dependencies": {
-    "@netscry/schemas": "^0.1.1",
+    "@netscry/schemas": "^0.1.2",
     "effect": "4.1.4"
   },
   "engines": {
