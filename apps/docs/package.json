@@ -14,7 +14,7 @@
   "dependencies": {
     "@netscry/schemas": "workspace:*",
     "blume": "^2.2.6",
-    "effect": "4.0.6",
+    "effect": "4.1.4",
     "oxfmt": "^0.74.0"
   }
 }

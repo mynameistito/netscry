@@ -31,7 +31,7 @@
   },
   "dependencies": {
     "@netscry/core": "^0.1.1",
-    "effect": "4.0.6"
+    "effect": "4.1.4"
   },
   "engines": {
     "node": ">=20"
