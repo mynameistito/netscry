@@ -77,17 +77,17 @@
     },
     "packages/netscry": {
       "name": "netscry",
-      "version": "0.1.1",
+      "version": "0.1.2",
       "dependencies": {
         "@netscry/core": "^0.1.1",
-        "@netscry/schemas": "^0.1.1",
-        "@netscry/sdk": "^0.1.1",
+        "@netscry/schemas": "^0.1.2",
+        "@netscry/sdk": "^0.1.2",
         "effect": "4.1.4",
       },
     },
     "packages/schemas": {
       "name": "@netscry/schemas",
-      "version": "0.1.1",
+      "version": "0.1.2",
       "dependencies": {
         "@netscry/core": "^0.1.1",
         "effect": "4.1.4",
@@ -95,9 +95,9 @@
     },
     "packages/sdk": {
       "name": "@netscry/sdk",
-      "version": "0.1.1",
+      "version": "0.1.2",
       "dependencies": {
-        "@netscry/schemas": "^0.1.1",
+        "@netscry/schemas": "^0.1.2",
         "effect": "4.1.4",
       },
     },
